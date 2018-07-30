@@ -1,0 +1,72 @@
+dist: trusty
+language: cpp
+
+cache:
+  ccache: true
+  directories:
+    - dependencies
+
+before_cache:
+  - ${TRAVIS_BUILD_DIR}/scripts/cleanup-cmake.sh
+
+env:
+  global:
+    - MAKEFLAGS="-j 2"
+
+# Create aliases for some of shared build configuration
+_basic_env:
+- &daily_linux
+  if: type != cron
+  os: linux
+  compiler: gcc
+  addons:
+    apt:
+      sources:
+        - ubuntu-toolchain-r-test
+      packages:
+        - g++-6
+- &linux_base
+  if: type != cron
+  os: linux
+  compiler: gcc
+  addons:
+    apt:
+      sources:
+        - ubuntu-toolchain-r-test
+      packages:
+        - g++-6
+
+jobs:
+  # On weekdays, the backlog for waiting OS X builds is huge
+  fast_finish: true
+  allow_failures:
+    - os: osx
+
+  include:
+   # ------------------------------------------------
+   # Jobs for daily valgrind and code coverage tests
+   # ------------------------------------------------
+    - <<: *linux_base
+      env:
+        - MATRIX_EVAL="COMPILER=gcc && CC=gcc-6 && CXX=g++-6"
+        - USE_SWIG=true
+        - USE_MPI=mpich
+        - BUILD_TYPE=Release
+
+branches:
+  except:
+    - gh-pages
+
+before_install:
+  - eval "${MATRIX_EVAL}"
+  - $CXX --version
+
+install:
+  - source scripts/install-ci-dependencies.sh
+  - source scripts/install-helics.sh
+
+script:
+  - pwd
+
+notifications:
+    email: false
