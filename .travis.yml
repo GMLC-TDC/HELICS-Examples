@@ -43,9 +43,6 @@ jobs:
     - os: osx
 
   include:
-   # ------------------------------------------------
-   # Jobs for daily valgrind and code coverage tests
-   # ------------------------------------------------
     - <<: *linux_base
       env:
         - MATRIX_EVAL="COMPILER=gcc && CC=gcc-6 && CXX=g++-6"
