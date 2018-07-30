@@ -12,10 +12,10 @@ if [[ "$USE_MPI" ]]; then OPTION_FLAGS_ARR+=("-DMPI_ENABLE=ON") ; fi
 if [[ "$USE_MPI" ]]; then CC=${CI_DEPENDENCY_DIR}/mpi/bin/mpicc ; CXX=${CI_DEPENDENCY_DIR}/mpi/bin/mpic++ ; fi
 HELICS_OPTION_FLAGS=${OPTION_FLAGS_ARR[@]}
 
-mkdir helics_build && cd helics_build
 #git clone helics... master, develop branch? for now, ignore the cached install of helics and always rebuild it for fresh updates
 rm -rf ${CI_DEPENDENCY_DIR}/helics
 git clone --single-branch -b develop https://github.com/GMLC-TDC/HELICS-src
+cd HELICS-src
 
 HELICS_DEPENDENCY_FLAGS+="-DZeroMQ_INSTALL_PATH=${CI_DEPENDENCY_DIR}/zmq -DBOOST_INSTALL_PATH=${CI_DEPENDENCY_DIR}/boost"
 cmake .. ${HELICS_DEPENDENCY_FLAGS} ${HELICS_OPTION_FLAGS} -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
