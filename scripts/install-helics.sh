@@ -1,6 +1,9 @@
 #!/bin/bash
 # Script for checking out and building a copy of HELICS on CI servies (Travis)
 
+# Save the current directory
+pushd
+
 # Setup build flags using environment variables (set elsewhere, travis.yml or install-ci-dependencies.sh)
 OPTION_FLAGS_ARR=()
 OPTION_FLAGS_ARR+=("-DBUILD_C_SHARED_LIB=ON" "-DBUILD_CXX_SHARED_LIB=ON" "-DBUILD_PYTHON_INTERFACE=ON" "-DBUILD_JAVA_INTERFACE=ON")
@@ -28,3 +31,6 @@ HELICS_DEPENDENCY_FLAGS+="-DZeroMQ_INSTALL_PATH=${CI_DEPENDENCY_DIR}/zmq -DBOOST
 cmake .. ${HELICS_DEPENDENCY_FLAGS} ${HELICS_OPTION_FLAGS} -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
 make ${MAKEFLAGS}
 make install
+
+# Return to original directory
+popd
