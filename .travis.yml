@@ -63,7 +63,8 @@ install:
   - source scripts/install-helics.sh
 
 script:
-  - pwd
+  - ls ${HELICS_INSTALL_PATH}/bin
+  - helics_broker --version
 
 notifications:
     email: false
