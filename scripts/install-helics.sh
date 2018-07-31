@@ -1,9 +1,6 @@
 #!/bin/bash
 # Script for checking out and building a copy of HELICS on CI servies (Travis)
 
-# Save the current directory
-pushd
-
 # Setup build flags using environment variables (set elsewhere, travis.yml or install-ci-dependencies.sh)
 OPTION_FLAGS_ARR=()
 OPTION_FLAGS_ARR+=("-DBUILD_C_SHARED_LIB=ON" "-DBUILD_CXX_SHARED_LIB=ON" "-DBUILD_PYTHON_INTERFACE=ON" "-DBUILD_JAVA_INTERFACE=ON")
@@ -20,7 +17,7 @@ HELICS_OPTION_FLAGS=${OPTION_FLAGS_ARR[@]}
 #git clone helics... master, develop branch? for now, ignore the cached install of helics and always rebuild it for fresh updates
 rm -rf ${CI_DEPENDENCY_DIR}/helics
 git clone --single-branch -b develop https://github.com/GMLC-TDC/HELICS-src
-cd HELICS-src
+pushd HELICS-src
 
 # Create directories for building HELICS
 mkdir -p build
