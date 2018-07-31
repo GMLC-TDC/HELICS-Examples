@@ -1,6 +1,17 @@
 #!/bin/bash
 # Script for checking out and building a copy of HELICS on CI servies (Travis)
 
+# Get the os name
+if [[ "$TRAVIS" == "true" ]]; then
+    if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+        os_name="Linux"
+    elif [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+        os_name="Darwin"
+    fi
+else
+    os_name="$(uname -s)"
+fi
+
 # Setup build flags using environment variables (set elsewhere, travis.yml or install-ci-dependencies.sh)
 OPTION_FLAGS_ARR=()
 OPTION_FLAGS_ARR+=("-DBUILD_C_SHARED_LIB=ON" "-DBUILD_CXX_SHARED_LIB=ON" "-DBUILD_PYTHON_INTERFACE=ON" "-DBUILD_JAVA_INTERFACE=ON")
@@ -29,5 +40,15 @@ cmake .. ${HELICS_DEPENDENCY_FLAGS} ${HELICS_OPTION_FLAGS} -DCMAKE_C_COMPILER_LA
 make ${MAKEFLAGS}
 make install
 
+export HELICS_INSTALL_PATH=${CI_DEPENDENCY_DIR}/helics
+
 # Return to original directory
 popd
+
+# Update some environment variables for running HELICS executables
+export PATH="${HELICS_INSTALL_PATH}/bin:${PATH}"
+if [[ "$os_name" == "Linux" ]]; then
+    export LD_LIBRARY_PATH=${HELICS_INSTALL_PATH}/lib64:${HELICS_INSTALL_PATH}/lib:$LD_LIBRARY_PATH
+elif [[ "$os_name" == "Darwin" ]]; then
+    export DYLD_LIBRARY_PATH=${HELICS_INSTALL_PATH}/lib64:${HELICS_INSTALL_PATH}/lib:$DYLD_LIBRARY_PATH
+fi
