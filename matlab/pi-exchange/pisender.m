@@ -102,7 +102,7 @@ for i = 1:numsteps
     [status, granted_time] = helics.helicsFederateRequestTime(vfed, i);
     assert(status==0)
 
-%    fprintf('PI SENDER: Sending value pi = %g at time %f to PI RECEIVER\n', val, this_time + (deltat * i));
+%    fprintf('PI SENDER: Publishing value pi = %g at time %f\n', val, this_time + (deltat * i));
     fprintf('PI SENDER: Publishing value pi = %g at time %4.1f... ', val, granted_time);
     status = helics.helicsPublicationPublishDouble(pub, val);
     fprintf('DONE (status=%d)\n', status);
