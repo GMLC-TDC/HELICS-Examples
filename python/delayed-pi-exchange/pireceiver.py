@@ -2,7 +2,7 @@
 import helics as h
 
 fedinitstring = "--federates=1"
-deltat = 0.01
+timePeriod = 1
 
 helicsversion = h.helicsGetVersion()
 
@@ -31,7 +31,7 @@ status = h.helicsFederateInfoSetCoreInitString(fedinfo, fedinitstring)
 
 # Set one second message interval
 print("PI RECEIVER: Setting Federate Info Time Delta")
-status = h.helicsFederateInfoSetTimeDelta(fedinfo, deltat)
+status = h.helicsFederateInfoSetPeriod(fedinfo, timePeriod)
 
 print("PI RECEIVER: Setting Federate Info Logging")
 status = h.helicsFederateInfoSetLoggingLevel(fedinfo, 1)

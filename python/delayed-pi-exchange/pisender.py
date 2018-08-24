@@ -5,7 +5,7 @@ from math import pi
 
 initstring = "2 --name=mainbroker"
 fedinitstring = "--broker=mainbroker --federates=1"
-deltat = 0.01
+timePeriod = 1
 
 helicsversion = h.helicsGetVersion()
 
@@ -41,7 +41,7 @@ status = h.helicsFederateInfoSetCoreInitString(fedinfo, fedinitstring)
 # setTimedelta routine is a multiplier for the default timedelta.
 
 # Set one second message interval #
-status = h.helicsFederateInfoSetTimeDelta(fedinfo, deltat)
+status = h.helicsFederateInfoSetPeriod(fedinfo, timePeriod)
 
 status = h.helicsFederateInfoSetLoggingLevel(fedinfo, 1)
 
