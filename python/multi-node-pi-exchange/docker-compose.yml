@@ -1,0 +1,30 @@
+version: '3'
+services:
+  broker:
+    build: ../../Dockerfiles/helics
+    command:
+    - helics_broker
+    - '2'
+    - --ipv4
+    - --loglevel=5
+    image: helics
+  sender:
+    build: ../../Dockerfiles/helics
+    command:
+    - python3
+    - pisender.py
+    - broker # reference to broker container
+    image: helics
+    volumes:
+      - .:/helics-example
+    working_dir: /helics-example
+  receiver:
+    build: ../../Dockerfiles/helics
+    command:
+    - python3
+    - pireceiver.py
+    - broker # reference to broker container
+    image: helics
+    volumes:
+      - .:/helics-example
+    working_dir: /helics-example
