@@ -11,4 +11,4 @@ project(valueFederate1)
 find_package(HELICS REQUIRED)
 
 add_executable(valueFed valueFed.cpp)
-target_link_libraries(valueFed HELICS::helics_apps-static)
+target_link_libraries(valueFed HELICS::helics-static)

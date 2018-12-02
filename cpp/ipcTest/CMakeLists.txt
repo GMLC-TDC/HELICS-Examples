@@ -11,7 +11,7 @@ project(ipcTest)
 find_package(HELICS REQUIRED)
 
 add_executable(ipcTest1 ipcTest1.cpp common.hpp)
-target_link_libraries(ipcTest1 HELICS::helics_apps-static)
+target_link_libraries(ipcTest1 HELICS::helics-static)
 
 add_executable(ipcTest2 ipcTest2.cpp common.hpp)
-target_link_libraries(ipcTest2 HELICS::helics_apps-static)
+target_link_libraries(ipcTest2 HELICS::helics-static)

@@ -11,4 +11,4 @@ project(comboFederate1)
 find_package(HELICS REQUIRED)
 
 add_executable(comboFed comboFed.cpp)
-target_link_libraries(comboFed HELICS::helics_apps-static)
+target_link_libraries(comboFed HELICS::helics-static)

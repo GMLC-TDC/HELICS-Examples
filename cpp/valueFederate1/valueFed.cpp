@@ -3,7 +3,7 @@ Copyright © 2017-2018,
 Battelle Memorial Institute; Lawrence Livermore National Security, LLC; Alliance for Sustainable Energy, LLC
 All rights reserved. See LICENSE file and DISCLAIMER for more details.
 */
-#include "helics/application_api/ValueFederate.hpp"
+#include "helics/ValueFederates.hpp"
 #include <thread>
 #include <iostream>
 #include "helics/core/BrokerFactory.hpp"
@@ -17,7 +17,7 @@ static const helics::ArgDescriptors InfoArgs{
 
 int main (int argc, const char * const *argv)
 {
-    helics::FederateInfo fi("fed");
+    helics::FederateInfo fi;
     helics::variable_map vm;
     auto parseResult = argumentParser(argc, argv, vm, InfoArgs);
     fi.loadInfoFromArgs(argc, argv);
@@ -26,7 +26,7 @@ int main (int argc, const char * const *argv)
         return 0;
     }
 
-	fi.logLevel = 5;
+	fi.setIntegerProperty(helics::defs::properties::log_level, 5);
     std::shared_ptr<helics::Broker> brk;
     if (vm.count("startbroker") > 0)
     {
@@ -42,23 +42,24 @@ int main (int argc, const char * const *argv)
     {
         target = vm["valuetarget"].as<std::string>();
     }
-    auto vFed = std::make_unique<helics::ValueFederate> (fi);
+    auto vFed = std::make_unique<helics::ValueFederate> ("fed",fi);
 
-    auto id = vFed->registerPublication ("pub", "double");
+    auto &pub = vFed->registerPublication ("pub", "double");
 
-    auto subid = vFed->registerOptionalSubscription(target + "/pub","double");
-    std::cout << "entering init State\n";
-    vFed->enterInitializationState ();
-    std::cout << "entered init State\n";
-    vFed->enterExecutionState ();
-    std::cout << "entered exec State\n";
+    auto &sub = vFed->registerSubscription(target + "/pub");
+	//TODO:: add optional property
+    std::cout << "entering init Mode\n";
+    vFed->enterInitializingMode ();
+    std::cout << "entered init Mode\n";
+    vFed->enterExecutingMode ();
+    std::cout << "entered exec Mode\n";
     for (int i=1; i<10; ++i) {
-        vFed->publish(id, i);
+        pub.publish(i);
         auto newTime = vFed->requestTime (i);
-        if (vFed->isUpdated(subid))
+        if (sub.isUpdated())
         {
-            auto val = vFed->getValue<double>(subid);
-            std::cout << "received updated value of " << val << " at "<< newTime << " from " << vFed->getSubscriptionKey(subid) << '\n';
+            auto val = sub.getValue<double>();
+            std::cout << "received updated value of " << val << " at "<< newTime << " from " << vFed->getTarget(sub) << '\n';
         }
         
         std::cout << "processed time " << static_cast<double> (newTime) << "\n";

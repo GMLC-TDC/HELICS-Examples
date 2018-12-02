@@ -11,7 +11,7 @@ project(messageFederate1)
 find_package(HELICS REQUIRED)
 
 add_executable(messageFed messageFed.cpp)
-target_link_libraries(messageFed HELICS::helics_apps-static)
+target_link_libraries(messageFed HELICS::helics-static)
 
 add_executable(messageFedObj messageFedObj.cpp)
-target_link_libraries(messageFedObj HELICS::helics_apps-static)
+target_link_libraries(messageFedObj HELICS::helics-static)
