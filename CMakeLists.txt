@@ -67,14 +67,18 @@ list(APPEND CMAKE_INSTALL_RPATH "./")
 # CMAKE Subdirectories
 # -----------------------------------------------------------------------------
 
-#add_subdirectory(c)
-add_subdirectory(cpp)
-#add_subdirectory(cpp98)
+OPTION(ENABLE_C_EXAMPLES "Enable the C based examples to be built" ON)
+OPTION(ENABLE_CPP_EXAMPLES "Enable the C++ based examples to be built" ON)
+OPTION(ENABLE_CPP98_EXAMPLES "Enable the C++98 based examples to be built" OFF)
 
+if (ENABLE_C_EXAMPLES)
+	add_subdirectory(c)
+endif()
 
-get_directory_property(hasParent PARENT_DIRECTORY)
-if(hasParent)
-  message(STATUS "Has a parent scope.")
-else()
-  message(STATUS "Doesn't have a parent scope.")
+if (ENABLE_CPP_EXAMPLES)
+  add_subdirectory(cpp)
+endif()
+
+if (ENABLE_CPP98_EXAMPLES)
+  add_subdirectory(cpp98)
 endif()
