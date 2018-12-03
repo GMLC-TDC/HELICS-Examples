@@ -30,7 +30,7 @@ static const char defSourceEndpoint[] = "endpoint";
 
 int main(int argc, char *argv[])
 {
-    helics_federate_info_t fedinfo = helicsFederateInfoCreate();
+    helics_federate_info fedinfo = helicsFederateInfoCreate();
     const char *messagetarget = defmessageTarget;
     const char *valuetarget = defvalueTarget;
     const char *endpoint = defTargetEndpoint;
@@ -41,10 +41,10 @@ int main(int argc, char *argv[])
     helics_federate cFed = NULL;
     helics_endpoint ept = NULL;
     helics_publication pubid = NULL;
-    helics_subscription subid = NULL;
+    helics_input subid = NULL;
     char str[255];
     char message[1024];
-    helics_time_t newTime;
+    helics_time newTime;
     for (ii = 1; ii < argc; ++ii)
     {
 
@@ -87,10 +87,9 @@ int main(int argc, char *argv[])
 
     }
 
-    helicsFederateInfoSetFederateName(fedinfo, "fed");
-    helicsFederateInfoLoadFromArgs(fedinfo, argc, (const char * const*)argv);
+    helicsFederateInfoLoadFromArgs(fedinfo, argc, (const char * const*)argv,NULL);
 
-    cFed = helicsCreateCombinationFederate(fedinfo);
+    cFed = helicsCreateCombinationFederate("fed",fedinfo,NULL);
 
     targetEndpoint = (char *)malloc(strlen(messagetarget) + 2 + strlen(endpoint));
     strcpy(targetEndpoint, messagetarget);
@@ -100,14 +99,14 @@ int main(int argc, char *argv[])
     helicsFederateGetName(cFed, str, 255);
     printf("registering endpoint %s for %s\n", source, str);
     /*this line actually creates an endpoint*/
-    ept = helicsFederateRegisterEndpoint(cFed, source, "");
+    ept = helicsFederateRegisterEndpoint(cFed, source, "",NULL);
 
-    pubid = helicsFederateRegisterPublication(cFed, "pub", "double", "");
+    pubid = helicsFederateRegisterPublication(cFed, "pub", "double", "",NULL);
     
     targetSubscription = (char *)malloc(strlen(valuetarget) + 4);
     strcpy(targetSubscription, messagetarget);
     strcat(targetSubscription, "/pub");
-    subid = helicsFederateRegisterOptionalSubscription(cFed, targetSubscription, "double", "");
+    subid = helicsFederateRegisterOptionalSubscription(cFed, targetSubscription, "",NULL);
 
     printf("entering init Mode\n");
     helicsFederateEnterInitializationMode(cFed);
@@ -116,16 +115,16 @@ int main(int argc, char *argv[])
     printf("entered execution Mode\n");
     for (ii = 1; ii<10; ++ii) {
         snprintf(message, 1024, "message sent from %s to %s at time %d", str, targetEndpoint, ii);
-        helicsEndpointSendMessageRaw(ept, targetEndpoint, message, (int)(strlen(message)));
+        helicsEndpointSendMessageRaw(ept, targetEndpoint, message, (int)(strlen(message)),NULL);
 
         printf(" %s \n", message);
-        helicsPublicationPublishDouble(pubid,(double)ii);
-        helicsFederateRequestTime(cFed, (helics_time_t)ii, &newTime);
+        helicsPublicationPublishDouble(pubid,(double)ii,NULL);
+        helicsFederateRequestTime(cFed, (helics_time)ii, &newTime);
 
         printf("granted time %f\n", newTime);
         while (helicsEndpointHasMessage(ept) == helics_true)
         {
-            message_t nmessage = helicsEndpointGetMessage(ept);
+            helics_message nmessage = helicsEndpointGetMessage(ept);
             printf("received message from %s at %f ::%s\n", nmessage.source, nmessage.time, nmessage.data);
         }
         if (helicsSubscriptionIsUpdated(subid))
@@ -137,7 +136,7 @@ int main(int argc, char *argv[])
 
     }
     printf("finalizing federate\n");
-    helicsFederateFinalize(cFed);
+    helicsFederateDestroy(cFed);
 
     return 0;
 }

@@ -22,3 +22,4 @@ target_link_libraries(pi_receiver2 HELICS::helicsSharedLib)
 add_executable(pi_sender2 pi_sender2.c)
 target_link_libraries(pi_sender2 HELICS::helicsSharedLib)
 
+set_target_properties(pi_receiver pi_receiver2 pi_sender pi_sender2 PROPERTIES FOLDER pi_exchange)
