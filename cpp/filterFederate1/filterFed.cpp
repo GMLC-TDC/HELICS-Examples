@@ -46,14 +46,14 @@ int main (int argc, char *argv[])
         targetEndpoint = vm["filtertype"].as<std::string>();
     }
 
-    helics::defined_filter_types ftype = helics::defined_filter_types::delay;
+    helics::filter_types ftype = helics::filter_types::delay;
     if (filtType == "random_drop")
     {
-        ftype = helics::defined_filter_types::random_drop;
+        ftype = helics::filter_types::random_drop;
     }
     else if (filtType == "random_delay")
     {
-        ftype = helics::defined_filter_types::random_delay;
+        ftype = helics::filter_types::random_delay;
     }
     else if (filtType != "delay")
     {
@@ -72,7 +72,7 @@ int main (int argc, char *argv[])
     // get a few specific parameters related to the particular filter
     switch (ftype)
     {
-    case helics::defined_filter_types::delay:
+    case helics::filter_types::delay:
     default:
     {
         std::string delay = "1.0";
@@ -82,7 +82,7 @@ int main (int argc, char *argv[])
         }
         break;
     }
-    case helics::defined_filter_types::random_drop:
+    case helics::filter_types::random_drop:
     {
         double dropprob = 0.33;
         if (vm.count("dropprob") > 0) {
@@ -91,7 +91,7 @@ int main (int argc, char *argv[])
         filt->set("dropprob", dropprob);
     }
         break;
-    case helics::defined_filter_types::random_delay:
+    case helics::filter_types::random_delay:
         filt->setString("distribution", "uniform");
         if (vm.count("delay") > 0)
         {
@@ -102,11 +102,7 @@ int main (int argc, char *argv[])
     */
     core->setCoreReadyToInit();
 
-    //just do a wait loop while the core is still processing so the filters have time to work
-    while (core->isConnected())
-    {
-        std::this_thread::yield();
-    }
+	core->waitForDisconnect();
     return 0;
 }
 

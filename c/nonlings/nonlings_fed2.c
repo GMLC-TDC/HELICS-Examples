@@ -45,23 +45,23 @@ void run_sim2(double x,double tol,double *yout,int *converged)
 
 int main()
 {
-  helics_federate_info_t fedinfo;
+  helics_federate_info fedinfo;
   const char*    helicsversion;
-  helics_status   status;
   const char*    fedinitstring="--federates=1";
   double         deltat=0.01;
   helics_federate vfed;
-  helics_subscription sub;
+  helics_input sub;
   helics_publication  pub;
   int converged;
   int stringLength;
   char sendbuf[100],recvbuf[100];
   double y = 1.0, /*xprv = 100,*/ yprv=100;
   int my_conv=0,other_conv; /* Global and local convergence */
-  helics_time_t currenttime=0.0;
-  helics_iteration_status currenttimeiter=iterating;
+  helics_time currenttime=0.0;
+  helics_iteration_result currenttimeiter=helics_iteration_result_iterating;
   double tol=1E-8;
   int helics_iter = 0;
+  helics_error err= helicsErrorInitialize();
 
   helicsversion = helicsGetVersion();
 
@@ -70,14 +70,11 @@ int main()
   /* Create Federate Info object that describes the federate properties */
   fedinfo = helicsFederateInfoCreate();
 
-  /* Set Federate name */
-  helicsFederateInfoSetFederateName(fedinfo,"TestB Federate");
-
   /* Set core type from string */
-  helicsFederateInfoSetCoreTypeFromString(fedinfo,"zmq");
+  helicsFederateInfoSetCoreTypeFromString(fedinfo,"zmq",NULL);
 
   /* Federate init string */
-  helicsFederateInfoSetCoreInitString(fedinfo,fedinitstring);
+  helicsFederateInfoSetCoreInitString(fedinfo,fedinitstring,NULL);
 
   helicsFederateInfoSetTimeDelta(fedinfo,deltat);
 
@@ -86,18 +83,18 @@ int main()
    helicsFederateInfoSetLoggingLevel(fedinfo,1);
 
   /* Create value federate */
-  vfed = helicsCreateValueFederate(fedinfo);
+  vfed = helicsCreateValueFederate("TestB Federate",fedinfo,NULL);
   printf(" Value federate created\n");
 
   sub = helicsFederateRegisterSubscription(vfed,"testA","string","");
   printf(" Subscription registered\n");
 
   /* Register the publication */
-  pub = helicsFederateRegisterGlobalPublication(vfed,"testB","string","");
+  pub = helicsFederateRegisterGlobalPublication(vfed,"testB",helics_data_type_string,"",NULL);
   printf(" Publication registered\n");
 
   /* Enter initialization mode */
-  status = helicsFederateEnterInitializationMode(vfed);
+  helicsFederateEnterInitializingMode(vfed,NULL);
   if (status != helics_ok) {
       printf("Error entering Initialization\n");
       return(-1);

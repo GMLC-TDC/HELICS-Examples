@@ -33,7 +33,7 @@ int main()
   printf("%s",help);
 
   /* Create Federate Info object that describes the federate properties */
-  fedinfo = helicsFederateInfoCreate();
+  fedinfo = helicsCreateFederateInfo();
 
   /* Set core type from string */
   helicsFederateInfoSetCoreTypeFromString(fedinfo,"zmq",&err);
@@ -47,9 +47,9 @@ int main()
      setTimedelta routine is a multiplier for the default timedelta.
   */
   /* Set one second message interval */
-   helicsFederateInfoSetTimeDelta(fedinfo,deltat);
+   helicsFederateInfoSetTimeProperty(fedinfo,helics_property_time_delta,deltat,NULL);
 
-  helicsFederateInfoSetLoggingLevel(fedinfo,1);
+  helicsFederateInfoSetIntegerProperty(fedinfo,helics_property_int_log_level,1,NULL);
 
   /* Create value federate */
   vfed = helicsCreateValueFederate("Test receiver Federate",fedinfo,&err);
@@ -60,7 +60,7 @@ int main()
   printf("PI RECEIVER: Subscription registered\n");
 
   /* Register the publication */
-  pub = helicsFederateRegisterGlobalPublication(vfed,"testB","double","",&err);
+  pub = helicsFederateRegisterGlobalTypePublication(vfed,"testB","double","",&err);
   printf("PI RECEIVER: Publication registered\n");
 
   fflush(NULL);
@@ -88,7 +88,7 @@ int main()
 
      int isupdated = 0;
     while(!isupdated) {
-      helicsFederateRequestTime(vfed,currenttime, &currenttime,&err);
+      currenttime=helicsFederateRequestTime(vfed,currenttime, &err);
       isupdated = helicsInputIsUpdated(sub);
 	  if (currenttime > 0.21)
 	  {

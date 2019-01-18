@@ -26,7 +26,7 @@ int main (int argc, const char * const *argv)
         return 0;
     }
 
-	fi.setIntegerProperty(helics::defs::properties::log_level, 5);
+	fi.setProperty(helics::defs::properties::log_level, 5);
     std::shared_ptr<helics::Broker> brk;
     if (vm.count("startbroker") > 0)
     {

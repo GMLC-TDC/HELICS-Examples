@@ -20,18 +20,18 @@ static char help[] = " PI SENDER: Simple program to demonstrate the usage of HEL
 
 int main()
 {
-  helics_federate_info_t fedinfo;
+  helics_federate_info fedinfo;
   const char*    helicsversion;
   /*helics_status   status; */
   helics_broker  broker;
-  const char*    initstring="2 --name=mainbroker";
+  const char*    initstring="-f 2 --name=mainbroker";
   const char*    fedinitstring="--broker=mainbroker --federates=1";
   int            isconnected;
   double         deltat=0.01;
   helics_federate vfed;
   helics_publication pub;
   double value = 22.0 / 7.0;
-  helics_time_t currenttime = 0.0;
+  helics_time currenttime = 0.0;
   int           numsteps = 20, i;
 
   helicsversion = helicsGetVersion();
@@ -40,7 +40,7 @@ int main()
   printf("%s",help);
 
   /* Create broker */
-  broker = helicsCreateBroker("zmq","",initstring);
+  broker = helicsCreateBroker("zmq","",initstring,NULL);
 
   isconnected = helicsBrokerIsConnected(broker);
 
@@ -49,16 +49,13 @@ int main()
   }
 
   /* Create Federate Info object that describes the federate properties */
-  fedinfo = helicsFederateInfoCreate();
-
-  /* Set Federate name */
-  helicsFederateInfoSetFederateName(fedinfo,"Test sender Federate");
+  fedinfo = helicsCreateFederateInfo();
 
   /* Set core type from string */
-   helicsFederateInfoSetCoreTypeFromString(fedinfo,"zmq");
+   helicsFederateInfoSetCoreTypeFromString(fedinfo,"zmq",NULL);
 
   /* Federate init string */
-  helicsFederateInfoSetCoreInitString(fedinfo,fedinitstring);
+  helicsFederateInfoSetCoreInitString(fedinfo,fedinitstring,NULL);
 
   /* Set the message interval (timedelta) for federate. Note that
      HELICS minimum message time interval is 1 ns and by default
@@ -71,19 +68,19 @@ int main()
   helicsFederateInfoSetLoggingLevel(fedinfo,1);
 
   /* Create value federate */
-  vfed = helicsCreateValueFederate(fedinfo);
+  vfed = helicsCreateValueFederate("Test sender Federate",fedinfo,NULL);
   printf("PI SENDER: Value federate created\n");
 
   /* Register the publication */
-  pub = helicsFederateRegisterGlobalPublication(vfed,"testA","double","");
+  pub = helicsFederateRegisterGlobalPublication(vfed,"testA","double","",NULL);
   printf("PI SENDER: Publication registered\n");
 
   /* Enter initialization mode */
-   helicsFederateEnterInitializationMode(vfed);
+   helicsFederateEnterInitializingMode(vfed,NULL);
   printf("PI SENDER: Entered initialization mode\n");
 
   /* Enter execution mode */
-   helicsFederateEnterExecutionMode(vfed);
+   helicsFederateEnterExecutingMode(vfed,NULL);
   printf("PI SENDER: Entered execution mode\n");
 
   /* This federate will be publishing deltat*pi for numsteps steps */
@@ -93,12 +90,12 @@ int main()
     double val = currenttime*value;
 
     printf("PI SENDER: Sending value %3.2fpi = %4.3f at time %3.2f to PI RECEIVER\n",deltat*i,val,currenttime);
-    helicsPublicationPublishDouble(pub,val);
+    helicsPublicationPublishDouble(pub,val,NULL);
 
-    helicsFederateRequestTime(vfed,currenttime, &currenttime);
+    currenttime=helicsFederateRequestTime(vfed,currenttime, NULL);
   }
 
-  helicsFederateFinalize(vfed);
+  helicsFederateFinalize(vfed,NULL);
   printf("PI SENDER: Federate finalized\n");
 
   helicsFederateFree(vfed);
