@@ -68,7 +68,7 @@ int main()
   printf(" Helics version = %s\n",helicsversion);
 
   /* Create Federate Info object that describes the federate properties */
-  fedinfo = helicsFederateInfoCreate();
+  fedinfo = helicsCreateFederateInfo();
 
   /* Set core type from string */
   helicsFederateInfoSetCoreTypeFromString(fedinfo,"zmq",NULL);
@@ -76,17 +76,15 @@ int main()
   /* Federate init string */
   helicsFederateInfoSetCoreInitString(fedinfo,fedinitstring,NULL);
 
-  helicsFederateInfoSetTimeDelta(fedinfo,deltat);
-
-  helicsFederateInfoSetMaxIterations(fedinfo,100);
-
-   helicsFederateInfoSetLoggingLevel(fedinfo,1);
+  helicsFederateInfoSetTimeProperty(fedinfo, helics_property_time_period, deltat, &err);
+  helicsFederateInfoSetIntegerProperty(fedinfo, helics_property_int_max_iterations, 100, &err);
+  helicsFederateInfoSetIntegerProperty(fedinfo, helics_property_int_log_level, 1, &err);
 
   /* Create value federate */
   vfed = helicsCreateValueFederate("TestB Federate",fedinfo,NULL);
   printf(" Value federate created\n");
 
-  sub = helicsFederateRegisterSubscription(vfed,"testA","string","");
+  sub = helicsFederateRegisterSubscription(vfed,"testA","",NULL);
   printf(" Subscription registered\n");
 
   /* Register the publication */
@@ -94,36 +92,36 @@ int main()
   printf(" Publication registered\n");
 
   /* Enter initialization mode */
-  helicsFederateEnterInitializingMode(vfed,NULL);
-  if (status != helics_ok) {
+  helicsFederateEnterInitializingMode(vfed,&err);
+  if (err.error_code != helics_ok) {
       printf("Error entering Initialization\n");
-      return(-1);
+      return(err.error_code);
   }
   printf(" Entered initialization mode\n");
 
   snprintf(sendbuf,100,"%18.16f,%d",y,my_conv);
-  status = helicsPublicationPublishString(pub, sendbuf);
-  if (status != helics_ok) {
-    printf("Error sending publication\n");
+  helicsPublicationPublishString(pub, sendbuf,&err);
+  if (err.error_code != helics_ok) {
+    printf("Error sending publication:%s\n",err.message);
   }
   fflush(NULL);
   /* Enter execution mode */
-  helicsFederateEnterExecutionMode(vfed);
+  helicsFederateEnterExecutingMode(vfed,&err);
   printf(" Entered execution mode\n");
 
   fflush(NULL);
 
-  while (currenttimeiter==iterating) {
+  while (currenttimeiter==helics_iteration_result_iterating) {
       int global_conv = 0;
       double x = 0.0;
-    helicsSubscriptionGetString(sub,recvbuf,100, &stringLength);
+    helicsInputGetString(sub,recvbuf,100, &stringLength,NULL);
     sscanf(recvbuf,"%lf,%d",&x,&other_conv);
 
     /* Check for global convergence */
     global_conv = my_conv&other_conv;
 
     if(global_conv) {
-      helicsFederateRequestTimeIterative(vfed, currenttime, no_iteration,&currenttime,&currenttimeiter);
+		currenttime=helicsFederateRequestTimeIterative(vfed, currenttime, helics_iteration_request_no_iteration,&currenttimeiter,&err);
     } else {
       /* Solve the system of equations for this federate */
       run_sim2(x,tol,&y,&converged);
@@ -140,15 +138,15 @@ int main()
       }
 
       snprintf(sendbuf,100,"%18.16f,%d",y,my_conv);
-      helicsPublicationPublishString(pub, sendbuf);
+      helicsPublicationPublishString(pub, sendbuf,&err);
 
       fflush(NULL);
-      helicsFederateRequestTimeIterative(vfed, currenttime, force_iteration,&currenttime,&currenttimeiter);
+	  currenttime=helicsFederateRequestTimeIterative(vfed, currenttime, helics_iteration_request_force_iteration,&currenttimeiter,&err);
       yprv = y;
     }
   }
 
-  helicsFederateFinalize(vfed);
+  helicsFederateFinalize(vfed,&err);
   printf("NLIN2: Federate finalized\n");
   fflush(NULL);
   helicsFederateFree(vfed);

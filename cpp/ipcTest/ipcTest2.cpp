@@ -32,8 +32,8 @@ int main (int, char **)
     helics::FederateInfo fed_info;
     fed_info.coreType = helics::core_type::IPC;
     fed_info.coreInitString = "--broker=stevebroker --federates 1 --loglevel 5";
-	fed_info.setTimeProperty(helics::defs::properties::time_delta, 0.1);
-	fed_info.setIntegerProperty(helics::defs::properties::log_level, 5);
+	fed_info.setProperty(helics::defs::properties::time_delta, 0.1);
+	fed_info.setProperty(helics::defs::properties::log_level, 5);
 	fed_info.setFlagOption(helics::defs::flags::observer, false);
 
     std::cout << "Creating federate." << std::endl;

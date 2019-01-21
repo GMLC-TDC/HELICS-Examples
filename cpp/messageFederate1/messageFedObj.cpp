@@ -44,7 +44,7 @@ int main (int argc, char *argv[])
         myendpoint = vm["source"].as<std::string>();
     }
 
-	fi.setIntegerProperty(helics::defs::properties::log_level, 5);
+	fi.setProperty(helics::defs::properties::log_level, 5);
     std::shared_ptr<helics::Broker> brk;
     if (vm.count("startbroker") > 0)
     {
@@ -64,8 +64,8 @@ int main (int argc, char *argv[])
     std::cout << "entered init State\n";
     mFed->enterExecutingMode ();
     std::cout << "entered exec State\n";
-    // set a defined target for the endpoint so it doesn't have to specfied on every call
-    endpoint.setTargetDestination(target);
+    // set a defined target for the endpoint so it doesn't have to specified on every call
+    endpoint.setDefaultDestination(target);
     for (int i=1; i<10; ++i) {
 		std::string message = "message sent from "+name+" to "+target+" at time " + std::to_string(i);
 		endpoint.send(message.data(), message.size());

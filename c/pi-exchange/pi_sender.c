@@ -33,6 +33,7 @@ int main()
   double value = 22.0 / 7.0;
   helics_time currenttime = 0.0;
   int           numsteps = 20, i;
+  helics_error err = helicsErrorInitialize();
 
   helicsversion = helicsGetVersion();
 
@@ -63,16 +64,16 @@ int main()
      setTimedelta routine is a multiplier for the default timedelta.
   */
   /* Set one second message interval */
-  helicsFederateInfoSetTimeDelta(fedinfo,deltat);
+  helicsFederateInfoSetTimeProperty(fedinfo, helics_property_time_period, deltat, &err);
+  helicsFederateInfoSetIntegerProperty(fedinfo, helics_property_int_log_level, 1, &err);
 
-  helicsFederateInfoSetLoggingLevel(fedinfo,1);
 
   /* Create value federate */
   vfed = helicsCreateValueFederate("Test sender Federate",fedinfo,NULL);
   printf("PI SENDER: Value federate created\n");
 
   /* Register the publication */
-  pub = helicsFederateRegisterGlobalPublication(vfed,"testA","double","",NULL);
+  pub = helicsFederateRegisterGlobalPublication(vfed,"testA",helics_data_type_double,"",NULL);
   printf("PI SENDER: Publication registered\n");
 
   /* Enter initialization mode */

@@ -31,7 +31,7 @@ int main (int, char **)
 
     std::cout << "trying to create broker..." << std::endl;
 
-    auto init_string = std::string ("2 --name=stevebroker");
+    auto init_string = std::string ("-f2 --name=stevebroker");
     auto broker = helics::BrokerFactory::create (helics::core_type::INTERPROCESS, init_string);
 
     std::cout << "created broker \"" << broker->getIdentifier () << "\"\n"
@@ -45,8 +45,8 @@ int main (int, char **)
     helics::FederateInfo fed_info;
     fed_info.coreType = helics::core_type::IPC;
     fed_info.coreInitString = "--broker=stevebroker --federates 1";
-	fed_info.setTimeProperty(helics::defs::properties::time_delta, delta_t);
-	fed_info.setIntegerProperty(helics::defs::properties::log_level, 5);
+	fed_info.setProperty(helics::defs::properties::time_delta, delta_t);
+	fed_info.setProperty(helics::defs::properties::log_level, 5);
 
     helics::ValueFederate fed ("TestA Federate",fed_info);
 
