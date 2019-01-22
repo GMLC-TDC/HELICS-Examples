@@ -15,3 +15,5 @@ target_link_libraries(nonlings_fed1 HELICS::helicsSharedLib)
 
 add_executable(nonlings_fed2 nonlings_fed2.c)
 target_link_libraries(nonlings_fed2 HELICS::helicsSharedLib)
+
+set_target_properties(nonlings_fed1 nonlings_fed2 PROPERTIES FOLDER c/nonlings)

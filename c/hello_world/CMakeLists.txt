@@ -15,3 +15,5 @@ target_link_libraries(hello_world_receiver HELICS::helicsSharedLib)
 
 add_executable(hello_world_sender hello_world_sender.c)
 target_link_libraries(hello_world_sender HELICS::helicsSharedLib)
+
+set_target_properties(hello_world_sender hello_world_receiver PROPERTIES FOLDER c/hello_world)

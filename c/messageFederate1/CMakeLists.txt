@@ -12,3 +12,5 @@ find_package(HELICS REQUIRED)
 
 add_executable(messageFed_c messageFed.c)
 target_link_libraries(messageFed_c HELICS::helicsSharedLib)
+
+set_target_properties(messageFed_c PROPERTIES FOLDER c/federates)

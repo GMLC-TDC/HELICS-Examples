@@ -15,3 +15,5 @@ target_link_libraries(messageFed HELICS::helics-static)
 
 add_executable(messageFedObj messageFedObj.cpp)
 target_link_libraries(messageFedObj HELICS::helics-static)
+
+set_target_properties(messageFed messageFedObj PROPERTIES FOLDER cpp/federates)

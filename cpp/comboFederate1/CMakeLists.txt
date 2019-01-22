@@ -12,3 +12,5 @@ find_package(HELICS REQUIRED)
 
 add_executable(comboFed comboFed.cpp)
 target_link_libraries(comboFed HELICS::helics-static)
+
+set_target_properties(comboFed PROPERTIES FOLDER cpp/federates)
