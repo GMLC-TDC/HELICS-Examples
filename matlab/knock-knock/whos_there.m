@@ -33,20 +33,16 @@ helicsversion = helics.helicsGetVersion();
 fprintf('WHOS_THERE: Helics version = %s\n', helicsversion)
 
 %% Create Federate Info object that describes the federate properties
-fedinfo = helics.helicsFederateInfoCreate();
+fedinfo = helics.helicsCreateFederateInfo();
 assert(not(isempty(fedinfo)))
 
-% Set Federate name
-status = helics.helicsFederateInfoSetFederateName(fedinfo, my_fed_name);
-assert(status==0)
-
 % Set core type from string
-status = helics.helicsFederateInfoSetCoreTypeFromString(fedinfo, helics_core_type);
-assert(status==0)
+helics.helicsFederateInfoSetCoreTypeFromString(fedinfo, helics_core_type);
+
 
 % Federate init string
-status = helics.helicsFederateInfoSetCoreInitString(fedinfo, fedinitstring);
-assert(status==0)
+helics.helicsFederateInfoSetCoreInitString(fedinfo, fedinitstring);
+
 
 %% Set the message interval (timedelta) for federate. 
 % Note:
@@ -56,14 +52,12 @@ assert(status==0)
 % (default unit = seconds).
 
 % Set one message interval
-status = helics.helicsFederateInfoSetTimeDelta(fedinfo, deltat);
-assert(status==0)
+helics.helicsFederateInfoSetTimeProperty(fedinfo,helics.helics_property_time_delta,deltat);
+helics.helicsFederateInfoSetIntegerProperty(fedinfo,helics.helics_property_int_log_level,helics.helics_log_level_warning);
 
-status = helics.helicsFederateInfoSetLoggingLevel(fedinfo, 1);
-assert(status==0)
 
 %% Actually create message federate
-mfed = helics.helicsCreateMessageFederate(fedinfo);
+mfed = helics.helicsCreateMessageFederate(my_fed_name,fedinfo);
 disp('WHOS_THERE: Message federate created');
 
 %% Register our endpoint (where we will publish the jokes)
@@ -73,12 +67,9 @@ my_endpt = helics.helicsFederateRegisterEndpoint(mfed, my_endpt_name, 'string');
 fprintf('WHOS_THERE: Our Endpoint registered as "%s/%s"\n', my_fed_name, my_endpt_name);
 
 %% Start execution
-status = helics.helicsFederateEnterExecutionMode(mfed);
-if status == 0
-    disp('WHOS_THERE: Entering execution mode');
-else
-    error('WHOS_THERE: Failed to enter execution mode (status = %d)\n Try running knock_knock.m first. (or start the broker seperately)', status);
-end
+helics.helicsFederateEnterExecutingMode(mfed);
+disp('WHOS_THERE: Entering execution mode');
+
 
 %% Execution Loop
 % Message endpoint names are prepended by the federate name, so build the
@@ -93,8 +84,7 @@ granted_time = -1;  %dummy value so we will at least start
 while granted_time < give_up_sim_time
     %Check for messages, if none, request our next time
     if not(helics.helicsEndpointHasMessage(my_endpt))
-        [status, granted_time] = helics.helicsFederateRequestTime(mfed, give_up_sim_time);
-        assert(status==0)
+        granted_time = helics.helicsFederateRequestTime(mfed, give_up_sim_time);
         continue
     end
 
@@ -107,7 +97,7 @@ while granted_time < give_up_sim_time
     %Advance time to introduce our response delay
     % Note: during the final exchange ("Goodbye"), this also allows the
     % sending federate to receive a valid time and end gracefully.
-    [status, granted_time] = helics.helicsFederateRequestTime(mfed, granted_time + response_delay);
+    granted_time = helics.helicsFederateRequestTime(mfed, granted_time + response_delay);
     
     %Build appropriate response
     switch state
@@ -134,14 +124,14 @@ while granted_time < give_up_sim_time
     
     %Send response
     fprintf('WHOS_THERE: Sending message "%s" to "%s" at time %4.1f... ', to_send, their_endpt_fullname, granted_time);
-    status = helics.helicsEndpointSendMessageRaw(my_endpt, their_endpt_fullname, to_send);
-    fprintf('DONE (status=%d)\n', status);
+    helics.helicsEndpointSendMessageRaw(my_endpt, their_endpt_fullname, to_send);
+    fprintf('DONE \n');
 
     give_up_sim_time = granted_time + timeout;
 end
 
 %% Shutdown
-helicsDestroyFederate(mfed);
+helics.helicsFederateDestroy(mfed);
 
 disp('WHOS_THERE: Federate finalized');
 
