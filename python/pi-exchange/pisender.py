@@ -1,8 +1,9 @@
+# -*- coding: utf-8 -*-
 import time
 import helics as h
 from math import pi
 
-initstring = "2 --name=mainbroker"
+initstring = "-f 2 --name=mainbroker"
 fedinitstring = "--broker=mainbroker --federates=1"
 deltat = 0.01
 
@@ -23,16 +24,16 @@ if isconnected == 1:
     print("Broker created and connected")
 
 # Create Federate Info object that describes the federate properties #
-fedinfo = h.helicsFederateInfoCreate()
+fedinfo = h.helicsCreateFederateInfo()
 
 # Set Federate name #
-status = h.helicsFederateInfoSetFederateName(fedinfo, "TestA Federate")
+h.helicsFederateInfoSetCoreName(fedinfo, "TestA Federate")
 
 # Set core type from string #
-status = h.helicsFederateInfoSetCoreTypeFromString(fedinfo, "zmq")
+h.helicsFederateInfoSetCoreTypeFromString(fedinfo, "zmq")
 
 # Federate init string #
-status = h.helicsFederateInfoSetCoreInitString(fedinfo, fedinitstring)
+h.helicsFederateInfoSetCoreInitString(fedinfo, fedinitstring)
 
 # Set the message interval (timedelta) for federate. Note th#
 # HELICS minimum message time interval is 1 ns and by default
@@ -40,20 +41,18 @@ status = h.helicsFederateInfoSetCoreInitString(fedinfo, fedinitstring)
 # setTimedelta routine is a multiplier for the default timedelta.
 
 # Set one second message interval #
-status = h.helicsFederateInfoSetTimeDelta(fedinfo, deltat)
-
-status = h.helicsFederateInfoSetLoggingLevel(fedinfo, 1)
+h.helicsFederateInfoSetTimeProperty(fedinfo, h.helics_property_time_delta, deltat)
 
 # Create value federate #
-vfed = h.helicsCreateValueFederate(fedinfo)
+vfed = h.helicsCreateValueFederate("TestA Federate", fedinfo)
 print("PI SENDER: Value federate created")
 
 # Register the publication #
-pub = h.helicsFederateRegisterGlobalPublication(vfed, "testA", "double", "")
+pub = h.helicsFederateRegisterGlobalTypePublication(vfed, "testA", "double", "")
 print("PI SENDER: Publication registered")
 
 # Enter execution mode #
-status = h.helicsFederateEnterExecutionMode(vfed)
+h.helicsFederateEnterExecutingMode(vfed)
 print("PI SENDER: Entering execution mode")
 
 # This federate will be publishing deltat*pi for numsteps steps #
@@ -65,19 +64,22 @@ for t in range(5, 10):
 
     currenttime = h.helicsFederateRequestTime(vfed, t)
 
-    status = h.helicsPublicationPublishDouble(pub, val)
-    print("PI SENDER: Sending value pi = {} at time {} to PI RECEIVER".format(val, currenttime[-1]))
+    h.helicsPublicationPublishDouble(pub, val)
+    print(
+        "PI SENDER: Sending value pi = {} at time {} to PI RECEIVER".format(
+            val, currenttime
+        )
+    )
 
     time.sleep(1)
 
-status = h.helicsFederateFinalize(vfed)
+h.helicsFederateFinalize(vfed)
 print("PI SENDER: Federate finalized")
 
-while (h.helicsBrokerIsConnected(broker)):
+while h.helicsBrokerIsConnected(broker):
     time.sleep(1)
 
 h.helicsFederateFree(vfed)
 h.helicsCloseLibrary()
 
 print("PI SENDER: Broker disconnected")
-
