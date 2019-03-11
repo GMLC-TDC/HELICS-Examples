@@ -13,6 +13,7 @@
 %% Initialize HELICS library in MATLAB
 helicsStartup()
 
+import helics.*;
 %% Configuration
 deltat = 0.01;  %Base time interval (seconds)
 sim_stop_time = 20;
@@ -22,25 +23,21 @@ helics_core_type = 'zmq';
 fedinitstring = '--federates=1';  % required with current C interface when using separate processes for each federate
 
 %% Provide summary information
-helicsversion = helics.helicsGetVersion();
+helicsversion = helicsGetVersion();
 
 fprintf('PI RECEIVER: Helics version = %s\n', helicsversion)
 
 %% Create Federate Info object that describes the federate properties
-fedinfo = helics.helicsFederateInfoCreate();
+fedinfo = helicsCreateFederateInfo();
 assert(not(isempty(fedinfo)))
 
-% Set Federate name
-status = helics.helicsFederateInfoSetFederateName(fedinfo, 'MATLAB Pi Receiver Federate');
-assert(status==0)
-
 % Set core type from string
-status = helics.helicsFederateInfoSetCoreTypeFromString(fedinfo, helics_core_type);
-assert(status==0)
+helicsFederateInfoSetCoreTypeFromString(fedinfo, helics_core_type);
+
 
 % Federate init string
-status = helics.helicsFederateInfoSetCoreInitString(fedinfo, fedinitstring);
-assert(status==0)
+helics.helicsFederateInfoSetCoreInitString(fedinfo, fedinitstring);
+
 
 %% Set the message interval (timedelta) for federate. 
 % Note:
@@ -50,27 +47,26 @@ assert(status==0)
 % (default unit = seconds).
 
 % Set one message interval
-status = helics.helicsFederateInfoSetTimeDelta(fedinfo, deltat);
-assert(status==0)
+helicsFederateInfoSetTimeProperty(fedinfo,helics_property_time_delta,deltat);
+helicsFederateInfoSetIntegerProperty(fedinfo,helics_property_int_log_level,helics_log_level_warning);
 
-status = helics.helicsFederateInfoSetLoggingLevel(fedinfo, 1);
-assert(status==0)
+
 
 %% Actually create value federate
-vfed = helics.helicsCreateValueFederate(fedinfo);
+vfed = helicsCreateValueFederate('MATLAB Pi Receiver Federates',fedinfo);
 disp('PI RECEIVER: Value federate created');
 
 % Subscribe to PI SENDER's publication (note: published as global)
-sub = helics.helicsFederateRegisterSubscription(vfed, 'testA', 'double', '');
+sub = helicsFederateRegisterSubscription(vfed, 'testA', '');
 
 disp('PI RECEIVER: Subscription registered (testA)');
 
 %% Start execution
-status = helics.helicsFederateEnterExecutionMode(vfed);
-if status == 0
+try
+    helicsFederateEnterExecutingMode(vfed);
     disp('PI RECEIVER: Entering execution mode');
-else
-    error('PI RECEIVER: Failed to enter execution mode (status = %d)\n Try running pisender.m first. (or start the broker seperately)', status);
+catch e
+    error('PI RECEIVER: Failed to enter execution mode (status = x)\n Try running pisender.m first. (or start the broker seperately)');
 end
 
 %% Execution Loop
@@ -79,19 +75,18 @@ granted_time =- 1;  %Force at least one run
 %% Continue execution until end of requested simulation time
 while granted_time <= sim_stop_time
 
-    [status, granted_time] = helics.helicsFederateRequestTime(vfed, sim_stop_time);
-    assert(status==0)
+    granted_time = helicsFederateRequestTime(vfed, sim_stop_time);
 
-    isupdated = helics.helicsSubscriptionIsUpdated(sub);
+    isupdated = helicsInputIsUpdated(sub);
 
     if (isupdated == 1)
-        [result, value] = helics.helicsSubscriptionGetDouble(sub);
+        value = helicsInputGetDouble(sub);
         fprintf('PI RECEIVER: Received value = %g at time %4.1f from PI SENDER\n', value, granted_time);
     end
 end
 
 %% Shutdown
-helicsDestroyFederate(vfed);
+helicsFederateDestroy(vfed);
 
 disp('PI RECEIVER: Federate finalized');
 

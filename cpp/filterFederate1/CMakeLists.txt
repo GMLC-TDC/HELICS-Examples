@@ -11,4 +11,6 @@ project(filterFederate1)
 find_package(HELICS REQUIRED)
 
 add_executable(filterFed filterFed.cpp)
-target_link_libraries(filterFed HELICS::helics_apps-static)
+target_link_libraries(filterFed HELICS::helics-static)
+
+set_target_properties(filterFed PROPERTIES FOLDER cpp/federates)

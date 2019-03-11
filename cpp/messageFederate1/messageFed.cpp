@@ -3,7 +3,7 @@ Copyright © 2017-2018,
 Battelle Memorial Institute; Lawrence Livermore National Security, LLC; Alliance for Sustainable Energy, LLC
 All rights reserved. See LICENSE file and DISCLAIMER for more details.
 */
-#include "helics/application_api/MessageFederate.hpp"
+#include "helics/MessageFederates.hpp"
 #include <iostream>
 #include <thread>
 #include "helics/core/BrokerFactory.hpp"
@@ -20,7 +20,7 @@ static const helics::ArgDescriptors InfoArgs{
 
 int main (int argc, char *argv[])
 {
-    helics::FederateInfo fi("fed");
+    helics::FederateInfo fi;
     helics::variable_map vm;
     auto parseResult = argumentParser(argc, argv, vm, InfoArgs);
     fi.loadInfoFromArgs(argc, argv);
@@ -49,34 +49,34 @@ int main (int argc, char *argv[])
         myendpoint = vm["source"].as<std::string>();
     }
 
-    fi.logLevel = 5;
+	fi.setProperty(helics::defs::properties::log_level, 5);
     std::shared_ptr<helics::Broker> brk;
     if (vm.count("startbroker") > 0)
     {
         brk = helics::BrokerFactory::create(fi.coreType, vm["startbroker"].as<std::string>());
     }
 
-    auto mFed = std::make_unique<helics::MessageFederate> (fi);
+    auto mFed = std::make_unique<helics::MessageFederate> ("fed",fi);
     auto name = mFed->getName();
 	std::cout << " registering endpoint '" << myendpoint << "' for " << name<<'\n';
 
     //this line actually creates an endpoint
-    auto id = mFed->registerEndpoint(myendpoint);
+    auto &ept = mFed->registerEndpoint(myendpoint);
 
     std::cout << "entering init State\n";
-    mFed->enterInitializationState ();
+    mFed->enterInitializingMode ();
     std::cout << "entered init State\n";
-    mFed->enterExecutionState ();
+    mFed->enterExecutingMode ();
     std::cout << "entered exec State\n";
     for (int i=1; i<10; ++i) {
 		std::string message = "message sent from "+name+" to "+target+" at time " + std::to_string(i);
-		mFed->sendMessage(id, target, message.data(), message.size());
+		mFed->sendMessage(ept, target, message.data(), message.size());
         std::cout << message << std::endl;
         auto newTime = mFed->requestTime (i);
 		std::cout << "processed time " << static_cast<double> (newTime) << "\n";
-		while (mFed->hasMessage(id))
+		while (mFed->hasMessage(ept))
 		{
-			auto nmessage = mFed->getMessage(id);
+			auto nmessage = mFed->getMessage(ept);
 			std::cout << "received message from " << nmessage->source << " at " << static_cast<double>(nmessage->time) << " ::" << nmessage->data.to_string() << '\n';
 		}
 

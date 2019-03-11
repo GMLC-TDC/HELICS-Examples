@@ -9,7 +9,7 @@ All rights reserved. See LICENSE file and DISCLAIMER for more details.
 #include <iostream>
 #include <random>
 
-#include <helics/application_api/ValueFederate.hpp>
+#include <helics/ValueFederates.hpp>
 #include <helics/core/BrokerFactory.hpp>
 
 #include "common.hpp"
@@ -20,7 +20,7 @@ using ValueSetter = ValuePacket<double>;
 // TestB will send ints
 using ValueRecver = ValuePacket<int>;
 
-void sendPublication (helics::ValueFederate &vFed, ValueSetter const &vs);
+void sendPublication ( ValueSetter const &vs);
 
 void break_on_me (void) {}
 
@@ -29,25 +29,25 @@ int main (int, char **)
     std::ofstream ofs ("TestB.log");
     helics::Time stopTime = helics::Time (0.9);
 
-    helics::FederateInfo fed_info ("TestB Federate");
+    helics::FederateInfo fed_info;
     fed_info.coreType = helics::core_type::IPC;
     fed_info.coreInitString = "--broker=stevebroker --federates 1 --loglevel 5";
-    fed_info.timeDelta = 0.1;
-    fed_info.logLevel = 5;
-    fed_info.observer = false;
+	fed_info.setProperty(helics::defs::properties::time_delta, 0.1);
+	fed_info.setProperty(helics::defs::properties::log_level, 5);
+	fed_info.setFlagOption(helics::defs::flags::observer, false);
 
     std::cout << "Creating federate." << std::endl;
-    helics::ValueFederate fed (fed_info);
+    helics::ValueFederate fed ("TestB Federate",fed_info);
     std::cout << "Done creating federate." << std::endl;
 
     // Subscribe to testA's publications
-    auto id = fed.registerRequiredSubscription ("testA", "double");
+    auto &sub = fed.registerSubscription ("testA");
 
-    fed.enterExecutionState ();
+    fed.enterExecutingMode ();
 
     break_on_me ();
 
-    std::cout << "Updated? " << std::boolalpha << fed.isUpdated (id) << std::endl;
+    std::cout << "Updated? " << std::boolalpha << sub.isUpdated() << std::endl;
 
     unsigned tstep = 0;
     for (;;)
@@ -56,9 +56,9 @@ int main (int, char **)
         std::cout << "at time " << time << std::endl;
         if (time <= stopTime)
         {
-            if (fed.isUpdated (id))
+            if (sub.isUpdated ())
             {
-                auto this_value = fed.getValue<double> (id);
+                auto this_value = sub.getValue<double> ();
                 std::cout << "welcome to timestep " << ++tstep << '\n'
                           << "   x(" << time << ") = " << this_value << std::endl;
 
@@ -74,5 +74,5 @@ int main (int, char **)
     return 0;
 }
 
-void sendPublication (helics::ValueFederate &vFed, ValueSetter const &vs) { vFed.publish (vs.id_, vs.value_); }
+void sendPublication ( ValueSetter const &vs) { vs.pub_.publish (vs.value_); }
 

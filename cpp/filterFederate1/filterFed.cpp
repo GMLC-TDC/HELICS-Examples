@@ -5,7 +5,7 @@ All rights reserved. See LICENSE file and DISCLAIMER for more details.
 */
 
 #include "helics/core/CoreFactory.hpp"
-#include "helics/application_api/Filters.hpp"
+#include "helics/application_api.hpp"
 #include <iostream>
 #include <thread>
 #include "helics/common/argParser.h"
@@ -14,8 +14,8 @@ static const helics::ArgDescriptors InfoArgs{
     {"target,t", "the federate at to target"},
     {"endpoint,e", "name of the endpoint to filter"},
     {"delay", "the time to delay the message"},
-{"filtertype","the type of filter to implement (delay,randomdrop,randomdelay"},
-{"dropprob",helics::ArgDescriptor::arg_type_t::double_type,"the probability a message will be dropped, only used with filtertype=randomdrop"}
+{"filtertype","the type of filter to implement (delay,random_drop,random_delay"},
+{"dropprob",helics::ArgDescriptor::arg_type_t::double_type,"the probability a message will be dropped, only used with filtertype=random_drop"}
 
     //name is captured in the argument processor for federateInfo
 };
@@ -46,14 +46,14 @@ int main (int argc, char *argv[])
         targetEndpoint = vm["filtertype"].as<std::string>();
     }
 
-    helics::defined_filter_types ftype = helics::defined_filter_types::delay;
-    if (filtType == "randomdrop")
+    helics::filter_types ftype = helics::filter_types::delay;
+    if (filtType == "random_drop")
     {
-        ftype = helics::defined_filter_types::randomDrop;
+        ftype = helics::filter_types::random_drop;
     }
-    else if (filtType == "randomdelay")
+    else if (filtType == "random_delay")
     {
-        ftype = helics::defined_filter_types::randomDelay;
+        ftype = helics::filter_types::random_delay;
     }
     else if (filtType != "delay")
     {
@@ -66,12 +66,13 @@ int main (int argc, char *argv[])
 	std::cout << " registering filter '"<< "' for " << target<<'\n';
 
     //create a source filter object with type, the fed pointer and a target endpoint
-    auto filt = helics::make_source_filter(ftype, core.get(), target);
+    auto filt = helics::make_filter(ftype, core.get());
+	filt->addSourceTarget(target);
 
     // get a few specific parameters related to the particular filter
     switch (ftype)
     {
-    case helics::defined_filter_types::delay:
+    case helics::filter_types::delay:
     default:
     {
         std::string delay = "1.0";
@@ -81,7 +82,7 @@ int main (int argc, char *argv[])
         }
         break;
     }
-    case helics::defined_filter_types::randomDrop:
+    case helics::filter_types::random_drop:
     {
         double dropprob = 0.33;
         if (vm.count("dropprob") > 0) {
@@ -90,7 +91,7 @@ int main (int argc, char *argv[])
         filt->set("dropprob", dropprob);
     }
         break;
-    case helics::defined_filter_types::randomDelay:
+    case helics::filter_types::random_delay:
         filt->setString("distribution", "uniform");
         if (vm.count("delay") > 0)
         {
@@ -101,11 +102,7 @@ int main (int argc, char *argv[])
     */
     core->setCoreReadyToInit();
 
-    //just do a wait loop while the core is still processing so the filters have time to work
-    while (core->isConnected())
-    {
-        std::this_thread::yield();
-    }
+	core->waitForDisconnect();
     return 0;
 }
 

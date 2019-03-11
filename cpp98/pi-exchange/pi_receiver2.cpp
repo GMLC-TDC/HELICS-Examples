@@ -10,16 +10,16 @@ static char help[] = "Example to demonstrate the usage of HELICS C Interface wit
             This federate can only publish a value once it receives value from the other federate.\n\n";
 
 #include <stdio.h>
-#include <cpp98/ValueFederate.hpp>
-#include <cpp98/helics.hpp> // helicsVersionString
-#include <math.h>
+#include <ValueFederate.hpp>
+#include <helics.hpp> // helicsVersionString
+#include <cmath>
 
 int main(int /*argc*/,char ** /*argv*/)
 {
   std::string    fedinitstring="--federates=1";
   double         deltat=0.01;
-  helics98::Subscription sub;
-  helics98::Publication  pub;
+  helicscpp::Input sub;
+  helicscpp::Publication  pub;
 
   printf("PI RECEIVER: Helics version = %s\n", helicsGetVersion());
   printf("%s",help);
@@ -27,7 +27,7 @@ int main(int /*argc*/,char ** /*argv*/)
   /* Create Federate Info object that describes the federate properties
    * Set federate name and core type from string
    */
-  helics98::FederateInfo fi("Test receiver Federate", "zmq");
+  helicscpp::FederateInfo fi( "zmq");
 
   /* Federate init string */
   fi.setCoreInitString(fedinitstring);
@@ -38,31 +38,32 @@ int main(int /*argc*/,char ** /*argv*/)
      setTimedelta routine is a multiplier for the default timedelta.
   */
   /* Set one second message interval */
-  fi.setTimeDelta(deltat);
-  fi.setLoggingLevel(1);
+  fi.setProperty(helics_property_time_delta, deltat);
+  fi.setProperty(helics_property_int_log_level, helics_log_level_warning);
+
 
   /* Create value federate */
-  helics98::ValueFederate* vfed = new helics98::ValueFederate(fi);
+  helicscpp::ValueFederate vfed("Test receiver Federate", fi);
   printf("PI RECEIVER: Value federate created\n");
 
   /* Subscribe to PI SENDER's publication */
-  sub = vfed->registerSubscription("testA","double");
+  sub = vfed.registerSubscription("testA");
   printf("PI RECEIVER: Subscription registered\n");
 
   /* Register the publication */
-  pub = vfed->registerGlobalPublication("testB","double");
+  pub = vfed.registerGlobalTypePublication("testB","double");
   printf("PI RECEIVER: Publication registered\n");
 
   fflush(NULL);
   /* Enter initialization state */
-  vfed->enterInitializationMode(); // can throw helics98::InvalidStateTransition exception
+  vfed.enterInitializingMode(); // can throw helicscpp::InvalidStateTransition exception
   printf("PI RECEIVER: Entered initialization state\n");
 
   /* Enter execution state */
-  vfed->enterExecutionMode(); // can throw helics98::InvalidStateTransition exception
+  vfed.enterExecutingMode(); // can throw helicscpp::InvalidStateTransition exception
   printf("PI RECEIVER: Entered execution state\n");
 
-  helics_time_t currenttime=0.0;
+  helics_time currenttime=0.0;
 
   double pi = 22.0/7.0;
 
@@ -70,7 +71,7 @@ int main(int /*argc*/,char ** /*argv*/)
 
     bool isupdated = false;
     while(!isupdated) {
-      currenttime = vfed->requestTime(currenttime);
+      currenttime = vfed.requestTime(currenttime);
       isupdated = sub.isUpdated();
 	  if (currenttime > 0.21)
 	  {
@@ -85,11 +86,9 @@ int main(int /*argc*/,char ** /*argv*/)
     printf("PI RECEIVER: Sending value %3.2f*pi = %4.3f at time %3.2f to PI SENDER\n",currenttime,value,currenttime);
     pub.publish(value); /* Note: The sender will receive this at currenttime+deltat */
   }
-  vfed->finalize();
+  vfed.finalize();
   printf("PI RECEIVER: Federate finalized\n");
   fflush(NULL);
-  // Destructor must be called for ValueFederate before close library
-  delete vfed;
   helicsCloseLibrary();
   printf("PI RECEIVER: Library Closed\n");
   fflush(NULL);

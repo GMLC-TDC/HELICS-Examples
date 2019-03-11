@@ -46,7 +46,7 @@ their_response_delay = 0.2;
 % federate
 knock_knock_start_broker = true;
 helics_core_type = 'zmq'; 
-broker_initstring = '2 --name=mainbroker';
+broker_initstring = '-f 2 --name=mainbroker';
 fed_initstring = '--broker=mainbroker --federates=1';
 
 %% Provide summary information
@@ -72,20 +72,14 @@ if knock_knock_start_broker
 end
 
 %% Create Federate Info object that describes the federate properties
-fedinfo = helics.helicsFederateInfoCreate();
+fedinfo = helics.helicsCreateFederateInfo();
 assert(not(isempty(fedinfo)))
 
-% Set Federate name
-status = helics.helicsFederateInfoSetFederateName(fedinfo, my_fed_name);
-assert(status==0)
-
 % Set core type from string
-status = helics.helicsFederateInfoSetCoreTypeFromString(fedinfo, helics_core_type);
-assert(status==0)
+helics.helicsFederateInfoSetCoreTypeFromString(fedinfo, helics_core_type);
 
 % Federate init string
-status = helics.helicsFederateInfoSetCoreInitString(fedinfo, fed_initstring);
-assert(status==0)
+helics.helicsFederateInfoSetCoreInitString(fedinfo, fed_initstring);
 
 
 % Note:
@@ -95,14 +89,11 @@ assert(status==0)
 % (default unit = seconds).
 
 % Set one message interval
-status = helics.helicsFederateInfoSetTimeDelta(fedinfo, deltat);
-assert(status==0)
-
-status = helics.helicsFederateInfoSetLoggingLevel(fedinfo, 1);
-assert(status==0)
+helics.helicsFederateInfoSetTimeProperty(fedinfo,helics.helics_property_time_delta,deltat);
+helics.helicsFederateInfoSetIntegerProperty(fedinfo,helics.helics_property_int_log_level,helics.helics_log_level_warning);
 
 %% Actually create message federate
-mfed = helics.helicsCreateMessageFederate(fedinfo);
+mfed = helics.helicsCreateMessageFederate(my_fed_name,fedinfo);
 disp('KNOCK KNOCK: Message federate created');
 
 %% Register our endpoint (where we will publish the jokes)
@@ -112,12 +103,9 @@ my_endpt = helics.helicsFederateRegisterEndpoint(mfed, my_endpt_name, 'string');
 fprintf('KNOCK KNOCK: Our Endpoint registered as "%s/%s"\n', my_fed_name, my_endpt_name);
 
 %% Start execution
-status = helics.helicsFederateEnterExecutionMode(mfed);
-if status == 0
-    disp('KNOCK KNOCK: Entering execution mode');
-else
-    error('KNOCK KNOCK: Failed to enter execution mode (status = %d)\n make sure knock_knock_start_broker = true. (or start the broker seperately)', status);
-end
+helics.helicsFederateEnterExecutingMode(mfed);
+disp('KNOCK KNOCK: Entering execution mode');
+
 
 %% Execution Loop
 % Message endpoint names are prepended by the federate name, so build the
@@ -127,8 +115,7 @@ their_endpt_fullname = sprintf('%s/%s', their_fed_name, their_endpt_name);
 %Start by advancing to our desired start time
 granted_time = 0;
 while granted_time < between_jokes
-    [status, granted_time] = helics.helicsFederateRequestTime(mfed, between_jokes);
-    assert(status==0)
+    granted_time = helics.helicsFederateRequestTime(mfed, between_jokes);
 end
 
 %Now loop over the list of jokes, waiting between_jokes seconds between
@@ -151,15 +138,14 @@ for joke_id = 1:numjokes
 
         %Send next line of joke
         fprintf('KNOCK KNOCK: Sending message "%s" to "%s" at time %4.1f... ', to_send, their_endpt_fullname, granted_time);
-        status = helics.helicsEndpointSendMessageRaw(my_endpt, their_endpt_fullname, to_send);
-        fprintf('DONE (status=%d)\n', status);
+         helics.helicsEndpointSendMessageRaw(my_endpt, their_endpt_fullname, to_send);
+        fprintf('DONE \n');
         
         %Wait for a response (with timeout)
         give_up_time = granted_time + timeout;
 
         while granted_time < give_up_time && not(helics.helicsEndpointHasMessage(my_endpt))
-            [status, granted_time] = helics.helicsFederateRequestTime(mfed, give_up_time);
-            assert(status==0)
+            granted_time = helics.helicsFederateRequestTime(mfed, give_up_time);
         end
         
         if granted_time >= give_up_time
@@ -180,8 +166,7 @@ for joke_id = 1:numjokes
             target_time = granted_time + between_jokes;
         end
         while granted_time < target_time
-            [status, granted_time] = helics.helicsFederateRequestTime(mfed, target_time);
-            assert(status==0)
+            granted_time = helics.helicsFederateRequestTime(mfed, target_time);
         end
 
     end
@@ -190,12 +175,11 @@ end
 %% Send a final message so audience knows to stop
 to_send = 'Goodbye';
 fprintf('KNOCK KNOCK: Sending message "%s" to "%s" at time %4.1f... ', to_send, their_endpt_fullname, granted_time);
-status = helics.helicsEndpointSendMessageRaw(my_endpt, their_endpt_fullname, to_send);
-fprintf('DONE (status=%d)\n', status);
+helics.helicsEndpointSendMessageRaw(my_endpt, their_endpt_fullname, to_send);
+fprintf('DONE \n');
 %Important: The message will not actually be made available to the receiver
 %until we advance the time
-[status, granted_time] = helics.helicsFederateRequestTime(mfed, granted_time + their_response_delay);
-assert(status==0)
+granted_time = helics.helicsFederateRequestTime(mfed, granted_time + their_response_delay);
 fprintf('KNOCK KNOCK: Shutting Down (Final time granted= %4.1f)\n', granted_time);
 
 
@@ -204,24 +188,20 @@ fprintf('KNOCK KNOCK: Shutting Down (Final time granted= %4.1f)\n', granted_time
 if knock_knock_start_broker
     % If we started the broker in this thread, we have to be careful
     % sequencing the shutdown in hopes of doing so cleanly
-    status = helics.helicsFederateFinalize(mfed);
+    helics.helicsFederateFinalize(mfed);
     disp('KNOCK KNOCK: Federate finalized');
 
     %Make sure the broker is gone in case we have a lingering low-level
     %reference (to avoid memory leaks)
-    for foo = 1:60
-        if not(helics.helicsBrokerIsConnected(broker))
-            break
-        end
-        pause(1);
-    end
+    helics.helicsBrokerWaitForDisconnect(broker,-1);
+    
     disp('KNOCK KNOCK: Broker disconnected');
 
     helics.helicsFederateFree(mfed);
     helics.helicsCloseLibrary();
 else
     %But if we just setup the federate, we can simply call endFederate
-    helicsDestroyFederate(mfed); %#ok<UNRCH>  
+    helics.helicsFederateDestroy(mfed); %#ok<UNRCH>  
     disp('KNOCK KNOCK: Federate finalized');
 end
 

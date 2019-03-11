@@ -10,9 +10,8 @@ All rights reserved. See LICENSE file and DISCLAIMER for more details.
 #include <iostream>
 #include <random>
 
-#include <helics/application_api/ValueFederate.hpp>
+#include <helics/ValueFederates.hpp>
 #include <helics/core/BrokerFactory.hpp>
-#include <helics/core/CoreBroker.hpp>
 
 #include "common.hpp"
 
@@ -22,7 +21,7 @@ using ValueSetter = ValuePacket<double>;
 // TestB will send ints
 using ValueRecver = ValuePacket<int>;
 
-void sendPublication (helics::ValueFederate &vFed, ValueSetter const &vs);
+void sendPublication(ValueSetter const &vs);
 
 int main (int, char **)
 {
@@ -32,7 +31,7 @@ int main (int, char **)
 
     std::cout << "trying to create broker..." << std::endl;
 
-    auto init_string = std::string ("2 --name=stevebroker");
+    auto init_string = std::string ("-f2 --name=stevebroker");
     auto broker = helics::BrokerFactory::create (helics::core_type::INTERPROCESS, init_string);
 
     std::cout << "created broker \"" << broker->getIdentifier () << "\"\n"
@@ -43,16 +42,17 @@ int main (int, char **)
 
     std::ofstream ofs ("TestA.log");
 
-    helics::FederateInfo fed_info ("TestA Federate");
+    helics::FederateInfo fed_info;
     fed_info.coreType = helics::core_type::IPC;
     fed_info.coreInitString = "--broker=stevebroker --federates 1";
-    fed_info.timeDelta = delta_t;
-    fed_info.logLevel = 5;
-    helics::ValueFederate fed (fed_info);
+	fed_info.setProperty(helics::defs::properties::time_delta, delta_t);
+	fed_info.setProperty(helics::defs::properties::log_level, 5);
+
+    helics::ValueFederate fed ("TestA Federate",fed_info);
 
     auto id = fed.registerGlobalPublication ("testA", "double");
 
-    fed.enterExecutionState ();
+    fed.enterExecutingMode ();
 
     for (unsigned tstep = 0; tstep < num_tsteps; ++tstep)
     {
@@ -70,7 +70,7 @@ int main (int, char **)
         ofs << std::setw (10) << std::right << this_time << std::setw (10) << std::right << this_value
             << std::endl;
 
-        sendPublication (fed, ValueSetter (thisTime, id, this_value));
+        sendPublication ( ValueSetter (thisTime, id, this_value));
 
         std::cout << "done." << std::endl;
     }
@@ -85,5 +85,5 @@ int main (int, char **)
     return 0;
 }
 
-void sendPublication (helics::ValueFederate &vFed, ValueSetter const &vs) { vFed.publish (vs.id_, vs.value_); }
+void sendPublication (ValueSetter const &vs) { vs.pub_.publish (vs.value_); }
 
