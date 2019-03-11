@@ -54,7 +54,8 @@ print("PI SENDER: Publication registered")
 
 epid = h.helicsFederateRegisterGlobalEndpoint(vfed, "endpoint1", "")
 
-fid = h.helicsFederateRegisterFilter(vfed, h.helics_filter_type_delay, "endpoint1")
+fid = h.helicsFederateRegisterFilter(vfed, h.helics_filter_type_delay, "filter1")
+h.helicsFilterAddSourceTarget(fid, "endpoint1")
 
 h.helicsFilterSet(fid, "delay", 2.0)
 
