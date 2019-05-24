@@ -6,11 +6,11 @@
 
 cmake_minimum_required(VERSION 3.4)
 
-project(messageFederate1 C)
+project(messageFederate1-c C)
 
-find_package(HELICS REQUIRED)
+find_package(HELICS 2 REQUIRED)
 
-add_executable(messageFed_c messageFed.c)
-target_link_libraries(messageFed_c HELICS::helicsSharedLib)
+add_executable(messageFed-c messageFed.c)
+target_link_libraries(messageFed-c HELICS::helicsSharedLib)
 
-set_target_properties(messageFed_c PROPERTIES FOLDER c/federates)
+set_target_properties(messageFed-c PROPERTIES FOLDER c/federates)

@@ -6,11 +6,15 @@
 
 cmake_minimum_required(VERSION 3.4)
 
-project(filterFederate1)
+project(filterFederate1-cpp)
 
-find_package(HELICS REQUIRED)
+if(NOT CMAKE_CXX_STANDARD)
+    set(CMAKE_CXX_STANDARD 14)
+endif()
 
-add_executable(filterFed filterFed.cpp)
-target_link_libraries(filterFed HELICS::helics-static)
+find_package(HELICS 2 REQUIRED)
 
-set_target_properties(filterFed PROPERTIES FOLDER cpp/federates)
+add_executable(filterFed-cpp filterFed.cpp)
+target_link_libraries(filterFed-cpp HELICS::helics_apps)
+
+set_target_properties(filterFed-cpp PROPERTIES FOLDER cpp/federates)

@@ -4,7 +4,7 @@ Battelle Memorial Institute; Lawrence Livermore National Security, LLC; Alliance
 All rights reserved. See LICENSE file and DISCLAIMER for more details.
 */
 
-#include <ValueFederate.h>
+#include <helics/shared_api_library/ValueFederate.h>
 #include <stdio.h>
 
 int main ()

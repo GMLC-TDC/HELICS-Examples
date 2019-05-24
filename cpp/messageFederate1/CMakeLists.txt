@@ -6,14 +6,18 @@
 
 cmake_minimum_required(VERSION 3.4)
 
-project(messageFederate1)
+project(messageFederate1-cpp)
 
-find_package(HELICS REQUIRED)
+if(NOT CMAKE_CXX_STANDARD)
+    set(CMAKE_CXX_STANDARD 14)
+endif()
 
-add_executable(messageFed messageFed.cpp)
-target_link_libraries(messageFed HELICS::helics-static)
+find_package(HELICS 2 REQUIRED)
 
-add_executable(messageFedObj messageFedObj.cpp)
-target_link_libraries(messageFedObj HELICS::helics-static)
+add_executable(messageFed-cpp messageFed.cpp)
+target_link_libraries(messageFed-cpp HELICS::helics_apps)
 
-set_target_properties(messageFed messageFedObj PROPERTIES FOLDER cpp/federates)
+add_executable(messageFedObj-cpp messageFedObj.cpp)
+target_link_libraries(messageFedObj-cpp HELICS::helics_apps)
+
+set_target_properties(messageFed-cpp messageFedObj-cpp PROPERTIES FOLDER cpp/federates)

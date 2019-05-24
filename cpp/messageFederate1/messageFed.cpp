@@ -4,59 +4,50 @@ Battelle Memorial Institute; Lawrence Livermore National Security, LLC; Alliance
 All rights reserved. See LICENSE file and DISCLAIMER for more details.
 */
 #include "helics/MessageFederates.hpp"
-#include <iostream>
-#include <thread>
-#include "helics/core/BrokerFactory.hpp"
-#include "helics/common/argParser.h"
+#include "helics/apps/BrokerApp.hpp"
+#include "helics/core/helicsCLI11.hpp"
+#include "helics/core/helics_definitions.hpp"
 
-static const helics::ArgDescriptors InfoArgs{
-    {"startbroker","start a broker with the specified arguments"},
-    {"target,t", "name of the target federate"},
-    { "messagetarget", "name of the target federate, same as target" },
-    {"endpoint,e", "name of the target endpoint"},
-    {"source,s", "name of the source endpoint"}
-    //name is captured in the argument processor for federateInfo
-};
+#include <iostream>
 
 int main (int argc, char *argv[])
 {
+    helics::helicsCLI11App app ("Message Fed", "MessageFed");
+    std::string targetFederate = "fed";
+    std::string targetEndpoint = "endpoint";
+    std::string myendpoint = "endpoint";
+    helics::apps::BrokerApp brk;
+    std::string brokerArgs = "";
+
+    app.add_option ("--messagetarget,--target,-t", targetFederate, "name of the target federate");
+    app.add_option ("--endpoint,-e", targetEndpoint, "name of the target endpoint");
+    app.add_option ("--source,-s", myendpoint, "name of the source endpoint");
+    app.add_option ("--startbroker", brokerArgs, "start a broker with the specified arguments");
+
+    auto ret = app.helics_parse (argc, argv);
+
     helics::FederateInfo fi;
-    helics::variable_map vm;
-    auto parseResult = argumentParser(argc, argv, vm, InfoArgs);
-    fi.loadInfoFromArgs(argc, argv);
-    if (parseResult != 0)
+    if (ret == helics::helicsCLI11App::parse_return::help_return)
     {
+        fi.loadInfoFromArgs ("--help");
         return 0;
     }
+    else if (ret == helics::helicsCLI11App::parse_return::ok)
+    {
+        return -1;
+    }
+    fi.defName = "fed";
+    fi.loadInfoFromArgs (app.remainArgs ());
 
-	std::string targetfederate = "fed";
-	if (vm.count("target") > 0)
-	{
-		targetfederate = vm["target"].as<std::string>();
-	}
-    if (vm.count("messagetarget") > 0)
-    {
-        targetfederate = vm["messagetarget"].as<std::string>();
-    }
-    std::string targetEndpoint = "endpoint";
-    if (vm.count("endpoint") > 0) {
-        targetEndpoint = vm["endpoint"].as<std::string>();
-    }
-    std::string target = targetfederate + "/" + targetEndpoint;
-    std::string myendpoint = "endpoint";
-    if (vm.count("source") > 0)
-    {
-        myendpoint = vm["source"].as<std::string>();
-    }
+    std::string target = targetFederate + "/" + targetEndpoint;
 
 	fi.setProperty(helics::defs::properties::log_level, 5);
-    std::shared_ptr<helics::Broker> brk;
-    if (vm.count("startbroker") > 0)
+    if (app["--startbroker"]->count () > 0)
     {
-        brk = helics::BrokerFactory::create(fi.coreType, vm["startbroker"].as<std::string>());
+        brk = helics::apps::BrokerApp (fi.coreType, brokerArgs);
     }
-
-    auto mFed = std::make_unique<helics::MessageFederate> ("fed",fi);
+    
+    auto mFed = std::make_unique<helics::MessageFederate> (std::string{},fi);
     auto name = mFed->getName();
 	std::cout << " registering endpoint '" << myendpoint << "' for " << name<<'\n';
 
@@ -82,14 +73,6 @@ int main (int argc, char *argv[])
 
     }
     mFed->finalize ();
-    if (brk)
-    {
-        while (brk->isConnected())
-        {
-            std::this_thread::yield();
-        }
-        brk = nullptr;
-    }
     return 0;
 }
 

@@ -6,11 +6,16 @@
 
 cmake_minimum_required(VERSION 3.4)
 
-project(comboFederate1)
+project(comboFederate1-cpp)
 
-find_package(HELICS REQUIRED)
+if(NOT CMAKE_CXX_STANDARD)
+    set(CMAKE_CXX_STANDARD 14)
+endif()
 
-add_executable(comboFed comboFed.cpp)
-target_link_libraries(comboFed HELICS::helics-static)
+find_package(HELICS 2 REQUIRED)
 
-set_target_properties(comboFed PROPERTIES FOLDER cpp/federates)
+add_executable(comboFed-cpp comboFed.cpp)
+target_link_libraries(comboFed-cpp HELICS::helics_apps)
+
+set_property(TARGET comboFed-cpp PROPERTY CXX_STANDARD 14)
+set_target_properties(comboFed-cpp PROPERTIES FOLDER cpp/federates)

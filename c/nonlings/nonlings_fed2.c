@@ -8,8 +8,7 @@ All rights reserved. See LICENSE file and DISCLAIMER for more details.
 */
 
 #include <stdio.h>
-#include <math.h>
-#include <ValueFederate.h>
+#include <helics/shared_api_library/ValueFederate.h>
 #include <math.h>
 
 /* This solves the system being simulated by this simulator. It takes in the coupling variable

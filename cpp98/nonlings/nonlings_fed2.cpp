@@ -6,8 +6,8 @@ All rights reserved. See LICENSE file and DISCLAIMER for more details.
 */
 #include <stdio.h>
 #include <math.h>
-#include <ValueFederate.hpp>
-#include <helics.hpp> // helicsVersionString
+#include <helics/cpp98/ValueFederate.hpp>
+#include <helics/cpp98/helics.hpp> // helicsVersionString
 
 int main(int /*argc*/,char ** /*argv*/)
 {

@@ -9,8 +9,8 @@ static char help[] = " PI RECEIVER: Simple program to demonstrate the usage of H
             registered by PI SENDER.\n\n";
 
 #include <stdio.h>
-#include <ValueFederate.hpp>
-#include <helics.hpp>
+#include <helics/cpp98/ValueFederate.hpp>
+#include <helics/cpp98/helics.hpp>
 
 int main(int /*argc*/,char ** /*argv*/)
 {

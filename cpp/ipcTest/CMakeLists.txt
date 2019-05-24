@@ -6,14 +6,19 @@
 
 cmake_minimum_required(VERSION 3.4)
 
-project(ipcTest)
+project(ipcTest-cpp)
 
-find_package(HELICS REQUIRED)
+if(NOT CMAKE_CXX_STANDARD)
+    set(CMAKE_CXX_STANDARD 14)
+endif()
 
-add_executable(ipcTest1 ipcTest1.cpp common.hpp)
-target_link_libraries(ipcTest1 HELICS::helics-static)
+find_package(HELICS 2 REQUIRED)
+find_package(Threads REQUIRED)
 
-add_executable(ipcTest2 ipcTest2.cpp common.hpp)
-target_link_libraries(ipcTest2 HELICS::helics-static)
+add_executable(ipcTest1-cpp ipcTest1.cpp common.hpp)
+target_link_libraries(ipcTest1-cpp HELICS::helics-static Threads::Threads)
 
-set_target_properties(ipcTest1 ipcTest2 PROPERTIES FOLDER cpp/ipc)
+add_executable(ipcTest2-cpp ipcTest2.cpp common.hpp)
+target_link_libraries(ipcTest2-cpp HELICS::helics-static Threads::Threads)
+
+set_target_properties(ipcTest1-cpp ipcTest2-cpp PROPERTIES FOLDER cpp/ipc)

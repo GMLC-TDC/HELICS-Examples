@@ -7,7 +7,7 @@ static char help[] = " PI RECEIVER: Simple program to demonstrate the usage of H
             This example creates a value federate subscribing to the publication \n\
             registered by PI SENDER.\n\n";
 
-#include <ValueFederate.h>
+#include <helics/shared_api_library/ValueFederate.h>
 #include <stdio.h>
 
 int main ()
