@@ -37,5 +37,5 @@ steps:
     mkdir build
     cd build
     cmake -GNinja ../ -DBUILD_HELICS_TESTS=OFF -DBUILD_HELICS_EXAMPLES=OFF
-    sudo cmake --build . --target install
+    cmake --build . --target install
   displayName: Install HELICS
