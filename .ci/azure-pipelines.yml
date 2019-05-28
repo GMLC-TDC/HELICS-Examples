@@ -1,0 +1,41 @@
+strategy:
+  matrix:
+    linux:
+      imageName: "ubuntu-16.04"
+    mac:
+      imageName: "macos-10.14"
+    windows:
+      imageName: "windows-2019"
+  maxParallel: 3
+
+pool:
+  vmImage: $(imageName)
+ 
+steps:
+# Linux
+- bash: |
+    sudo apt-get install -y libzmq5-dev ninja-build
+  condition: eq( variables['Agent.OS'], 'Linux' )
+  displayName: Install ZeroMQ and Ninja
+# macOS
+- bash: |
+    brew install zeromq ninja
+  condition: eq( variables['Agent.OS'], 'Darwin' )
+  displayName: Install ZeroMQ and Ninja
+# Windows
+- powershell: |
+    choco install ninja
+  condition: eq( variables['Agent.OS'], 'Windows_NT' )
+  displayName: Install Ninja
+
+- bash: |
+    cmake --version
+    git clone https://github.com/GMLC-TDC/HELICS-src
+    cd HELICS-src
+    git checkout develop
+    git submodule update --init --recursive
+    mkdir build
+    cd build
+    cmake -GNinja ../ -DBUILD_HELICS_TESTS=OFF -DBUILD_HELICS_EXAMPLES=OFF
+    sudo cmake --build . --target install
+  displayName: Install HELICS
