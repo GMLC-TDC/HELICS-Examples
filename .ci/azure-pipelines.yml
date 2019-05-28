@@ -37,5 +37,9 @@ steps:
     mkdir build
     cd build
     cmake -GNinja ../ -DBUILD_HELICS_TESTS=OFF -DBUILD_HELICS_EXAMPLES=OFF
-    cmake --build . --target install
+    SUDO_CMD=''
+    if [ -x "$(command -v sudo)" ]; then
+      SUDO_CMD=sudo
+    fi
+    ${SUDO_CMD} cmake --build . --target install
   displayName: Install HELICS
