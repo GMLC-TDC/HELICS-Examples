@@ -34,7 +34,7 @@ steps:
     cd HELICS-src
     git checkout develop
     git submodule update --init --recursive
-    displayName: Checkout HELICS
+  displayName: Checkout HELICS
 # Linux, macOS
 - bash: |
     mkdir build
