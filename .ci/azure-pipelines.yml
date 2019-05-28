@@ -40,16 +40,16 @@ steps:
     cd HELICS-src
     mkdir build
     cd build
-    cmake -GNinja ../ -DBUILD_HELICS_TESTS=OFF -DBUILD_HELICS_EXAMPLES=OF
+    cmake -GNinja -DBUILD_HELICS_TESTS=OFF -DBUILD_HELICS_EXAMPLES=OFF ../
     sudo cmake --build . --target install
   condition: ne( variables['Agent.OS'], 'Windows_NT' )
   displayName: Linux/macOS - Install HELICS
 # Windows
-- powershell: |
+- script: |
     cd HELICS-src
     mkdir build
     cd build
-    cmake -GNinja ../ -DBUILD_HELICS_TESTS=OFF -DBUILD_HELICS_EXAMPLES=OF
+    cmake -GNinja -DBUILD_HELICS_TESTS=OFF -DBUILD_HELICS_EXAMPLES=OFF ../
     cmake --build . --target install
   condition: eq( variables['Agent.OS'], 'Windows_NT' )
   displayName: Windows - Install HELICS
