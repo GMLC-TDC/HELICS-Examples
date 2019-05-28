@@ -16,17 +16,17 @@ steps:
 - bash: |
     sudo apt-get install -y libzmq5-dev ninja-build
   condition: eq( variables['Agent.OS'], 'Linux' )
-  displayName: Install ZeroMQ and Ninja
+  displayName: Linux - Install ZeroMQ and Ninja
 # macOS
 - bash: |
-    brew install zeromq ninja
+    brew install zeromq ninja boost
   condition: eq( variables['Agent.OS'], 'Darwin' )
-  displayName: Install ZeroMQ and Ninja
+  displayName: macOS - Install Boost, ZeroMQ, and Ninja
 # Windows
 - powershell: |
     choco install ninja
   condition: eq( variables['Agent.OS'], 'Windows_NT' )
-  displayName: Install Ninja
+  displayName: Windows - Install Ninja
 
 - bash: |
     cmake --version
