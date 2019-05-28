@@ -37,6 +37,7 @@ steps:
   displayName: Checkout HELICS
 # Linux, macOS
 - bash: |
+    cd HELICS-src
     mkdir build
     cd build
     cmake -GNinja ../ -DBUILD_HELICS_TESTS=OFF -DBUILD_HELICS_EXAMPLES=OF
@@ -45,6 +46,7 @@ steps:
   displayName: Linux/macOS - Install HELICS
 # Windows
 - powershell: |
+    cd HELICS-src
     mkdir build
     cd build
     cmake -GNinja ../ -DBUILD_HELICS_TESTS=OFF -DBUILD_HELICS_EXAMPLES=OF
