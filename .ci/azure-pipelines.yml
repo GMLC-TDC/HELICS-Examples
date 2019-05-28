@@ -46,6 +46,7 @@ steps:
   displayName: Linux/macOS - Install HELICS
 # Windows
 - script: |
+    call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
     cd HELICS-src
     mkdir build
     cd build
