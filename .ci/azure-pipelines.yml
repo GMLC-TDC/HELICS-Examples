@@ -5,7 +5,7 @@ strategy:
     mac:
       imageName: "macos-10.14"
     windows:
-      imageName: "vs2017-win2016"
+      imageName: "windows-2019"
   maxParallel: 3
 
 pool:
@@ -34,12 +34,20 @@ steps:
     cd HELICS-src
     git checkout develop
     git submodule update --init --recursive
+    displayName: Checkout HELICS
+# Linux, macOS
+- bash: |
     mkdir build
     cd build
-    cmake -GNinja ../ -DBUILD_HELICS_TESTS=OFF -DBUILD_HELICS_EXAMPLES=OFF
-    SUDO_CMD=''
-    if [ -x "$(command -v sudo)" ]; then
-      SUDO_CMD=sudo
-    fi
-    ${SUDO_CMD} cmake --build . --target install
-  displayName: Install HELICS
+    cmake -GNinja ../ -DBUILD_HELICS_TESTS=OFF -DBUILD_HELICS_EXAMPLES=OF
+    sudo cmake --build . --target install
+  condition: ne( variables['Agent.OS'], 'Windows_NT' )
+  displayName: Linux/macOS - Install HELICS
+# Windows
+- powershell: |
+    mkdir build
+    cd build
+    cmake -GNinja ../ -DBUILD_HELICS_TESTS=OFF -DBUILD_HELICS_EXAMPLES=OF
+    cmake --build . --target install
+  condition: eq( variables['Agent.OS'], 'Windows_NT' )
+  displayName: Windows - Install HELICS
