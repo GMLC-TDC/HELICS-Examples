@@ -50,7 +50,7 @@ steps:
     cd HELICS-src
     mkdir build
     cd build
-    cmake -GNinja -DCMAKE_C_COMPILER="cl.exe" -DCMAKE_CXX_COMPILER="cl.exe" -DBUILD_HELICS_TESTS=OFF -DBUILD_HELICS_EXAMPLES=OFF ../
+    cmake -G "Visual Studio 16 2019" -A x64 -DBUILD_HELICS_TESTS=OFF -DBUILD_HELICS_EXAMPLES=OFF ../
     cmake --build . --target install
   condition: eq( variables['Agent.OS'], 'Windows_NT' )
   displayName: Windows - Install HELICS
