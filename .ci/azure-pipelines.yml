@@ -5,7 +5,7 @@ strategy:
     mac:
       imageName: "macos-10.14"
     windows:
-      imageName: "windows-2019"
+      imageName: "vs2017-win2016"
   maxParallel: 3
 
 pool:
@@ -50,7 +50,7 @@ steps:
     cd HELICS-src
     mkdir build
     cd build
-    cmake -G "Visual Studio 16 2019" -A x64 -DBUILD_HELICS_TESTS=OFF -DBUILD_HELICS_EXAMPLES=OFF ../
+    cmake -G "Visual Studio 15 2017" -A x64 -DBUILD_HELICS_TESTS=OFF -DBUILD_HELICS_EXAMPLES=OFF ../
     cmake --build . --target install
   condition: eq( variables['Agent.OS'], 'Windows_NT' )
   displayName: Windows - Install HELICS
