@@ -25,6 +25,11 @@ steps:
     brew install zeromq ninja boost
   condition: eq( variables['Agent.OS'], 'Darwin' )
   displayName: macOS - Install Boost, ZeroMQ, and Ninja
+# Windows
+- bash: |
+    choco install ninja
+  condition: eq( variables['Agent.OS'], 'Windows_NT' )
+  displayName: Windows - Install Ninja
 
 # -----------------------
 # Checkout HELICS
@@ -38,23 +43,31 @@ steps:
   displayName: Checkout HELICS
 
 # -----------------------
-# Install HELICS
+# Configure HELICS
 # -----------------------
 # Linux, macOS
-- bash: |
-    cd HELICS-src
-    mkdir build
-    cd build
-    cmake -GNinja -DBUILD_HELICS_TESTS=OFF -DBUILD_HELICS_EXAMPLES=OFF ../
-    sudo cmake --build . --target install
+- task: CMake@1
+  inputs:
+    workingDirectory: HELICS-src/build
+    cmakeArgs: -GNinja -DCMAKE_BUILD_TYPE=Release -DBUILD_HELICS_TESTS=OFF -DBUILD_HELICS_EXAMPLES=OFF ..
+  displayName: 'Linux/macOS - Configure HELICS'
   condition: ne( variables['Agent.OS'], 'Windows_NT' )
-  displayName: Linux/macOS - Install HELICS
 # Windows
-- script: |
-    cd HELICS-src
-    mkdir build
-    cd build
-    cmake -G "Visual Studio 15 2017" -A x64 -DBUILD_HELICS_TESTS=OFF -DBUILD_HELICS_EXAMPLES=OFF ../
-    cmake --build . --target install
+- task: CMake@1
+  inputs:
+    workingDirectory: HELICS-src/build
+    cmakeArgs: -GNinja -DCMAKE_C_COMPILER="cl.exe" -DCMAKE_CXX_COMPILER="cl.exe" -DCMAKE_BUILD_TYPE=Release -DBUILD_HELICS_TESTS=OFF -DBUILD_HELICS_EXAMPLES=OFF ..
+  displayName: 'Windows - Configure HELICS'
   condition: eq( variables['Agent.OS'], 'Windows_NT' )
-  displayName: Windows - Install HELICS
+
+# -----------------------
+# Install HELICS
+# -----------------------
+- bash: |
+    if [ -x "$(command -v sudo)" ]; then
+      sudo cmake --build . --target install
+    else
+      cmake --build . --target install
+    fi
+  displayName: 'Install HELICS'
+  workingDirectory: HELICS-src/build
