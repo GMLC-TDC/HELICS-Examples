@@ -25,11 +25,6 @@ steps:
     brew install zeromq ninja boost
   condition: eq( variables['Agent.OS'], 'Darwin' )
   displayName: macOS - Install Boost, ZeroMQ, and Ninja
-# Windows
-- bash: |
-    choco install ninja
-  condition: eq( variables['Agent.OS'], 'Windows_NT' )
-  displayName: Windows - Install Ninja
 
 # -----------------------
 # Checkout HELICS
@@ -56,7 +51,7 @@ steps:
 - task: CMake@1
   inputs:
     workingDirectory: HELICS-src/build
-    cmakeArgs: -GNinja -DCMAKE_BUILD_TYPE=Release -DBUILD_HELICS_TESTS=OFF -DBUILD_HELICS_EXAMPLES=OFF ..
+    cmakeArgs: -Ax64 -DCMAKE_BUILD_TYPE=Release -DBUILD_HELICS_TESTS=OFF -DBUILD_HELICS_EXAMPLES=OFF ..
   displayName: 'Windows - Configure HELICS'
   condition: eq( variables['Agent.OS'], 'Windows_NT' )
 
