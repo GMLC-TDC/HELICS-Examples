@@ -10,8 +10,11 @@ strategy:
 
 pool:
   vmImage: $(imageName)
- 
+
 steps:
+# -----------------------
+# Install dependencies
+# -----------------------
 # Linux
 - bash: |
     sudo apt-get install -y libzmq5-dev ninja-build
@@ -22,12 +25,10 @@ steps:
     brew install zeromq ninja boost
   condition: eq( variables['Agent.OS'], 'Darwin' )
   displayName: macOS - Install Boost, ZeroMQ, and Ninja
-# Windows
-- powershell: |
-    choco install ninja
-  condition: eq( variables['Agent.OS'], 'Windows_NT' )
-  displayName: Windows - Install Ninja
 
+# -----------------------
+# Checkout HELICS
+# -----------------------
 - bash: |
     cmake --version
     git clone https://github.com/GMLC-TDC/HELICS-src
@@ -35,6 +36,10 @@ steps:
     git checkout zmq_subproject
     git submodule update --init --recursive
   displayName: Checkout HELICS
+
+# -----------------------
+# Install HELICS
+# -----------------------
 # Linux, macOS
 - bash: |
     cd HELICS-src
@@ -46,7 +51,6 @@ steps:
   displayName: Linux/macOS - Install HELICS
 # Windows
 - script: |
-    call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x64
     cd HELICS-src
     mkdir build
     cd build
