@@ -33,7 +33,7 @@ steps:
     cmake --version
     git clone https://github.com/GMLC-TDC/HELICS-src
     cd HELICS-src
-    git checkout zmq_subproject
+    git checkout ${HELICS_COMMITISH:-develop}
     git submodule update --init --recursive
   displayName: Checkout HELICS
 
