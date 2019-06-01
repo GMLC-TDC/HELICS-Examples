@@ -105,7 +105,7 @@ jobs:
     displayName: 'Build Examples'
     workingDirectory: build
 
-- job: Report Results
+- job: Report_Results
   dependsOn: Native
   variables:
     build_result: $[dependencies.Native.result]
