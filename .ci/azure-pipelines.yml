@@ -108,7 +108,7 @@ jobs:
 - job: Report_Results
   displayName: Report Results
   dependsOn: Native
-  condition: always()
+  condition: succeededOrFailed()
   variables:
     build_result: $[dependencies.Native.result]
   steps:
