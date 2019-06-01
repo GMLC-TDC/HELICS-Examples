@@ -108,11 +108,7 @@ jobs:
 - job: Report_Results
   displayName: Report Results
   dependsOn: Native
-  condition: succeededOrFailed()
-  variables:
-    build_result: $[ dependencies.Native.macOS.result ]
+  condition: and(succeededOrFailed(), ne(variables['HELICS_PR_SLUG'], ""), ne(variables['HELICS_PR_NUM'], ""))
   steps:
   - bash: |
-      echo "Result: ${build_result}"
       echo "AGENT_JOBSTATUS: ${AGENT_JOBSTATUS}"
-      echo $[dependencies.Native.result]
