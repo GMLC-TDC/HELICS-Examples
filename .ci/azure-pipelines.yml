@@ -115,4 +115,3 @@ jobs:
   - bash: |
       echo "Result: ${build_result}"
       echo $[dependencies]
-      echo $(dependencies)
