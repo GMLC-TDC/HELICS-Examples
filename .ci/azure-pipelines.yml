@@ -111,6 +111,6 @@ jobs:
     build_result: $[dependencies.Native.result]
   steps:
   - bash: |
-    echo "Result: ${build_result}"
-    echo $[dependencies]
-    echo $(dependencies)
+      echo "Result: ${build_result}"
+      echo $[dependencies]
+      echo $(dependencies)
