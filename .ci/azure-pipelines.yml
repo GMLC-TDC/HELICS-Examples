@@ -109,6 +109,7 @@ jobs:
   dependsOn: Native
   variables:
     build_result: $[dependencies.Native.result]
+  steps:
   - bash: |
     echo "Result: ${build_result}"
     echo $[dependencies]
