@@ -1,106 +1,115 @@
-strategy:
-  matrix:
-    linux:
-      imageName: "ubuntu-16.04"
-    mac:
-      imageName: "macos-10.14"
-    windows:
-      imageName: "windows-2019"
-  maxParallel: 3
+jobs:
+- job: Native
+  strategy:
+    matrix:
+      Linux:
+        imageName: "ubuntu-16.04"
+      macOS:
+        imageName: "macos-10.14"
+      Windows:
+        imageName: "windows-2019"
+  pool:
+    vmImage: $(imageName)
 
-pool:
-  vmImage: $(imageName)
+  steps:
+  # -----------------------
+  # Install dependencies
+  # -----------------------
+  # Linux
+  - bash: |
+      sudo apt-get install -y libzmq5-dev ninja-build
+    condition: eq( variables['Agent.OS'], 'Linux' )
+    displayName: Linux - Install ZeroMQ and Ninja
+  # macOS
+  - bash: |
+      brew install zeromq ninja boost
+    condition: eq( variables['Agent.OS'], 'Darwin' )
+    displayName: macOS - Install Boost, ZeroMQ, and Ninja
 
-steps:
-# -----------------------
-# Install dependencies
-# -----------------------
-# Linux
-- bash: |
-    sudo apt-get install -y libzmq5-dev ninja-build
-  condition: eq( variables['Agent.OS'], 'Linux' )
-  displayName: Linux - Install ZeroMQ and Ninja
-# macOS
-- bash: |
-    brew install zeromq ninja boost
-  condition: eq( variables['Agent.OS'], 'Darwin' )
-  displayName: macOS - Install Boost, ZeroMQ, and Ninja
+  # -----------------------
+  # Checkout HELICS
+  # -----------------------
+  - bash: |
+      cmake --version
+      git clone https://github.com/GMLC-TDC/HELICS-src
+      cd HELICS-src
+      git checkout ${HELICS_COMMITISH:-develop}
+      git submodule update --init --recursive
+    displayName: Checkout HELICS
 
-# -----------------------
-# Checkout HELICS
-# -----------------------
-- bash: |
-    cmake --version
-    git clone https://github.com/GMLC-TDC/HELICS-src
-    cd HELICS-src
-    git checkout ${HELICS_COMMITISH:-develop}
-    git submodule update --init --recursive
-  displayName: Checkout HELICS
+  # -----------------------
+  # Configure HELICS
+  # -----------------------
+  # Linux, macOS
+  - task: CMake@1
+    inputs:
+      workingDirectory: HELICS-src/build
+      cmakeArgs: -GNinja -DCMAKE_BUILD_TYPE=Release -DBUILD_HELICS_TESTS=OFF -DBUILD_HELICS_EXAMPLES=OFF ..
+    displayName: 'Linux/macOS - Configure HELICS'
+    condition: ne( variables['Agent.OS'], 'Windows_NT' )
+  # Windows
+  - task: CMake@1
+    inputs:
+      workingDirectory: HELICS-src/build
+      cmakeArgs: -Ax64 -DCMAKE_BUILD_TYPE=Release -DBUILD_HELICS_TESTS=OFF -DBUILD_HELICS_EXAMPLES=OFF ..
+    displayName: 'Windows - Configure HELICS'
+    condition: eq( variables['Agent.OS'], 'Windows_NT' )
 
-# -----------------------
-# Configure HELICS
-# -----------------------
-# Linux, macOS
-- task: CMake@1
-  inputs:
+  # -----------------------
+  # Install HELICS
+  # -----------------------
+  - bash: |
+      if [ -x "$(command -v sudo)" ]; then
+        sudo cmake --build . --target install
+      else
+        cmake --build . --target install
+      fi
+    displayName: 'Install HELICS'
     workingDirectory: HELICS-src/build
-    cmakeArgs: -GNinja -DCMAKE_BUILD_TYPE=Release -DBUILD_HELICS_TESTS=OFF -DBUILD_HELICS_EXAMPLES=OFF ..
-  displayName: 'Linux/macOS - Configure HELICS'
-  condition: ne( variables['Agent.OS'], 'Windows_NT' )
-# Windows
-- task: CMake@1
-  inputs:
-    workingDirectory: HELICS-src/build
-    cmakeArgs: -Ax64 -DCMAKE_BUILD_TYPE=Release -DBUILD_HELICS_TESTS=OFF -DBUILD_HELICS_EXAMPLES=OFF ..
-  displayName: 'Windows - Configure HELICS'
-  condition: eq( variables['Agent.OS'], 'Windows_NT' )
+  
+  # -----------------------
+  # Set HELICS_DIR env var
+  # -----------------------
+  # Windows
+  - bash: |
+      dir=$(find C:/local -mindepth 1 -maxdepth 1 -type d -iname 'helics*')
+      echo "##vso[task.setvariable variable=HELICS_DIR]$dir"
+    displayName: 'Windows - Set HELICS_DIR env var'
+    condition: eq( variables['Agent.OS'], 'Windows_NT' )
+  
+  # -----------------------
+  # Configure Examples
+  # -----------------------
+  # Linux, macOS
+  - task: CMake@1
+    inputs:
+      cmakeArgs: -GNinja -DCMAKE_BUILD_TYPE=Release ..
+    displayName: 'Linux/macOS - Configure HELICS-Examples'
+    condition: ne( variables['Agent.OS'], 'Windows_NT' )
+  # Windows
+  - task: CMake@1
+    inputs:
+      cmakeArgs: -Ax64 -DCMAKE_BUILD_TYPE=Release ..
+    displayName: 'Windows - Configure HELICS-Examples'
+    condition: eq( variables['Agent.OS'], 'Windows_NT' )
+  
+  # -----------------------
+  # Build Examples
+  # -----------------------
+  - bash: |
+      if [ -x "$(command -v sudo)" ]; then
+        sudo cmake --build .
+      else
+        cmake --build .
+      fi
+    displayName: 'Build Examples'
+    workingDirectory: build
 
-# -----------------------
-# Install HELICS
-# -----------------------
-- bash: |
-    if [ -x "$(command -v sudo)" ]; then
-      sudo cmake --build . --target install
-    else
-      cmake --build . --target install
-    fi
-  displayName: 'Install HELICS'
-  workingDirectory: HELICS-src/build
-  
-# -----------------------
-# Set HELICS_DIR env var
-# -----------------------
-# Windows
-- bash: |
-    dir=$(find C:/local -mindepth 1 -maxdepth 1 -type d -iname 'helics*')
-    echo "##vso[task.setvariable variable=HELICS_DIR]$dir"
-  displayName: 'Windows - Set HELICS_DIR env var'
-  condition: eq( variables['Agent.OS'], 'Windows_NT' )
-  
-# -----------------------
-# Configure Examples
-# -----------------------
-# Linux, macOS
-- task: CMake@1
-  inputs:
-    cmakeArgs: -GNinja -DCMAKE_BUILD_TYPE=Release ..
-  displayName: 'Linux/macOS - Configure HELICS-Examples'
-  condition: ne( variables['Agent.OS'], 'Windows_NT' )
-# Windows
-- task: CMake@1
-  inputs:
-    cmakeArgs: -Ax64 -DCMAKE_BUILD_TYPE=Release ..
-  displayName: 'Windows - Configure HELICS-Examples'
-  condition: eq( variables['Agent.OS'], 'Windows_NT' )
-  
-# -----------------------
-# Build Examples
-# -----------------------
-- bash: |
-    if [ -x "$(command -v sudo)" ]; then
-      sudo cmake --build .
-    else
-      cmake --build .
-    fi
-  displayName: 'Build Examples'
-  workingDirectory: build
+- job: Report Results
+  dependsOn: Native
+  variables:
+    build_result: $[dependencies.Native.result]
+  - bash: |
+    echo "Result: ${build_result}"
+    echo $[dependencies]
+    echo $(dependencies)
