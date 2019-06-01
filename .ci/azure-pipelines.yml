@@ -108,7 +108,7 @@ jobs:
 - job: Report_Results
   displayName: Report Results
   dependsOn: Native
-  condition: and(succeededOrFailed(), ne(variables['HELICS_PR_SLUG'], ""), ne(variables['HELICS_PR_NUM'], ""))
+  condition: and(succeededOrFailed(), variables['HELICS_PR_SLUG'], variables['HELICS_PR_NUM'])
   steps:
   - bash: |
       echo "AGENT_JOBSTATUS: ${AGENT_JOBSTATUS}"
