@@ -110,8 +110,9 @@ jobs:
   dependsOn: Native
   condition: succeededOrFailed()
   variables:
-    build_result: $[dependencies.Native.result]
+    build_result: $[ dependencies.Native.macOS.result ]
   steps:
   - bash: |
       echo "Result: ${build_result}"
-      echo $[dependencies]
+      echo "AGENT_JOBSTATUS: ${AGENT_JOBSTATUS}"
+      echo $[dependencies.Native.result]
