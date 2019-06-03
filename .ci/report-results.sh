@@ -1,10 +1,10 @@
 #!/bin/bash
 case ${AGENT_JOBSTATUS} in
     *Succeeded*)
-        BUILD_MESSAGE=":tada: HELICS-Examples integration test passed (${BUILD_BUILDURI})"
+        BUILD_MESSAGE=":tada: HELICS-Examples integration test passed: [build log](https://dev.azure.com/HELICS-test/HELICS-Examples/_build/results?buildId=${BUILD_BUILDID})"
     ;;
     *Failed*)
-        BUILD_MESSAGE=":confused: HELICS-Examples integration test had issues (${BUILD_BUILDURI})"
+        BUILD_MESSAGE=":confused: HELICS-Examples integration test had some problems: [build log](https://dev.azure.com/HELICS-test/HELICS-Examples/_build/results?buildId=${BUILD_BUILDID})"
     ;;
 esac
 
