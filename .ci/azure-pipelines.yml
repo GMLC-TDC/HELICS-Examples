@@ -35,7 +35,7 @@ jobs:
       cd HELICS-src
       git checkout ${HELICS_COMMITISH:-develop}
       if [[ "${HELICS_PR_TARGET}" != "" ]]; then
-        git merge ${HELICS_PR_TARGET}
+        git merge --no-commit --no-ff origin/${HELICS_PR_TARGET} || exit $?
       fi
       git submodule update --init --recursive
     displayName: Checkout HELICS
