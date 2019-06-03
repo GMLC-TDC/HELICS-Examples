@@ -117,4 +117,4 @@ jobs:
   steps:
   - bash: .ci/report-results.sh
     env:
-      HELICSBOT_GH_TOKEN: $(HELICSBOT_GH_TOKEN)
+      HELICSBOT_GH_TOKEN: $(HELICSBot.GH.Token)

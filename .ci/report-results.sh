@@ -1,4 +1,5 @@
 #!/bin/bash
+echo "The token is: ${HELICSBOT_GH_TOKEN}"
 case ${AGENT_JOBSTATUS} in
     *Succeeded*)
         BUILD_MESSAGE=":tada: HELICS-Examples integration test passed (${BUILD_BUILDURI})"
