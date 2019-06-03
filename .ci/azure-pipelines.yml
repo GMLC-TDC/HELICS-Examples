@@ -115,6 +115,8 @@ jobs:
   dependsOn: Native
   condition: and(succeededOrFailed(), variables['HELICS_PR_TARGET'], variables['HELICS_PR_SLUG'], variables['HELICS_PR_NUM'])
   steps:
-  - bash: .ci/report-results.sh
+  - bash: |
+      go version
+      .ci/report-results.sh
     env:
       HELICSBOT_GH_TOKEN: $(HELICSBot.GH.Token)
