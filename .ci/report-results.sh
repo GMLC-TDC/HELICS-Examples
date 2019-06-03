@@ -1,5 +1,4 @@
 #!/bin/bash
-
 case ${AGENT_JOBSTATUS} in
     *Succeeded*)
         BUILD_MESSAGE=":tada: HELICS-Examples integration test passed (${BUILD_BUILDURI})"
@@ -11,8 +10,8 @@ esac
 
 # Report build status to PR
 if [[ "${BUILD_MESSAGE}" != "" ]]; then
+    echo "Reporting build status $AGENT_JOBSTATUS to github.com/${HELICS_PR_SLUG}/issues/${HELICS_PR_NUM}"
     body='{"body": "'${BUILD_MESSAGE}'"}'
-
     curl -s -X POST \
         -H "User-Agent: HELICS-bot" \
         -H "Content-Type: application/json" \
