@@ -35,7 +35,9 @@ jobs:
       cd HELICS-src
       git checkout ${HELICS_COMMITISH:-develop}
       if [[ "${HELICS_PR_TARGET}" != "" ]]; then
-        git merge ${HELICS_PR_TARGET}
+        git config --global user.email "helicsbot@helics.org"
+        git config --global user.name "HELICS-bot"
+        git merge --no-commit --no-ff origin/${HELICS_PR_TARGET} || exit $?
       fi
       git submodule update --init --recursive
     displayName: Checkout HELICS
@@ -113,4 +115,8 @@ jobs:
   dependsOn: Native
   condition: and(succeededOrFailed(), variables['HELICS_PR_TARGET'], variables['HELICS_PR_SLUG'], variables['HELICS_PR_NUM'])
   steps:
-  - bash: .ci/report-results.sh
+  - bash: |
+      go run .ci/get-env-len.go
+      .ci/report-results.sh
+    env:
+      HELICSBOT_GH_TOKEN: $(HELICSBot.GH.Token)
