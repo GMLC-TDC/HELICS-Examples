@@ -58,6 +58,10 @@ int main ()
     {
         fprintf(stderr, "HELICS request time failed\n");
     }
+    else
+    {
+        fprintf(stdout, "HELICS granted time:%f\n", currenttime);
+    }
     /** check if the value was updated*/
     isUpdated = helicsInputIsUpdated (sub);
     if (isUpdated)
