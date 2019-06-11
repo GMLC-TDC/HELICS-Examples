@@ -67,6 +67,10 @@ int main() {
   {
       fprintf(stderr, "HELICS request time failed:%s\n",err.message);
   }
+  else
+  {
+      fprintf(stdout, "HELICS granted time:%f\n", currenttime);
+  }
   /** finalize the federate*/
   helicsFederateFinalize(vfed,&err);
   /** free the memory allocated to the federate*/

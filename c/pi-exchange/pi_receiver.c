@@ -50,7 +50,8 @@ int main ()
     /* Create value federate */
     vfed = helicsCreateValueFederate ("TestB Federate",fedinfo,&err);
     printf ("PI RECEIVER: Value federate created\n");
-	//free the federateInfo structure
+	
+    /* Free the federateInfo structure */
 	helicsFederateInfoFree(fedinfo);
 
     /* Subscribe to PI SENDER's publication */
