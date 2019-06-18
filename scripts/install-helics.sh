@@ -27,8 +27,8 @@ HELICS_OPTION_FLAGS=${OPTION_FLAGS_ARR[@]}
 
 #git clone helics... master, develop branch? for now, ignore the cached install of helics and always rebuild it for fresh updates
 rm -rf ${CI_DEPENDENCY_DIR}/helics
-git clone --single-branch -b develop https://github.com/GMLC-TDC/HELICS-src
-pushd HELICS-src
+git clone --single-branch -b develop https://github.com/GMLC-TDC/HELICS
+pushd HELICS
 
 # Create directories for building HELICS
 mkdir -p build
