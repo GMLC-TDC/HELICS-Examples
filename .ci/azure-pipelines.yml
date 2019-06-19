@@ -31,8 +31,8 @@ jobs:
   # -----------------------
   - bash: |
       cmake --version
-      git clone https://github.com/GMLC-TDC/HELICS-src
-      cd HELICS-src
+      git clone https://github.com/GMLC-TDC/HELICS
+      cd HELICS
       git checkout ${HELICS_COMMITISH:-develop}
       if [[ "${HELICS_PR_TARGET}" != "" ]]; then
         git config --global user.email "helicsbot@helics.org"
@@ -48,14 +48,14 @@ jobs:
   # Linux, macOS
   - task: CMake@1
     inputs:
-      workingDirectory: HELICS-src/build
+      workingDirectory: HELICS/build
       cmakeArgs: -GNinja -DCMAKE_BUILD_TYPE=Release -DBUILD_HELICS_TESTS=OFF -DBUILD_HELICS_EXAMPLES=OFF ..
     displayName: 'Linux/macOS - Configure HELICS'
     condition: ne( variables['Agent.OS'], 'Windows_NT' )
   # Windows
   - task: CMake@1
     inputs:
-      workingDirectory: HELICS-src/build
+      workingDirectory: HELICS/build
       cmakeArgs: -Ax64 -DCMAKE_BUILD_TYPE=Release -DBUILD_HELICS_TESTS=OFF -DBUILD_HELICS_EXAMPLES=OFF ..
     displayName: 'Windows - Configure HELICS'
     condition: eq( variables['Agent.OS'], 'Windows_NT' )
@@ -70,7 +70,7 @@ jobs:
         cmake --build . --target install
       fi
     displayName: 'Install HELICS'
-    workingDirectory: HELICS-src/build
+    workingDirectory: HELICS/build
   
   # -----------------------
   # Set HELICS_DIR env var

@@ -8,7 +8,7 @@ RUN apt update && apt install -y \
 
 WORKDIR /root/develop
 
-RUN git clone --single-branch -b v2.1.0 https://github.com/GMLC-TDC/HELICS-src.git helics
+RUN git clone --single-branch -b v2.1.0 https://github.com/GMLC-TDC/HELICS.git helics
 
 WORKDIR /root/develop/helics/build
 
