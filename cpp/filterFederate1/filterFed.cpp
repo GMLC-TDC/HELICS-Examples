@@ -4,50 +4,43 @@ Battelle Memorial Institute; Lawrence Livermore National Security, LLC; Alliance
 All rights reserved. See LICENSE file and DISCLAIMER for more details.
 */
 
-#include "helics/core/CoreFactory.hpp"
 #include "helics/application_api.hpp"
+#include "helics/core/helicsCLI11.hpp"
 #include <iostream>
 #include <thread>
-#include "helics/common/argParser.h"
-
-static const helics::ArgDescriptors InfoArgs{
-    {"target,t", "the federate at to target"},
-    {"endpoint,e", "name of the endpoint to filter"},
-    {"delay", "the time to delay the message"},
-{"filtertype","the type of filter to implement (delay,random_drop,random_delay"},
-{"dropprob",helics::ArgDescriptor::arg_type_t::double_type,"the probability a message will be dropped, only used with filtertype=random_drop"}
-
-    //name is captured in the argument processor for federateInfo
-};
 
 int main (int argc, char *argv[])
 {
-    //process the command line arguments
-    helics::variable_map vm;
-    auto parseResult = argumentParser(argc, argv, vm, InfoArgs);
-    if (parseResult != 0)
-    {
-        return 0;
-    }
-
-	std::string targetfederate = "fed";
-	if (vm.count("target") > 0)
-	{
-		targetfederate = vm["target"].as<std::string>();
-	}
+    helics::helicsCLI11App app ("Filter Fed", "FilterFed");
+    std::string targetFederate = "fed";
     std::string targetEndpoint = "endpoint";
-    if (vm.count("endpoint") > 0) {
-        targetEndpoint = vm["endpoint"].as<std::string>();
-    }
-    std::string target = targetfederate + "/" + targetEndpoint;
-
+    std::string delay = "1.0";
     std::string filtType = "delay";
-    if (vm.count("filtertype") > 0) {
-        targetEndpoint = vm["filtertype"].as<std::string>();
+    helics::filter_types ftype;
+    double dropprob = 0.33;
+   
+    app.add_option ("--target,-t", targetFederate, "name of the federate to target");
+    app.add_option ("--endpoint,-e", targetEndpoint, "name of the endpoint to filter");
+    app.add_option ("--delay", delay, "the time to delay the message");
+    app.add_option ("--filtertype", filtType, "the type of filter to implement")
+        ->check(CLI::IsMember({
+                        "delay",
+                        "random_drop",
+                        "random_delay"
+                        }));
+    app.add_option ("--dropprob", dropprob, "the probability a message will be dropped, only used with filtertype=random_drop");
+
+    auto ret = app.helics_parse (argc, argv);
+    if (ret != helics::helicsCLI11App::parse_return::ok)
+    {
+        return -1;
     }
 
-    helics::filter_types ftype = helics::filter_types::delay;
-    if (filtType == "random_drop")
+    if (filtType == "delay")
+    {
+        ftype = helics::filter_types::delay;
+    }
+    else if (filtType == "random_drop")
     {
         ftype = helics::filter_types::random_drop;
     }
@@ -55,15 +48,11 @@ int main (int argc, char *argv[])
     {
         ftype = helics::filter_types::random_delay;
     }
-    else if (filtType != "delay")
-    {
-        std::cerr << "invalid filter type specified valid types are \"delay\",\"random drop\",\"random delay\"\n";
-        return (-2);
-    }
 
+    std::string target = targetFederate + "/" + targetEndpoint;
 
     auto core = helics::CoreFactory::create(argc, argv);
-	std::cout << " registering filter '"<< "' for " << target<<'\n';
+	std::cout << " registering filter '"<< "' for " << target <<'\n';
 
     //create a source filter object with type, the fed pointer and a target endpoint
     auto filt = helics::make_filter(ftype, core.get());
@@ -75,31 +64,23 @@ int main (int argc, char *argv[])
     case helics::filter_types::delay:
     default:
     {
-        std::string delay = "1.0";
-        if (vm.count("delay") > 0) {
-            delay = vm["delay"].as<std::string>();
-            filt->setString("delay", delay);
-        }
+        filt->setString("delay", delay);
         break;
     }
     case helics::filter_types::random_drop:
     {
-        double dropprob = 0.33;
-        if (vm.count("dropprob") > 0) {
-            dropprob = vm["dropprob"].as<double>();
-        }
         filt->set("dropprob", dropprob);
-    }
         break;
-    case helics::filter_types::random_delay:
-        filt->setString("distribution", "uniform");
-        if (vm.count("delay") > 0)
-        {
-            filt->setString("max", vm["delay"].as<std::string>());
-        }
     }
-    /*setup and run
-    */
+    case helics::filter_types::random_delay:
+    {
+        filt->setString("distribution", "uniform");
+        filt->setString("max", delay);
+        break;
+    }
+    }
+
+    // setup and run
     core->setCoreReadyToInit();
 
 	core->waitForDisconnect();

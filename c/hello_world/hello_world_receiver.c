@@ -4,7 +4,7 @@ Battelle Memorial Institute; Lawrence Livermore National Security, LLC; Alliance
 All rights reserved. See LICENSE file and DISCLAIMER for more details.
 */
 
-#include <ValueFederate.h>
+#include <helics/shared_api_library/ValueFederate.h>
 #include <stdio.h>
 
 int main ()
@@ -57,6 +57,10 @@ int main ()
     if (err.error_code != helics_ok)
     {
         fprintf(stderr, "HELICS request time failed\n");
+    }
+    else
+    {
+        fprintf(stdout, "HELICS granted time:%f\n", currenttime);
     }
     /** check if the value was updated*/
     isUpdated = helicsInputIsUpdated (sub);

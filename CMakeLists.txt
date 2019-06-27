@@ -7,19 +7,14 @@
 cmake_minimum_required(VERSION 3.4)
 cmake_policy(VERSION 3.4)
 
-project (HELICS_EXAMPLES VERSION 2.0.0)
-
+project (HELICS-EXAMPLES VERSION 2.1.0)
 
 # -----------------------------------------------------------------------------
-# set the module path and include some common macros
+# include some common macros
 # -----------------------------------------------------------------------------
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/config")
-
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
 include(GNUInstallDirs)
 
-find_package(HELICS 2 REQUIRED)
 # -------------------------------------------------------------
 # setting the RPATH
 # -------------------------------------------------------------

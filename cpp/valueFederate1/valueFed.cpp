@@ -4,49 +4,48 @@ Battelle Memorial Institute; Lawrence Livermore National Security, LLC; Alliance
 All rights reserved. See LICENSE file and DISCLAIMER for more details.
 */
 #include "helics/ValueFederates.hpp"
-#include <thread>
-#include <iostream>
-#include "helics/core/BrokerFactory.hpp"
-#include "helics/common/argParser.h"
+#include "helics/apps/BrokerApp.hpp"
+#include "helics/core/helicsCLI11.hpp"
+#include "helics/core/helics_definitions.hpp"
 
-static const helics::ArgDescriptors InfoArgs{
-    { "startbroker","start a broker with the specified arguments" },
-    { "valuetarget", "name of the target federate, same as target" },
-    { "target,t", "name of the target federate" }
-};
+#include <iostream>
 
 int main (int argc, const char * const *argv)
 {
+    helics::helicsCLI11App app ("Value Fed", "ValueFed");
+    std::string target = "fed";
+    helics::apps::BrokerApp brk;
+    std::string brokerArgs = "";
+
+    app.add_option ("--valuetarget,--target,t", target, "name of the target federate", true);
+    app.add_option ("--startbroker", brokerArgs, "start a broker with the specified arguments");
+
+    auto ret = app.helics_parse (argc, argv);
+    
     helics::FederateInfo fi;
-    helics::variable_map vm;
-    auto parseResult = argumentParser(argc, argv, vm, InfoArgs);
-    fi.loadInfoFromArgs(argc, argv);
-    if (parseResult != 0)
+    if (ret == helics::helicsCLI11App::parse_return::help_return)
     {
+        fi.loadInfoFromArgs ("--help");
         return 0;
     }
+    else if (ret != helics::helicsCLI11App::parse_return::ok)
+    {
+        return -1;
+    }
+    fi.defName = "fed";
+    fi.loadInfoFromArgs (app.remainArgs ());
 
 	fi.setProperty(helics::defs::properties::log_level, 5);
-    std::shared_ptr<helics::Broker> brk;
-    if (vm.count("startbroker") > 0)
+    if (app["--startbroker"]->count () > 0)
     {
-        brk = helics::BrokerFactory::create(fi.coreType, vm["startbroker"].as<std::string>());
+        brk = helics::apps::BrokerApp (fi.coreType, brokerArgs);
     }
-
-    std::string target = "fed";
-    if (vm.count("target") > 0)
-    {
-        target = vm["target"].as<std::string>();
-    }
-    if (vm.count("valuetarget") > 0)
-    {
-        target = vm["valuetarget"].as<std::string>();
-    }
-    auto vFed = std::make_unique<helics::ValueFederate> ("fed",fi);
+    
+    auto vFed = std::make_unique<helics::ValueFederate> (std::string{},fi);
 
     auto &pub = vFed->registerPublication ("pub", "double");
 
-    auto &sub = vFed->registerSubscription(target + "/pub");
+    auto &sub = vFed->registerSubscription(target + "/pub", "double");
 	//TODO:: add optional property
     std::cout << "entering init Mode\n";
     vFed->enterInitializingMode ();
@@ -65,14 +64,6 @@ int main (int argc, const char * const *argv)
         std::cout << "processed time " << static_cast<double> (newTime) << "\n";
     }
     vFed->finalize ();
-    if (brk)
-    {
-        while (brk->isConnected())
-        {
-            std::this_thread::yield();
-        }
-        brk = nullptr;
-    }
     return 0;
 }
 

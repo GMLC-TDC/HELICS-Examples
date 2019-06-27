@@ -6,11 +6,15 @@
 
 cmake_minimum_required(VERSION 3.4)
 
-project(valueFederate1)
+project(valueFederate1-cpp)
 
-find_package(HELICS REQUIRED)
+if(NOT CMAKE_CXX_STANDARD)
+    set(CMAKE_CXX_STANDARD 14)
+endif()
 
-add_executable(valueFed valueFed.cpp)
-target_link_libraries(valueFed HELICS::helics-static)
+find_package(HELICS 2 REQUIRED)
 
-set_target_properties(valueFed PROPERTIES FOLDER cpp/nonlings)
+add_executable(valueFed-cpp valueFed.cpp)
+target_link_libraries(valueFed-cpp HELICS::helics_apps)
+
+set_target_properties(valueFed-cpp PROPERTIES FOLDER cpp/federates)

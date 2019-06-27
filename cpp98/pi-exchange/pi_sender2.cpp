@@ -10,9 +10,9 @@ static char help[] = "Example to demonstrate the usage of HELICS Cpp98 Interface
             published by the other federate. Once the value has arrived, it publishes its next value \n\n";
 
 #include <stdio.h>
-#include <ValueFederate.hpp>
-#include <Broker.hpp>
-#include <helics.hpp> // helicsVersionString
+#include <helics/cpp98/ValueFederate.hpp>
+#include <helics/cpp98/Broker.hpp>
+#include <helics/cpp98/helics.hpp> // helicsVersionString
 
 
 int main(int /*argc*/,char ** /*argv*/)

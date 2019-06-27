@@ -6,20 +6,20 @@
 
 cmake_minimum_required(VERSION 3.4)
 
-project(pi_exchange C)
+project(pi_exchange-c C)
 
-find_package(HELICS REQUIRED)
+find_package(HELICS 2 REQUIRED)
 
-add_executable(pi_receiver pi_receiver.c)
-target_link_libraries(pi_receiver HELICS::helicsSharedLib)
+add_executable(pi_receiver-c pi_receiver.c)
+target_link_libraries(pi_receiver-c HELICS::helicsSharedLib)
 
-add_executable(pi_sender pi_sender.c)
-target_link_libraries(pi_sender HELICS::helicsSharedLib)
+add_executable(pi_sender-c pi_sender.c)
+target_link_libraries(pi_sender-c HELICS::helicsSharedLib)
 
-add_executable(pi_receiver2 pi_receiver2.c)
-target_link_libraries(pi_receiver2 HELICS::helicsSharedLib)
+add_executable(pi_receiver2-c pi_receiver2.c)
+target_link_libraries(pi_receiver2-c HELICS::helicsSharedLib)
 
-add_executable(pi_sender2 pi_sender2.c)
-target_link_libraries(pi_sender2 HELICS::helicsSharedLib)
+add_executable(pi_sender2-c pi_sender2.c)
+target_link_libraries(pi_sender2-c HELICS::helicsSharedLib)
 
-set_target_properties(pi_receiver pi_receiver2 pi_sender pi_sender2 PROPERTIES FOLDER c/pi_exchange)
+set_target_properties(pi_receiver-c pi_receiver2-c pi_sender-c pi_sender2-c PROPERTIES FOLDER c/pi_exchange)

@@ -5,7 +5,7 @@ All rights reserved. See LICENSE file and DISCLAIMER for more details.
 */
 
 /* include the HELICS header for value Federates*/
-#include <ValueFederate.h>
+#include <helics/shared_api_library/ValueFederate.h>
 #include <stdio.h>
 
 int main() {
@@ -66,6 +66,10 @@ int main() {
   if (err.error_code!=helics_ok)
   {
       fprintf(stderr, "HELICS request time failed:%s\n",err.message);
+  }
+  else
+  {
+      fprintf(stdout, "HELICS granted time:%f\n", currenttime);
   }
   /** finalize the federate*/
   helicsFederateFinalize(vfed,&err);

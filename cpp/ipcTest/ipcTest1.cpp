@@ -9,6 +9,7 @@ All rights reserved. See LICENSE file and DISCLAIMER for more details.
 #include <iomanip>
 #include <iostream>
 #include <random>
+#include <thread>
 
 #include <helics/ValueFederates.hpp>
 #include <helics/core/BrokerFactory.hpp>

@@ -7,7 +7,7 @@ All rights reserved. See LICENSE file and DISCLAIMER for more details.
 /*
    Example from http://mathfaculty.fullerton.edu/mathews//n2003/newtonsystem/newtonsystemproof.pdf.
 */
-#include <ValueFederate.h>
+#include <helics/shared_api_library/ValueFederate.h>
 #include <math.h>
 #include <stdio.h>
 

@@ -11,9 +11,9 @@ static char help[] = " PI SENDER: Simple program to demonstrate the usage of HEL
 
 
 #include <stdio.h>
-#include <ValueFederate.hpp>
-#include <Broker.hpp>
-#include <helics.hpp> // helicsVersionString
+#include <helics/cpp98/ValueFederate.hpp>
+#include <helics/cpp98/Broker.hpp>
+#include <helics/cpp98/helics.hpp> // helicsVersionString
 
 int main(int /*argc*/,char ** /*argv*/)
 {

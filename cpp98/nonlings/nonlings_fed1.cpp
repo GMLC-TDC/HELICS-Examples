@@ -4,9 +4,9 @@ Battelle Memorial Institute; Lawrence Livermore National Security, LLC; Alliance
 All rights reserved. See LICENSE file and DISCLAIMER for more details.
 */
 
-#include <ValueFederate.hpp>
-#include <Broker.hpp>
-#include <helics.hpp> // helicsVersionString
+#include <helics/cpp98/ValueFederate.hpp>
+#include <helics/cpp98/Broker.hpp>
+#include <helics/cpp98/helics.hpp> // helicsVersionString
 #include <math.h>
 #include <stdio.h>
 

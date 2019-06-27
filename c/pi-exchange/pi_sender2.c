@@ -10,7 +10,7 @@ static char help[] = "Example to demonstrate the usage of HELICS C Interface wit
             published by the other federate. Once the value has arrived, it publishes its next value \n\n";
 
 #include <stdio.h>
-#include <ValueFederate.h>
+#include <helics/shared_api_library/ValueFederate.h>
 #ifdef _MSC_VER
 #include <windows.h>
 #else

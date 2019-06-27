@@ -6,10 +6,10 @@
 
 cmake_minimum_required(VERSION 3.4)
 
-project(comboFederate1 C)
+project(comboFederate1-c C)
 
-find_package(HELICS REQUIRED)
+find_package(HELICS 2 REQUIRED)
 
-add_executable(comboFed_c comboFed.c)
-target_link_libraries(comboFed_c HELICS::helicsSharedLib)
-set_target_properties(comboFed_c PROPERTIES FOLDER c/federates)
+add_executable(comboFed-c comboFed.c)
+target_link_libraries(comboFed-c HELICS::helicsSharedLib)
+set_target_properties(comboFed-c PROPERTIES FOLDER c/federates)
