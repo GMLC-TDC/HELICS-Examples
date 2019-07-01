@@ -1,6 +1,6 @@
 # Manager Worker Example
 
-A manager federate sends some values to the worker federates. The workers update the values and sends back the updated values to the manager. The manager doesn't move forward untill all the federates have sent back the value.
+A manager federate sends some values to the worker federates. The workers update the values and sends back the updated values to the manager. Each worker has a random delay. The manager doesn't move forward untill all the federates have sent back the value.
 
 ## Running
 
