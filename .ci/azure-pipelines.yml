@@ -114,6 +114,8 @@ jobs:
   displayName: Report Results
   dependsOn: Native
   condition: and(succeededOrFailed(), variables['HELICS_PR_TARGET'], variables['HELICS_PR_SLUG'], variables['HELICS_PR_NUM'])
+  variables:
+    PR_STATUS_REPORT: $[variables['Agent.JobStatus']]
   steps:
   - bash: |
       .ci/report-results.sh
