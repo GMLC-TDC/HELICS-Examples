@@ -31,7 +31,7 @@ int main (int argc, char *argv[])
     app.add_option ("--dropprob", dropprob, "the probability a message will be dropped, only used with filtertype=random_drop");
 
     auto ret = app.helics_parse (argc, argv);
-    if (ret != helics::helicsCLI11App::parse_return::ok)
+    if (ret != helics::helicsCLI11App::parse_output::ok)
     {
         return -1;
     }
