@@ -1,0 +1,14 @@
+{
+  "coreInit": "--federates=1",
+  "coreName": "receiver Federate",
+  "coreType": "zmq",
+  "name": "receiver",
+  "offset": 0.0,
+  "period": 0.1,
+  "subscriptions": [
+    {
+      "name": "data"
+    }
+  ],
+  "timeDelta": 0.1
+}
