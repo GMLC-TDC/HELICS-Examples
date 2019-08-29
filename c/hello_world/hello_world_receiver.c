@@ -38,8 +38,8 @@ int main ()
         return (-2);
     }
 
-	/** free the federateInfo structure when it isn't needed*/
-	helicsFederateInfoFree(fedinfo);
+    /** free the federateInfo structure when it isn't needed*/
+    helicsFederateInfoFree(fedinfo);
     /** register a subscription interface on vFed, with a Name of "hello", with no units*/
     sub = helicsFederateRegisterSubscription (vfed, "hello",NULL,&err);
     if (err.error_code != helics_ok)

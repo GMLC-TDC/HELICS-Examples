@@ -41,7 +41,7 @@ int main (int argc, char *argv[])
 
     std::string target = targetFederate + "/" + targetEndpoint;
 
-	fi.setProperty(helics::defs::properties::log_level, 5);
+    fi.setProperty(helics::defs::properties::log_level, 5);
     if (app["--startbroker"]->count () > 0)
     {
         brk = helics::apps::BrokerApp (fi.coreType, brokerArgs);
@@ -49,7 +49,7 @@ int main (int argc, char *argv[])
 
     auto mFed = std::make_unique<helics::MessageFederate> (std::string{},fi);
     auto name = mFed->getName();
-	std::cout << " registering endpoint '" << myendpoint << "' for " << name<<'\n';
+    std::cout << " registering endpoint '" << myendpoint << "' for " << name<<'\n';
 
     // create the endpoint using the Endpoint object interface
     helics::Endpoint endpoint(mFed.get(), myendpoint);
@@ -63,16 +63,16 @@ int main (int argc, char *argv[])
     // set a defined target for the endpoint so it doesn't have to specified on every call
     endpoint.setDefaultDestination(target);
     for (int i=1; i<10; ++i) {
-		std::string message = "message sent from "+name+" to "+target+" at time " + std::to_string(i);
-		endpoint.send(message.data(), message.size());
+        std::string message = "message sent from "+name+" to "+target+" at time " + std::to_string(i);
+        endpoint.send(message.data(), message.size());
         std::cout << message << std::endl;
         auto newTime = mFed->requestTime (i);
-		std::cout << "processed time " << static_cast<double> (newTime) << "\n";
-		while (endpoint.hasMessage())
-		{
-			auto nmessage = endpoint.getMessage();
-			std::cout << "received message from " << nmessage->source << " at " << static_cast<double>(nmessage->time) << " ::" << nmessage->data.to_string() << '\n';
-		}
+        std::cout << "processed time " << static_cast<double> (newTime) << "\n";
+        while (endpoint.hasMessage())
+        {
+            auto nmessage = endpoint.getMessage();
+            std::cout << "received message from " << nmessage->source << " at " << static_cast<double>(nmessage->time) << " ::" << nmessage->data.to_string() << '\n';
+        }
 
     }
     mFed->finalize ();

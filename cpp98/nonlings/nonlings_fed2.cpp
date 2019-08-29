@@ -78,8 +78,8 @@ int main(int /*argc*/,char ** /*argv*/)
       double f2 = x*x + 4*y*y - 4;
 
       if(fabs(f2) < tol) {
-	newt_conv = 1;
-	break;
+    newt_conv = 1;
+    break;
       }
       iter++;
 

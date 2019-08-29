@@ -101,7 +101,7 @@ int main()
   snprintf(sendbuf,100,"%18.16f,%d",y,my_conv);
   helicsPublicationPublishString(pub, sendbuf,&err);
   if (err.error_code != helics_ok) {
-    printf("Error sending publication:%s\n",err.message);
+      printf("Error sending publication:%s\n",err.message);
   }
   fflush(NULL);
   /* Enter execution mode */
@@ -111,8 +111,8 @@ int main()
   fflush(NULL);
 
   while (currenttimeiter==helics_iteration_result_iterating) {
-      int global_conv = 0;
-      double x = 0.0;
+    int global_conv = 0;
+    double x = 0.0;
     helicsInputGetString(sub,recvbuf,100, &stringLength,NULL);
     sscanf(recvbuf,"%lf,%d",&x,&other_conv);
 
@@ -120,7 +120,7 @@ int main()
     global_conv = my_conv&other_conv;
 
     if(global_conv) {
-		currenttime=helicsFederateRequestTimeIterative(vfed, currenttime, helics_iteration_request_no_iteration,&currenttimeiter,&err);
+        currenttime=helicsFederateRequestTimeIterative(vfed, currenttime, helics_iteration_request_no_iteration,&currenttimeiter,&err);
     } else {
       /* Solve the system of equations for this federate */
       run_sim2(x,tol,&y,&converged);
@@ -129,18 +129,18 @@ int main()
       printf("Fed2 Current time %4.3f iteration %d x=%f, y=%f\n",currenttime, helics_iter,x,y);
 
       if ((fabs(y-yprv)>tol)) {
-	my_conv = 0;
-	printf("Fed2: publishing new y\n");
+          my_conv = 0;
+          printf("Fed2: publishing new y\n");
       } else {
-	my_conv = 1;
-	printf("Fed2: converged\n");
+          my_conv = 1;
+          printf("Fed2: converged\n");
       }
 
       snprintf(sendbuf,100,"%18.16f,%d",y,my_conv);
       helicsPublicationPublishString(pub, sendbuf,&err);
 
       fflush(NULL);
-	  currenttime=helicsFederateRequestTimeIterative(vfed, currenttime, helics_iteration_request_force_iteration,&currenttimeiter,&err);
+      currenttime=helicsFederateRequestTimeIterative(vfed, currenttime, helics_iteration_request_force_iteration,&currenttimeiter,&err);
       yprv = y;
     }
   }

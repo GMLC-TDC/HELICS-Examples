@@ -20,7 +20,7 @@ int main ()
     helics_federate vfed;
     helics_input sub;
     helics_time currenttime = 0.0;
-	helics_error err= helicsErrorInitialize();
+    helics_error err= helicsErrorInitialize();
     double value = 0.0;
 
     helicsversion = helicsGetVersion ();
@@ -43,48 +43,48 @@ int main ()
        setTimedelta routine is a multiplier for the default timedelta.
     */
     /* Set one second message interval */
-	helicsFederateInfoSetTimeProperty(fedinfo, helics_property_time_period, deltat, &err);
+    helicsFederateInfoSetTimeProperty(fedinfo, helics_property_time_period, deltat, &err);
 
     helicsFederateInfoSetIntegerProperty(fedinfo, helics_property_int_log_level,1,&err);
 
     /* Create value federate */
     vfed = helicsCreateValueFederate ("TestB Federate",fedinfo,&err);
     printf ("PI RECEIVER: Value federate created\n");
-	
+
     /* Free the federateInfo structure */
-	helicsFederateInfoFree(fedinfo);
+    helicsFederateInfoFree(fedinfo);
 
     /* Subscribe to PI SENDER's publication */
     sub = helicsFederateRegisterSubscription (vfed, "testA", "",&err);
     printf ("PI RECEIVER: Subscription registered\n");
 
     /* Enter initialization mode */
-	helicsFederateEnterInitializingMode(vfed, &err);
+    helicsFederateEnterInitializingMode(vfed, &err);
     if (err.error_code == helics_ok)
     {
         printf ("PI RECEIVER: Entered initialization mode\n");
     }
     else
     {
-		printf("PI RECEIVER: Failed to Entered initialization mode: %s\n",err.message);
+        printf("PI RECEIVER: Failed to Entered initialization mode: %s\n",err.message);
         return (err.error_code);
     }
 
     /* Enter execution mode */
-	helicsFederateEnterExecutingMode(vfed, &err);
+    helicsFederateEnterExecutingMode(vfed, &err);
     if (err.error_code == helics_ok)
     {
         printf ("PI RECEIVER: Entered execution mode\n");
     }
-	else
-	{
-		printf("PI RECEIVER: Failed to Entered execution mode: %s\n", err.message);
-		return (err.error_code);
-	}
+    else
+    {
+        printf("PI RECEIVER: Failed to Entered execution mode: %s\n", err.message);
+        return (err.error_code);
+    }
     while (currenttime < 0.20)
     {
         int isupdated;
-		currenttime=helicsFederateRequestTime (vfed, currenttime, &err);
+        currenttime=helicsFederateRequestTime (vfed, currenttime, &err);
 
         isupdated = helicsInputIsUpdated (sub);
         if (isupdated!=helics_false)
