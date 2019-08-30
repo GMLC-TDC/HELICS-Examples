@@ -21,7 +21,7 @@ int main (int argc, const char * const *argv)
     app.add_option ("--startbroker", brokerArgs, "start a broker with the specified arguments");
 
     auto ret = app.helics_parse (argc, argv);
-    
+
     helics::FederateInfo fi;
     if (ret == helics::helicsCLI11App::parse_output::help_call)
     {
@@ -35,18 +35,18 @@ int main (int argc, const char * const *argv)
     fi.defName = "fed";
     fi.loadInfoFromArgs (app.remainArgs ());
 
-	fi.setProperty(helics::defs::properties::log_level, 5);
+    fi.setProperty(helics::defs::properties::log_level, 5);
     if (app["--startbroker"]->count () > 0)
     {
         brk = helics::apps::BrokerApp (fi.coreType, brokerArgs);
     }
-    
+
     auto vFed = std::make_unique<helics::ValueFederate> (std::string{},fi);
 
     auto &pub = vFed->registerPublication ("pub", "double");
 
     auto &sub = vFed->registerSubscription(target + "/pub", "double");
-	//TODO:: add optional property
+    //TODO:: add optional property
     std::cout << "entering init Mode\n";
     vFed->enterInitializingMode ();
     std::cout << "entered init Mode\n";
@@ -60,7 +60,7 @@ int main (int argc, const char * const *argv)
             auto val = sub.getValue<double>();
             std::cout << "received updated value of " << val << " at "<< newTime << " from " << vFed->getTarget(sub) << '\n';
         }
-        
+
         std::cout << "processed time " << static_cast<double> (newTime) << "\n";
     }
     vFed->finalize ();

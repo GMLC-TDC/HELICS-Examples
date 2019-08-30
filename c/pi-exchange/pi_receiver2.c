@@ -28,7 +28,7 @@ int main()
 
   helicsversion = helicsGetVersion();
 
-  
+
   printf("PI RECEIVER: Helics version = %s\n",helicsversion);
   printf("%s",help);
 
@@ -90,10 +90,10 @@ int main()
     while(!isupdated) {
       currenttime=helicsFederateRequestTime(vfed,currenttime, &err);
       isupdated = helicsInputIsUpdated(sub);
-	  if (currenttime > 0.21)
-	  {
-		  break;
-	  }
+      if (currenttime > 0.21)
+      {
+          break;
+      }
     }
     value=helicsInputGetDouble(sub,&err); /* Note: The sender sent this value at currenttime-deltat */
     printf("PI RECEIVER: Received value = %4.3f at time %3.2f from PI SENDER\n",value,currenttime);

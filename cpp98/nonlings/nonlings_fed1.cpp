@@ -37,8 +37,8 @@ int main (int /*argc*/, char ** /*argv*/)
 
     /* Federate init string */
     fi.setCoreInitString (fedinitstring);
-	fi.setProperty(helics_property_time_delta, deltat);
-	fi.setProperty(helics_property_int_max_iterations, 100);
+    fi.setProperty(helics_property_time_delta, deltat);
+    fi.setProperty(helics_property_int_max_iterations, 100);
 
     //fi.setLoggingLevel(5);
 
@@ -113,7 +113,7 @@ int main (int /*argc*/, char ** /*argv*/)
     fflush (NULL);
     // Destructor for ValueFederate must be called before close library
     delete vfed;
-	broker.waitForDisconnect();
+    broker.waitForDisconnect();
     printf ("NLIN1: Broker disconnected\n");
     helicsCloseLibrary ();
     printf ("NLIN1: Library closed\n");

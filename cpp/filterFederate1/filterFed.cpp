@@ -18,7 +18,7 @@ int main (int argc, char *argv[])
     std::string filtType = "delay";
     helics::filter_types ftype;
     double dropprob = 0.33;
-   
+
     app.add_option ("--target,-t", targetFederate, "name of the federate to target");
     app.add_option ("--endpoint,-e", targetEndpoint, "name of the endpoint to filter");
     app.add_option ("--delay", delay, "the time to delay the message");
@@ -52,11 +52,11 @@ int main (int argc, char *argv[])
     std::string target = targetFederate + "/" + targetEndpoint;
 
     auto core = helics::CoreFactory::create(argc, argv);
-	std::cout << " registering filter '"<< "' for " << target <<'\n';
+    std::cout << " registering filter '"<< "' for " << target <<'\n';
 
     //create a source filter object with type, the fed pointer and a target endpoint
     auto filt = helics::make_filter(ftype, core.get());
-	filt->addSourceTarget(target);
+    filt->addSourceTarget(target);
 
     // get a few specific parameters related to the particular filter
     switch (ftype)
@@ -83,7 +83,7 @@ int main (int argc, char *argv[])
     // setup and run
     core->setCoreReadyToInit();
 
-	core->waitForDisconnect();
+    core->waitForDisconnect();
     return 0;
 }
 

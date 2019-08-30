@@ -1,5 +1,5 @@
 #
-# Copyright © 2017-2018, Battelle Memorial Institute; Lawrence Livermore National
+# Copyright Â© 2017-2018, Battelle Memorial Institute; Lawrence Livermore National
 # Security, LLC; Alliance for Sustainable Energy, LLC All rights reserved. See LICENSE
 # file and DISCLAIMER for more details.
 #
@@ -11,8 +11,8 @@ project (HELICS-CPP-EXAMPLES VERSION 2.1.0)
 
 get_directory_property(hasParent PARENT_DIRECTORY)
 if(NOT hasParent)
-	set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-	include(GNUInstallDirs)
+    set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+    include(GNUInstallDirs)
 endif()
 
 # -----------------------------------------------------------------------------

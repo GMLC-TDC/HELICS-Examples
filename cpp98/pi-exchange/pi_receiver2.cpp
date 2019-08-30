@@ -73,10 +73,10 @@ int main(int /*argc*/,char ** /*argv*/)
     while(!isupdated) {
       currenttime = vfed.requestTime(currenttime);
       isupdated = sub.isUpdated();
-	  if (currenttime > 0.21)
-	  {
-		  break;
-	  }
+      if (currenttime > 0.21)
+      {
+          break;
+      }
     }
     double value = sub.getDouble(); /* Note: The sender sent this value at currenttime-deltat */
     printf("PI RECEIVER: Received value = %4.3f at time %3.2f from PI SENDER\n",value,currenttime);
