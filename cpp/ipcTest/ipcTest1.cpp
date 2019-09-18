@@ -46,8 +46,8 @@ int main (int, char **)
     helics::FederateInfo fed_info;
     fed_info.coreType = helics::core_type::IPC;
     fed_info.coreInitString = "--broker=stevebroker --federates 1";
-	fed_info.setProperty(helics::defs::properties::time_delta, delta_t);
-	fed_info.setProperty(helics::defs::properties::log_level, 5);
+    fed_info.setProperty(helics::defs::properties::time_delta, delta_t);
+    fed_info.setProperty(helics::defs::properties::log_level, 5);
 
     helics::ValueFederate fed ("TestA Federate",fed_info);
 

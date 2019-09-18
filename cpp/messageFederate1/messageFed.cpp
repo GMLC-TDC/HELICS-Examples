@@ -41,15 +41,15 @@ int main (int argc, char *argv[])
 
     std::string target = targetFederate + "/" + targetEndpoint;
 
-	fi.setProperty(helics::defs::properties::log_level, 5);
+    fi.setProperty(helics::defs::properties::log_level, 5);
     if (app["--startbroker"]->count () > 0)
     {
         brk = helics::apps::BrokerApp (fi.coreType, brokerArgs);
     }
-    
+
     auto mFed = std::make_unique<helics::MessageFederate> (std::string{},fi);
     auto name = mFed->getName();
-	std::cout << " registering endpoint '" << myendpoint << "' for " << name<<'\n';
+    std::cout << " registering endpoint '" << myendpoint << "' for " << name<<'\n';
 
     //this line actually creates an endpoint
     auto &ept = mFed->registerEndpoint(myendpoint);
@@ -60,16 +60,16 @@ int main (int argc, char *argv[])
     mFed->enterExecutingMode ();
     std::cout << "entered exec State\n";
     for (int i=1; i<10; ++i) {
-		std::string message = "message sent from "+name+" to "+target+" at time " + std::to_string(i);
-		mFed->sendMessage(ept, target, message.data(), message.size());
+        std::string message = "message sent from "+name+" to "+target+" at time " + std::to_string(i);
+        mFed->sendMessage(ept, target, message.data(), message.size());
         std::cout << message << std::endl;
         auto newTime = mFed->requestTime (i);
-		std::cout << "processed time " << static_cast<double> (newTime) << "\n";
-		while (mFed->hasMessage(ept))
-		{
-			auto nmessage = mFed->getMessage(ept);
-			std::cout << "received message from " << nmessage->source << " at " << static_cast<double>(nmessage->time) << " ::" << nmessage->data.to_string() << '\n';
-		}
+        std::cout << "processed time " << static_cast<double> (newTime) << "\n";
+        while (mFed->hasMessage(ept))
+        {
+            auto nmessage = mFed->getMessage(ept);
+            std::cout << "received message from " << nmessage->source << " at " << static_cast<double>(nmessage->time) << " ::" << nmessage->data.to_string() << '\n';
+        }
 
     }
     mFed->finalize ();

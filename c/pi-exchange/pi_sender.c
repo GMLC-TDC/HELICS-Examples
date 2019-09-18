@@ -102,7 +102,7 @@ int main()
   helicsFederateFree(vfed);
   while(helicsBrokerIsConnected(broker)) {
 #ifdef _MSC_VER
-	  Sleep(100);
+      Sleep(100);
 #else
     usleep(100000); /* Sleep for 100 millisecond */
 #endif

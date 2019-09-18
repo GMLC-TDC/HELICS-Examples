@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
     ept = helicsFederateRegisterEndpoint(cFed, source, "",NULL);
 
     pubid = helicsFederateRegisterTypePublication(cFed, "pub", "double", "",NULL);
-    
+
     targetSubscription = (char *)malloc(strlen(valuetarget) + 4);
     strcpy(targetSubscription, messagetarget);
     strcat(targetSubscription, "/pub");
@@ -119,7 +119,7 @@ int main(int argc, char *argv[])
 
         printf(" %s \n", message);
         helicsPublicationPublishDouble(pubid,(double)ii,NULL);
-		newTime=helicsFederateRequestTime(cFed, (helics_time)ii, NULL);
+        newTime=helicsFederateRequestTime(cFed, (helics_time)ii, NULL);
 
         printf("granted time %f\n", newTime);
         while (helicsEndpointHasMessage(ept) == helics_true)

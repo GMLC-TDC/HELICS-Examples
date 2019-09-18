@@ -29,7 +29,7 @@ static const char defSourceEndpoint[] = "endpoint";
 int main (int argc, char *argv[])
 {
     helics_federate_info fedinfo = helicsCreateFederateInfo();
-	const char *target = defTarget;
+    const char *target = defTarget;
     const char *endpoint = defTargetEndpoint;
     const char *source = defSourceEndpoint;
     char *targetEndpoint = NULL;
@@ -39,10 +39,10 @@ int main (int argc, char *argv[])
     const char *str=NULL;
     char message[1024];
     helics_time newTime;
-	helics_error err = helicsErrorInitialize();
+    helics_error err = helicsErrorInitialize();
     for (ii = 1; ii < argc; ++ii)
     {
-        
+
         if (strcmp(argv[ii], "--target")==0)
         {
             target=argv[ii + 1];
@@ -66,11 +66,11 @@ int main (int argc, char *argv[])
             printf(" --help, -? display help\n");
             return 0;
         }
-      
+
     }
-	
+
     helicsFederateInfoLoadFromArgs(fedinfo, argc, (const char * const*)argv,&err);
-    
+
     mFed = helicsCreateMessageFederate("fed",fedinfo,&err);
 
     targetEndpoint = (char *)malloc(strlen(target) + 2 + strlen(endpoint));
@@ -91,21 +91,21 @@ int main (int argc, char *argv[])
     for (ii=1; ii<10; ++ii) {
         snprintf(message,1024, "message sent from %s to %s at time %d", str, targetEndpoint, ii);
         helicsEndpointSendMessageRaw(ept, targetEndpoint, message, (int)(strlen(message)),&err);
-		
+
         printf(" %s \n", message);
         newTime=helicsFederateRequestTime(mFed, (helics_time)ii, &err);
 
         printf("granted time %f\n", newTime);
-		while (helicsEndpointHasMessage(ept)==helics_true)
-		{
-			helics_message nmessage = helicsEndpointGetMessage(ept);
+        while (helicsEndpointHasMessage(ept)==helics_true)
+        {
+            helics_message nmessage = helicsEndpointGetMessage(ept);
             printf("received message from %s at %f ::%s\n", nmessage.source, nmessage.time, nmessage.data);
-		}
+        }
 
     }
     printf("finalizing federate\n");
     helicsFederateDestroy(mFed);
-   
+
     return 0;
 }
 

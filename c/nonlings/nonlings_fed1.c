@@ -62,7 +62,7 @@ int main ()
     double tol = 1E-8;
     int my_conv=0,other_conv; /* Global and local convergence */
     int helics_iter = 0;
-	helics_error err = helicsErrorInitialize();
+    helics_error err = helicsErrorInitialize();
 
     helicsversion = helicsGetVersion ();
 
@@ -87,9 +87,9 @@ int main ()
     /* Federate init string */
      helicsFederateInfoSetCoreInitString (fedinfo, fedinitstring,&err);
 
-	 /* Set one second message interval */
-	 helicsFederateInfoSetTimeProperty(fedinfo, helics_property_time_period, deltat, &err);
-	 helicsFederateInfoSetIntegerProperty(fedinfo, helics_property_int_max_iterations, 100, &err);
+     /* Set one second message interval */
+     helicsFederateInfoSetTimeProperty(fedinfo, helics_property_time_period, deltat, &err);
+     helicsFederateInfoSetIntegerProperty(fedinfo, helics_property_int_max_iterations, 100, &err);
 
     /*status = helicsFederateInfoSetLoggingLevel (fedinfo, 5); */
 
@@ -135,30 +135,30 @@ int main ()
       global_conv = my_conv&other_conv;
 
       if(global_conv) {
-		  currenttime=helicsFederateRequestTimeIterative(vfed, currenttime, helics_iteration_request_no_iteration,&currenttimeiter,&err);
+          currenttime=helicsFederateRequestTimeIterative(vfed, currenttime, helics_iteration_request_no_iteration,&currenttimeiter,&err);
       } else {
 
-	/* Solve the system of equations for this federate */
-	run_sim1(y,tol,&x,&converged);
+    /* Solve the system of equations for this federate */
+    run_sim1(y,tol,&x,&converged);
 
-	++helics_iter;
-	printf("Fed1: Current time %4.3f iteration %d x=%f, y=%f\n",currenttime,helics_iter, x, y);
+    ++helics_iter;
+    printf("Fed1: Current time %4.3f iteration %d x=%f, y=%f\n",currenttime,helics_iter, x, y);
 
-	if ((fabs(x-xprv)>tol)) {
-	  my_conv = 0;
-	  printf("Fed1: publishing new x\n");
-	} else {
-	  my_conv = 1;
-	  printf("Fed1: converged\n");
-	}
+    if ((fabs(x-xprv)>tol)) {
+      my_conv = 0;
+      printf("Fed1: publishing new x\n");
+    } else {
+      my_conv = 1;
+      printf("Fed1: converged\n");
+    }
 
-	snprintf(sendbuf,100,"%18.16f,%d",x,my_conv);
-	helicsPublicationPublishString(pub, sendbuf,&err);
+    snprintf(sendbuf,100,"%18.16f,%d",x,my_conv);
+    helicsPublicationPublishString(pub, sendbuf,&err);
 
-	fflush(NULL);
+    fflush(NULL);
 
-	currenttime=helicsFederateRequestTimeIterative(vfed, currenttime, helics_iteration_request_force_iteration,&currenttimeiter,&err);
-	xprv = x;
+    currenttime=helicsFederateRequestTimeIterative(vfed, currenttime, helics_iteration_request_force_iteration,&currenttimeiter,&err);
+    xprv = x;
       }
     }
 
@@ -166,8 +166,8 @@ int main ()
     printf ("NLIN1: Federate finalized\n");
     fflush (NULL);
     helicsFederateFree (vfed);
-	helicsBrokerWaitForDisconnect(broker, -1, &err);
-    
+    helicsBrokerWaitForDisconnect(broker, -1, &err);
+
     helicsBrokerFree(broker);
     printf ("NLIN1: Broker disconnected\n");
     helicsCloseLibrary ();

@@ -67,7 +67,7 @@ OPTION(ENABLE_CPP_EXAMPLES "Enable the C++ based examples to be built" ON)
 OPTION(ENABLE_CPP98_EXAMPLES "Enable the C++98 based examples to be built" ON)
 
 if (ENABLE_C_EXAMPLES)
-	add_subdirectory(c)
+    add_subdirectory(c)
 endif()
 
 if (ENABLE_CPP_EXAMPLES)
