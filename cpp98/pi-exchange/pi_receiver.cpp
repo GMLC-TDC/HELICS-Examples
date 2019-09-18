@@ -8,7 +8,7 @@ static char help[] = " PI RECEIVER: Simple program to demonstrate the usage of H
             This example creates a value federate subscribing to the publication \n\
             registered by PI SENDER.\n\n";
 
-#include <stdio.h>
+#include <cstdio>
 #include <helics/cpp98/ValueFederate.hpp>
 #include <helics/cpp98/helics.hpp>
 
@@ -30,7 +30,7 @@ int main(int /*argc*/,char ** /*argv*/)
   helicscpp::FederateInfo fi( "zmq");
 
   /* Federate init string */
-  fi.setCoreInitString(fedinitstring);
+  fi.setCoreInit(fedinitstring);
 
   /* Set the message interval (timedelta) for federate. Note that
      HELICS minimum message time interval is 1 ns and by default
