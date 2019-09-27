@@ -40,7 +40,7 @@ int main(int /*argc*/,char ** /*argv*/)
   helicscpp::FederateInfo fi( "zmq");
 
   /* Federate init string */
-  fi.setCoreInitString(fedinitstring);
+  fi.setCoreInit(fedinitstring);
 
   /* Set the message interval (timedelta) for federate. Note that
      HELICS minimum message time interval is 1 ns and by default

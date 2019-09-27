@@ -4,8 +4,8 @@ Copyright © 2017-2018,
 Battelle Memorial Institute; Lawrence Livermore National Security, LLC; Alliance for Sustainable Energy, LLC
 All rights reserved. See LICENSE file and DISCLAIMER for more details.
 */
-#include <stdio.h>
-#include <math.h>
+#include <cstdio>
+#include <cmath>
 #include <helics/cpp98/ValueFederate.hpp>
 #include <helics/cpp98/helics.hpp> // helicsVersionString
 
@@ -27,7 +27,7 @@ int main(int /*argc*/,char ** /*argv*/)
   helicscpp::FederateInfo fi ( "zmq");
 
   /* Federate init string */
-  fi.setCoreInitString (fedinitstring);
+  fi.setCoreInit (fedinitstring);
 
   fi.setProperty(helics_property_time_delta, deltat);
   fi.setProperty(helics_property_int_log_level, helics_log_level_warning);
@@ -41,7 +41,7 @@ int main(int /*argc*/,char ** /*argv*/)
   printf(" Subscription registered\n");
 
   /* Register the publication */
-  pub = vfed->registerGlobalTypePublication("testB","double");
+  pub = vfed->registerGlobalPublication("testB","double");
   printf(" Publication registered\n");
 
 

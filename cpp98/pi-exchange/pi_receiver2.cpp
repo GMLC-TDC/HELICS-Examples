@@ -9,7 +9,7 @@ static char help[] = "Example to demonstrate the usage of HELICS C Interface wit
             Here, a value federate, that can both publish and subscribe is created.\n\
             This federate can only publish a value once it receives value from the other federate.\n\n";
 
-#include <stdio.h>
+#include <cstdio>
 #include <helics/cpp98/ValueFederate.hpp>
 #include <helics/cpp98/helics.hpp> // helicsVersionString
 #include <cmath>
@@ -30,7 +30,7 @@ int main(int /*argc*/,char ** /*argv*/)
   helicscpp::FederateInfo fi( "zmq");
 
   /* Federate init string */
-  fi.setCoreInitString(fedinitstring);
+  fi.setCoreInit(fedinitstring);
 
   /* Set the message interval (timedelta) for federate. Note that
      HELICS minimum message time interval is 1 ns and by default
@@ -51,7 +51,7 @@ int main(int /*argc*/,char ** /*argv*/)
   printf("PI RECEIVER: Subscription registered\n");
 
   /* Register the publication */
-  pub = vfed.registerGlobalTypePublication("testB","double");
+  pub = vfed.registerGlobalPublication("testB","double");
   printf("PI RECEIVER: Publication registered\n");
 
   fflush(NULL);

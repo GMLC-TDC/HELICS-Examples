@@ -7,12 +7,12 @@ All rights reserved. See LICENSE file and DISCLAIMER for more details.
 #include <helics/cpp98/ValueFederate.hpp>
 #include <helics/cpp98/Broker.hpp>
 #include <helics/cpp98/helics.hpp> // helicsVersionString
-#include <math.h>
-#include <stdio.h>
+#include <cmath>
+#include <cstdio>
 
 int main (int /*argc*/, char ** /*argv*/)
 {
-    std::string initstring = "=f 2 --name=mainbroker";
+    std::string initstring = "-f 2 --name=mainbroker";
     std::string fedinitstring = "--broker=mainbroker --federates=1";
     double deltat = 0.01;
     helicscpp::Publication pub;
@@ -36,7 +36,7 @@ int main (int /*argc*/, char ** /*argv*/)
     helicscpp::FederateInfo fi ( "zmq");
 
     /* Federate init string */
-    fi.setCoreInitString (fedinitstring);
+    fi.setCoreInit (fedinitstring);
     fi.setProperty(helics_property_time_delta, deltat);
     fi.setProperty(helics_property_int_max_iterations, 100);
 
@@ -47,7 +47,7 @@ int main (int /*argc*/, char ** /*argv*/)
     printf (" Value federate created\n");
 
     /* Register the publication */
-    pub = vfed->registerGlobalTypePublication ("testA", "double");
+    pub = vfed->registerGlobalPublication ("testA", "double");
     printf (" Publication registered\n");
 
     sub = vfed->registerSubscription ("testB");
