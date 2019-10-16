@@ -14,7 +14,8 @@ If you would like to contribute to the Utilities or HELICS project see [CONTRIBU
  - Brian Palmentier
 
 ### Other
-Bryan Richardson
+[Bryan Richardson](https://github.com/activeshadow) Active Shadow LLC
+[Cody Rooks](https://github.com/rookscody) University of Tennessee (Knoxville)
 
 ## Used Libraries or Code
 ### [HELICS](https://github.com/GMLC-TDC/HELICS)  
