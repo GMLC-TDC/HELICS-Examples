@@ -15,6 +15,6 @@ endif()
 find_package(HELICS 2 REQUIRED)
 
 add_executable(filterFed-cpp filterFed.cpp)
-target_link_libraries(filterFed-cpp HELICS::helics_apps)
+target_link_libraries(filterFed-cpp HELICS::helics-apps-shared)
 
 set_target_properties(filterFed-cpp PROPERTIES FOLDER cpp/federates)

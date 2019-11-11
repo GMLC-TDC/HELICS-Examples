@@ -6,6 +6,7 @@ All rights reserved. See LICENSE file and DISCLAIMER for more details.
 
 #include "helics/application_api.hpp"
 #include "helics/core/helicsCLI11.hpp"
+#include "helics/core/Core.hpp"
 #include <iostream>
 #include <thread>
 
@@ -16,13 +17,13 @@ int main (int argc, char *argv[])
     std::string targetEndpoint = "endpoint";
     std::string delay = "1.0";
     std::string filtType = "delay";
-    helics::filter_types ftype;
+    helics::filter_types ftype = helics::filter_types::delay;
     double dropprob = 0.33;
 
     app.add_option ("--target,-t", targetFederate, "name of the federate to target");
     app.add_option ("--endpoint,-e", targetEndpoint, "name of the endpoint to filter");
     app.add_option ("--delay", delay, "the time to delay the message");
-    app.add_option ("--filtertype", filtType, "the type of filter to implement")
+    app.add_option ("--filtertype", filtType, "the type of filter to implement",true)
         ->check(CLI::IsMember({
                         "delay",
                         "random_drop",
@@ -51,11 +52,11 @@ int main (int argc, char *argv[])
 
     std::string target = targetFederate + "/" + targetEndpoint;
 
-    auto core = helics::CoreFactory::create(argc, argv);
+    auto core = helics::CoreApp(argc, argv);
     std::cout << " registering filter '"<< "' for " << target <<'\n';
 
     //create a source filter object with type, the fed pointer and a target endpoint
-    auto filt = helics::make_filter(ftype, core.get());
+    auto filt = helics::make_filter(ftype, core);
     filt->addSourceTarget(target);
 
     // get a few specific parameters related to the particular filter
@@ -81,9 +82,9 @@ int main (int argc, char *argv[])
     }
 
     // setup and run
-    core->setCoreReadyToInit();
+	core.setReadyToInit();
 
-    core->waitForDisconnect();
+    core.waitForDisconnect();
     return 0;
 }
 

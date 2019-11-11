@@ -15,7 +15,7 @@ endif()
 find_package(HELICS 2 REQUIRED)
 
 add_executable(comboFed-cpp comboFed.cpp)
-target_link_libraries(comboFed-cpp HELICS::helics_apps)
+target_link_libraries(comboFed-cpp HELICS::helics-apps-shared)
 
 set_property(TARGET comboFed-cpp PROPERTY CXX_STANDARD 14)
 set_target_properties(comboFed-cpp PROPERTIES FOLDER cpp/federates)
