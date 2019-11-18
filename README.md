@@ -1,5 +1,7 @@
 # HELICS-Examples
 
+[![Build Status](https://dev.azure.com/HELICS-test/HELICS-Examples/_apis/build/status/GMLC-TDC.HELICS-Examples?branchName=master)](https://dev.azure.com/HELICS-test/HELICS-Examples/_build/latest?definitionId=2?branchName=master)
+
 Examples for using HELICS with a variety of the supported programming languages
 
 All C and C++ examples can be build through CMAKE.  They can be build from individual folders or by running CMAKE on the main folder
