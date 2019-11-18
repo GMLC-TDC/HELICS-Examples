@@ -50,14 +50,14 @@ jobs:
   - task: CMake@1
     inputs:
       workingDirectory: HELICS/build
-      cmakeArgs: -GNinja -DCMAKE_BUILD_TYPE=Release -DHELICS_BUILD_TESTS=OFF -DHELICS_BUILD_EXAMPLES=OFF ..
+      cmakeArgs: -GNinja -DCMAKE_BUILD_TYPE=Release -DHELICS_BUILD_CXX_SHARED_LIB=ON ..
     displayName: 'Linux/macOS - Configure HELICS'
     condition: ne( variables['Agent.OS'], 'Windows_NT' )
   # Windows
   - task: CMake@1
     inputs:
       workingDirectory: HELICS/build
-      cmakeArgs: -Ax64 -DCMAKE_BUILD_TYPE=Release -DHELICS_BUILD_TESTS=OFF -DHELICS_BUILD_EXAMPLES=OFF ..
+      cmakeArgs: -Ax64 -DCMAKE_BUILD_TYPE=Release -DHELICS_BUILD_CXX_SHARED_LIB=ON ..
     displayName: 'Windows - Configure HELICS'
     condition: eq( variables['Agent.OS'], 'Windows_NT' )
 
