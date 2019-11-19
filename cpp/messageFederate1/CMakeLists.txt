@@ -18,9 +18,9 @@ endif()
 find_package(HELICS 2 REQUIRED)
 
 add_executable(messageFed-cpp messageFed.cpp)
-target_link_libraries(messageFed-cpp HELICS::helics_apps)
+target_link_libraries(messageFed-cpp HELICS::helics-apps-shared)
 
 add_executable(messageFedObj-cpp messageFedObj.cpp)
-target_link_libraries(messageFedObj-cpp HELICS::helics_apps)
+target_link_libraries(messageFedObj-cpp HELICS::helics-apps-shared)
 
 set_target_properties(messageFed-cpp messageFedObj-cpp PROPERTIES FOLDER cpp/federates)

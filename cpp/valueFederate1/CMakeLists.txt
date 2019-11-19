@@ -18,6 +18,6 @@ endif()
 find_package(HELICS 2 REQUIRED)
 
 add_executable(valueFed-cpp valueFed.cpp)
-target_link_libraries(valueFed-cpp HELICS::helics_apps)
+target_link_libraries(valueFed-cpp HELICS::helics-apps-shared)
 
 set_target_properties(valueFed-cpp PROPERTIES FOLDER cpp/federates)

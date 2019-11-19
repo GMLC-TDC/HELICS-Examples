@@ -12,7 +12,7 @@ SPDX-License-Identifier: BSD-3-Clause
 #include <thread>
 
 #include <helics/ValueFederates.hpp>
-#include <helics/core/BrokerFactory.hpp>
+#include <helics/application_api/BrokerApp.hpp>
 
 #include "common.hpp"
 
@@ -33,7 +33,7 @@ int main (int, char **)
     std::cout << "trying to create broker..." << std::endl;
 
     auto init_string = std::string ("-f2 --name=stevebroker");
-    auto broker = helics::BrokerFactory::create (helics::core_type::INTERPROCESS, init_string);
+    helics::BrokerApp broker(helics::core_type::INTERPROCESS, init_string);
 
     std::cout << "created broker \"" << broker->getIdentifier () << "\"\n"
               << "broker is connected: " << std::boolalpha << broker->isConnected () << std::endl;
@@ -77,11 +77,7 @@ int main (int, char **)
     }
 
     fed.finalize ();
-    do  // sleep until the broker finishes
-    {
-        std::this_thread::sleep_for (std::chrono::milliseconds (500));
-
-    } while (broker->isConnected ());
+	broker.waitForDisconnect();
 
     return 0;
 }

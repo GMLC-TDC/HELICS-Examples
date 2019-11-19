@@ -19,9 +19,9 @@ find_package(HELICS 2 REQUIRED)
 find_package(Threads REQUIRED)
 
 add_executable(ipcTest1-cpp ipcTest1.cpp common.hpp)
-target_link_libraries(ipcTest1-cpp HELICS::helics-static Threads::Threads)
+target_link_libraries(ipcTest1-cpp HELICS::helics-shared Threads::Threads)
 
 add_executable(ipcTest2-cpp ipcTest2.cpp common.hpp)
-target_link_libraries(ipcTest2-cpp HELICS::helics-static Threads::Threads)
+target_link_libraries(ipcTest2-cpp HELICS::helics-shared Threads::Threads)
 
 set_target_properties(ipcTest1-cpp ipcTest2-cpp PROPERTIES FOLDER cpp/ipc)
