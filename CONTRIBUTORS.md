@@ -1,5 +1,5 @@
 # Contributors
-This file describes the contributors to the HELICS-examples library and the software used as part of this project It is part of the GMLC-TDC project and used in the HELICS project.  HELICS is a joint project between PNNL, LLNL, and NREL, with contributions from many other national Labs
+This file describes the contributors to the HELICS-examples library and the software used as part of this project. It is part of the GMLC-TDC project and used in the HELICS project.  HELICS is a joint project between PNNL, LLNL, and NREL, with contributions from many other national labs.
 If you would like to contribute to the HELICS-examples, HELICS, or any of the GMLC-TDC related repositories see [CONTRIBUTING](CONTRIBUTING.md)
 ## Individual contributors
 ### Pacific Northwest National Lab
