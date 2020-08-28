@@ -1,0 +1,35 @@
+{
+  "name": "EV_federate",
+  "loglevel": 1,
+  "coreType": "zmq",
+  "timedelta": 60,
+  "uninterruptible": true,
+  "terminate_on_error": true,
+  "endpoints": [
+    {
+      "name": "EV_federate/EV1.soc",
+      "destination": "EVController_federate/endpoint",
+      "global": true
+    },
+    {
+      "name": "EV_federate/EV2.soc",
+      "destination": "EVController_federate/endpoint",
+      "global": true
+    },
+    {
+      "name": "EV_federate/EV3.soc",
+      "destination": "EVController_federate/endpoint",
+      "global": true
+    },
+    {
+      "name": "EV_federate/EV4.soc",
+      "destination": "EVController_federate/endpoint",
+      "global": true
+    },
+    {
+      "name": "EV_federate/EV5.soc",
+      "destination": "EVController_federate/endpoint",
+      "global": true
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+
+{
+  "name": "EVController_federate",
+  "loglevel": 1,
+  "coreType": "zmq",
+  "timedelta": 60,
+  "uninterruptible": true,
+  "terminate_on_error": true,
+  "endpoints": [
+    {
+      "name": "EVController_federate/endpoint",
+      "global": true
+    }
+  ]
+}
