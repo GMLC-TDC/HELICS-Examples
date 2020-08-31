@@ -1,0 +1,32 @@
+{
+  "federates": [    
+    {
+      "directory": ".",
+      "exec": "helics_broker -f 2 --loglevel=7",
+      "host": "localhost",
+      "name": "broker"
+    },
+    {
+      "directory": ".",
+      "exec": "python -u EVComboFed.py 1",
+      "host": "localhost",
+      "name": "EV_federate",
+      "loglevel": 1
+    },
+    {
+      "directory": ".",
+      "exec": "python -u EVControllerMsgFed.py 1",
+      "host": "localhost",
+      "name": "EVController_federate",
+      "loglevel": 1
+    }
+    {
+      "directory": ".",
+      "exec": "python -u EVBatteryValueFed.py 1",
+      "host": "localhost",
+      "name": "EVBattery_federate",
+      "loglevel": 1
+    }
+  ],
+  "name": "EV_toy"
+}
