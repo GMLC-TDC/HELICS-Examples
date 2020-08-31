@@ -29,6 +29,14 @@ import matplotlib.pyplot as plt
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
+# Define battery physics as empirical values
+socs = np.array([0, 0.0667, 0.1333, 0.2, 0.2667, 0.3333, 0.4, 0.4667, 0.5333,
+                0.6, 0.6667, 0.7333, 0.8, 0.8667, 0.9333, 1])
+effective_R = np.array([2, 2.2222, 2.4444, 2.6667, 2.6815, 2.6963, 2.7111,
+                        2.7259, 2.7407, 2.7556, 2.7704, 2.7852, 2.8, 3.8182,
+                        6, 21])
+
+
 def destroy_federate(fed):
     '''
     As part of ending a HELICS co-simulation it is good housekeeping to
@@ -49,6 +57,7 @@ def destroy_federate(fed):
 
 
 if __name__ == "__main__":
+    np.random.seed(1)
 
     ##############  Registering  federate from json  ##########################
     name = "Battery_federate"
@@ -87,6 +96,15 @@ if __name__ == "__main__":
     update_interval = 60 # updates every minute
     grantedtime = -1
 
+    batt_size = 62  # kWh
+    batt_cell_series = 96
+    batt_cell_parallel = 3
+
+    current_soc = {}
+    for i in range (0, pub_count):
+        current_soc[i] = (np.randint(0,80))/100
+
+
 
     # Data collection lists
     time_sim = []
@@ -106,13 +124,28 @@ if __name__ == "__main__":
         t = grantedtime
 
         for j in range(0,sub_count):
+            logger.debug(f'Battery {j}')
 
             # Get the applied charging voltage from the EV
             charging_voltage = h.helicsInputGetDouble((subid[j]))
 
-            # TODO: Calculate charging current and update SOC
-            # Dummy value
-            charging_current = 1.00001
+            # EV is fully charged and a new EV is moving in:
+            if charging_voltage == 0:
+                current_soc[j] = (np.randint(0,80))/100
+
+            # Calculate charging current and update SOC
+            R = batt_cell_series * np.interp(socs, effective_R,
+                                              current_soc[j])
+            logger.debug(f'\t Effective R (ohms): {R}')
+            charging_current = charging_voltage / R
+            logger.debug(f'\t Charging current (A): {charging_current}')
+            added_energy = charging_current * charging_voltage * \
+                           update_interval/3600
+            logger.debug(f'\t Added energy (kWh): {added_energy}')
+            current_soc[j] = current_soc[j] + added_energy
+            logger.debug(f'\t SOC: {current_soc[j]}')
+
+
 
             # Publish out charging current
             h.helicsPublicationPublishDouble(pubid[j], charging_current)

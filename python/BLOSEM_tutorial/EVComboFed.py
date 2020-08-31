@@ -125,8 +125,10 @@ if __name__ == "__main__":
     #   size of a Nissan Leaf
     batt_size = 62 # kWh
 
-    # Current at this value indicates the EV is charging in constant
-    # current mode
+    # Charging current at this value indicates the EV is charging in constant
+    # current mode. We're going to assume this value is invariant with
+    # charging level and it is the charging voltage that changes.
+    # TODO: Define this value for reals
     critical_charging_current = 1
 
     # SOC at which the charging mode changes from constant current to
@@ -168,8 +170,10 @@ if __name__ == "__main__":
     #   constant current range the battery model will come back with the
     #   current that is too high and we'll drop the charging voltage down.
     charging_voltage = {}
+    new_EV = {}
     for j in range(0, end_count):
         charging_voltage[j] = constant_voltage[j]
+        new_EV[j] = False
 
     # Once granted an initial time, send the initial SOCs to the EV
     #   Controller
@@ -199,59 +203,76 @@ if __name__ == "__main__":
             charging_current = h.helicsInputGetDouble((subid[j]))
             logger.debug(f'\tCharging current: {charging_current}')
 
-
-            ############### SOC estimation ###################################
-            # Estimate SOC based on charging current and voltage
-            if charging_current >= charging_current:
-                # SOC is estimated by some function of charging voltage
-                # SOC in this range below the critical_soc. When the charging
-                #   voltage reaches the constant_voltage value we are,
-                #   by definition, assumed to be at the critical SOC value
-                voltage_diff = constant_voltage[j] - charging_voltage
-                voltage_factor = 1 - (voltage_diff / constant_voltage[j])
-                # TODO: Still need to implement the function that maps
-                #  charging votlage to SOC
-
+            if new_EV[j]:
+                charging_voltage[j] = 0
+                logger.debug(f'New EV; setting charging voltage to 0')
+                new_EV[j] = False
             else:
-                # SOC estimated based on charging current
-                #   As charging continues beyong the critical SOC, the voltage
-                #   will remain constant but the charging current will decrease
-                current_diff = critical_charging_current - charging_current
-                # The charging current is highest when the SOC is lowest
-                #   (in the constant voltage charging regime) Small
-                #   differences translate into low SOCs above 0.75
-                current_factor = current_diff / critical_charging_current
-                logger.debug(f'\t Current factor: {current_factor}')
-                currentsoc[j] = critical_soc + (current_factor / (1 -
-                                                                  critical_soc) )
-            logger.debug(f'\t EV SOC estimate: {currentsoc[j]}')
+                ############### SOC estimation ###################################
+                # Estimate SOC based on charging current and voltage
+                if charging_current == 0:
+                    # Just connected a new EV so going to charge at a
+                    #   nominal level and see what happens.
+                    # Making up the SOC level just so the controller doesn't
+                    #   disconnect the EV prematurely.
+                    charging_voltage[j] = constant_voltage[j]
+                    currentsoc[j] = 0
+
+                elif charging_current >= charging_current:
+                    # SOC is estimated by some function of charging voltage
+                    # SOC in this range below the critical_soc. When the charging
+                    #   voltage reaches the constant_voltage value we are,
+                    #   by definition, assumed to be at the critical SOC value
+                    voltage_diff = constant_voltage[j] - charging_voltage[j]
+                    voltage_factor = 1 - (voltage_diff / constant_voltage[j])
+                    # TODO: Still need to implement the function that maps
+                    #  charging voltage to SOC. Need to ensure we don't exceed
+                    #  the voltage rating for the level of charger.
+
+                else:
+                    # SOC estimated based on charging current
+                    #   As charging continues beyong the critical SOC, the voltage
+                    #   will remain constant but the charging current will decrease
+                    current_diff = critical_charging_current - charging_current
+                    # The charging current is highest when the SOC is lowest
+                    #   (in the constant voltage charging regime) Small
+                    #   differences translate into low SOCs above 0.75
+                    current_factor = current_diff / critical_charging_current
+                    logger.debug(f'\t Current factor: {current_factor}')
+                    currentsoc[j] = critical_soc + (current_factor / (1 -
+                                                                      critical_soc) )
+                logger.debug(f'\t EV SOC estimate: {currentsoc[j]}')
 
 
 
-            ######## Charging algorithm - Update charging voltage #############
-            # Model a charging algorithm with constant current during low
-            #   SOC periods and constant voltage during high SOC periods
-            #   We won't know the SOC when we start charging so need to
-            #   estimate it from the current
+                ######## Charging algorithm - Update charging voltage #############
+                # Model a charging algorithm with constant current during low
+                #   SOC periods and constant voltage during high SOC periods
+                #   We won't know the SOC when we start charging so need to
+                #   estimate it from the current
+                if charging_current != 0:
+                    # Don't need to do this if we just connected a new EV.
+                    #   Once the battery is providing real charging currents
+                    #   we'll estimate the new charging voltage.
+                    if charging_current > critical_charging_current:
+                        # Constant current charging
+                        # Stupid algorithm
+                        # TODO: implement a good-enough contant current charging
+                        #  algorithm
+                        logger.debug(f'\t Constant current charging')
+                        current_difference = charging_current - critical_charging_current
+                        current_factor_diff = current_difference / critical_charging_current
+                        charging_voltage[j] = charging_voltage[j] * ( 1+
+                                                                 current_factor_diff)
+                        logger.debug(f'\t Current percentage difference:'
+                                     f' {current_factor_diff}')
+                        logger.debug((f'\t New charging voltage:'
+                                     f' {charging_voltage[j]}'))
+                    else:
+                        # Constant voltage charging
+                        logger.debug(f'\t Constant voltage charging')
+                        logger.debug(f'\t New charging voltage: {charging_voltage[j]}')
 
-            if charging_current > critical_charging_current:
-                # Constant current charging
-                # Stupid algorithm
-                # TODO: implement a good-enough contant current charging
-                #  algorithm
-                logger.debug(f'\t Constant current charging')
-                current_difference = charging_current - critical_charging_current
-                current_factor_diff = current_difference / critical_charging_current
-                charging_voltage[j] = charging_voltage * ( 1+
-                                                         current_factor_diff)
-                logger.debug(f'\t Current percentage difference:'
-                             f' {current_factor_diff}')
-                logger.debug((f'\t New charging voltage:'
-                             f' {charging_voltage[j]}'))
-            else:
-                # Constant voltage charging
-                logger.debug(f'\t Constant voltage charging')
-                logger.debug(f'\t New charging voltage: {charging_voltage[j]}')
 
             # Publish updated charging voltage
             h.helicsPublicationPublishDouble(pubid[j], charging_voltage[j])
@@ -277,7 +298,8 @@ if __name__ == "__main__":
                     #   charging station
                     _,_,_,newEVtype = get_new_EV(1)
                     EVlist[j] = newEVtype[0]
-                    currentsoc[j] = 0.05
+                    new_EV = True
+                    #currentsoc[j] = 0.05
                     logger.info(f'\tEV full; moving in new EV charging at '
                                  f'level {newEVtype[0]}')
             else:
