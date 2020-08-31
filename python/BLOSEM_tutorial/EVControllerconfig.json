@@ -3,8 +3,8 @@
   "name": "EVController_federate",
   "loglevel": 1,
   "coreType": "zmq",
-  "timedelta": 60,
-  "uninterruptible": true,
+  "timedelta": 1,
+  "uninterruptible": false,
   "terminate_on_error": true,
   "endpoints": [
     {

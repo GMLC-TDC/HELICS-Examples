@@ -2,8 +2,8 @@
   "name": "EV_federate",
   "loglevel": 1,
   "coreType": "zmq",
-  "timedelta": 60,
-  "uninterruptible": true,
+  "period": 60,
+  "uninterruptible": false,
   "terminate_on_error": true,
   "endpoints": [
     {
