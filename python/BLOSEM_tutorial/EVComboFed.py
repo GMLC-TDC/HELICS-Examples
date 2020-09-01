@@ -84,13 +84,17 @@ if __name__ == "__main__":
     name = "EV_federate"
     fed = h.helicsCreateCombinationFederateFromConfig("EVconfig.json")
     federate_name = h.helicsFederateGetName(fed)
-    logging.info(f'Created federate {federate_name}')    
+    logging.info(f'Created federate {federate_name}')
     end_count = h.helicsFederateGetEndpointCount(fed)
     logging.info(f'\tNumber of endpoints: {end_count}')
     sub_count = h.helicsFederateGetInputCount(fed)
     logging.info(f'\tNumber of subscriptions: {sub_count}')
     pub_count = h.helicsFederateGetPublicationCount(fed)
     logging.info(f'\tNumber of publications: {pub_count}')
+    print(f'Created federate {federate_name}')
+    print(f'\tNumber of endpoints: {end_count}')
+    print(f'\tNumber of subscriptions: {sub_count}')
+    print(f'\tNumber of publications: {pub_count}')
 
     # Diagnostics to confirm JSON config correctly added the required
     #   endpoints, publications, and subscriptions.
@@ -102,13 +106,13 @@ if __name__ == "__main__":
     subid = {}
     for i in range(0, sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name = h.helicsEndpointGetName(subid[i])
+        sub_name = h.helicsSubscriptionGetKey(subid[i])
         logger.info(f'\tRegistered subscription---> {sub_name}')
 
     pubid = {}
     for i in range(0, pub_count):
         pubid[i] = h.helicsFederateGetPublicationByIndex(fed, i)
-        pub_name = h.helicsEndpointGetName(pubid[i])
+        pub_name = h.helicsPublicationGetKey(pubid[i])
         logger.info(f'\tRegistered publication---> {pub_name}')
 
 
@@ -149,7 +153,8 @@ if __name__ == "__main__":
     # charging current and switch to constant voltage charging mode.
     constant_voltage = {}
     for j, EV in enumerate(EVlist):
-        constant_voltage[j] = charge_rate[EVlist-1] / critical_charging_current
+        constant_voltage[j] = charge_rate[EV-1] / critical_charging_current
+        logger.info(f'voltage: {constant_voltage[j]}')
 
     # Set the SOCs of the initial EV fleet to arbitrary values
     currentsoc = np.linspace(0.1,0.5,num=end_count)
@@ -202,6 +207,7 @@ if __name__ == "__main__":
             #   uses the latest value provided by the battery model.
             charging_current = h.helicsInputGetDouble((subid[j]))
             logger.debug(f'\tCharging current: {charging_current}')
+            logger.debug(f'\tfrom input {h.helicsSubscriptionGetKey(subid[j])}')
 
             if new_EV[j]:
                 charging_voltage[j] = 0
@@ -218,7 +224,7 @@ if __name__ == "__main__":
                     charging_voltage[j] = constant_voltage[j]
                     currentsoc[j] = 0
 
-                elif charging_current >= charging_current:
+                elif charging_current >= critical_charging_current:
                     # SOC is estimated by some function of charging voltage
                     # SOC in this range below the critical_soc. When the charging
                     #   voltage reaches the constant_voltage value we are,
@@ -228,6 +234,8 @@ if __name__ == "__main__":
                     # TODO: Still need to implement the function that maps
                     #  charging voltage to SOC. Need to ensure we don't exceed
                     #  the voltage rating for the level of charger.
+                    #  implement json for value federate
+                    #
 
                 else:
                     # SOC estimated based on charging current
@@ -345,5 +353,3 @@ if __name__ == "__main__":
     plt.xlabel('time (hr)')
     plt.title('Instantaneous Power Draw from 5 EVs')
     plt.show()
-
-

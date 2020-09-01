@@ -69,20 +69,21 @@ if __name__ == "__main__":
     logging.info(f'\tNumber of subscriptions: {sub_count}')
     pub_count = h.helicsFederateGetPublicationCount(fed)
     logging.info(f'\tNumber of publications: {pub_count}')
-
+    print(f'\tNumber of subscriptions: {sub_count}')
+    print(f'\tNumber of publications: {pub_count}')
 
     # Diagnostics to confirm JSON config correctly added the required
     #   publications and subscriptions
     subid = {}
     for i in range(0, sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name = h.helicsEndpointGetName(subid[i])
+        sub_name = h.helicsSubscriptionGetKey(subid[i])
         logger.info(f'\tRegistered subscription---> {sub_name}')
 
     pubid = {}
     for i in range(0, pub_count):
         pubid[i] = h.helicsFederateGetPublicationByIndex(fed, i)
-        pub_name = h.helicsEndpointGetName(pubid[i])
+        pub_name = h.helicsPublicationGetKey(pubid[i])
         logger.info(f'\tRegistered publication---> {pub_name}')
 
 
@@ -102,7 +103,7 @@ if __name__ == "__main__":
 
     current_soc = {}
     for i in range (0, pub_count):
-        current_soc[i] = (np.randint(0,80))/100
+        current_soc[i] = (np.random.randint(0,80))/100
 
 
 
@@ -128,10 +129,11 @@ if __name__ == "__main__":
 
             # Get the applied charging voltage from the EV
             charging_voltage = h.helicsInputGetDouble((subid[j]))
-
+            logger.debug(f'\tvoltage {charging_voltage}')
+            logger.debug(f'\tfrom input {h.helicsSubscriptionGetKey(subid[j])}')
             # EV is fully charged and a new EV is moving in:
             if charging_voltage == 0:
-                current_soc[j] = (np.randint(0,80))/100
+                current_soc[j] = (np.random.randint(0,80))/100
 
             # Calculate charging current and update SOC
             R = batt_cell_series * np.interp(socs, effective_R,
@@ -158,5 +160,3 @@ if __name__ == "__main__":
 
     # Cleaning up HELICS stuff once we've finished the co-simulation.
     destroy_federate(fed)
-
-

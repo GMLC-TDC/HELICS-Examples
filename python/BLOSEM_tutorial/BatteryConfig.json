@@ -1,0 +1,72 @@
+{
+  "name": "Battery_federate",
+  "loglevel": 1,
+  "coreType": "zmq",
+  "period": 60,
+  "uninterruptible": false,
+  "terminate_on_error": true,
+  "publications":[
+    {
+      "key":"Battery_federate/EV1",
+      "type":"double",
+      "unit":"I",
+      "global": true
+    },
+    {
+      "key":"Battery_federate/EV2",
+      "type":"double",
+      "unit":"I",
+      "global": true
+    },
+    {
+      "key":"Battery_federate/EV3",
+      "type":"double",
+      "unit":"I",
+      "global": true
+    },
+    {
+      "key":"Battery_federate/EV4",
+      "type":"double",
+      "unit":"I",
+      "global": true
+    },
+    {
+      "key":"Battery_federate/EV5",
+      "type":"double",
+      "unit":"I",
+      "global": true
+    }
+  ],
+  "subscriptions":[
+    {
+      "key":"EV_federate/EV1",
+      "type":"double",
+      "unit":"V",
+      "global": true
+    },
+    {
+      "key":"EV_federate/EV2",
+      "type":"double",
+      "unit":"V",
+      "global": true
+    },
+    {
+      "key":"EV_federate/EV3",
+      "type":"double",
+      "unit":"V",
+      "global": true
+    },
+    {
+      "key":"EV_federate/EV4",
+      "type":"double",
+      "unit":"V",
+      "global": true
+    },
+    {
+      "key":"EV_federate/EV5",
+      "type":"double",
+      "unit":"V",
+      "global": true
+    }
+  ]
+}

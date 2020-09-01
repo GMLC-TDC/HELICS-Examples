@@ -1,5 +1,5 @@
 {
-  "federates": [    
+  "federates": [
     {
       "directory": ".",
       "exec": "helics_broker -f 2 --loglevel=7",
@@ -19,7 +19,7 @@
       "host": "localhost",
       "name": "EVController_federate",
       "loglevel": 1
-    }
+    },
     {
       "directory": ".",
       "exec": "python -u EVBatteryValueFed.py 1",
