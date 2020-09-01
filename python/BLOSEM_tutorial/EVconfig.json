@@ -34,31 +34,31 @@
   ],
   "publications":[
     {
-      "key":"EV_federate/EV1",
+      "key":"EV_federate/EV1_voltage",
       "type":"double",
       "unit":"V",
       "global": true
     },
     {
-      "key":"EV_federate/EV2",
+      "key":"EV_federate/EV2_voltage",
       "type":"double",
       "unit":"V",
       "global": true
     },
     {
-      "key":"EV_federate/EV3",
+      "key":"EV_federate/EV3_voltage",
       "type":"double",
       "unit":"V",
       "global": true
     },
     {
-      "key":"EV_federate/EV4",
+      "key":"EV_federate/EV4_voltage",
       "type":"double",
       "unit":"V",
       "global": true
     },
     {
-      "key":"EV_federate/EV5",
+      "key":"EV_federate/EV5_voltage",
       "type":"double",
       "unit":"V",
       "global": true
@@ -66,33 +66,33 @@
   ],
   "subscriptions":[
     {
-      "key":"Battery_federate/EV1",
+      "key":"Battery_federate/EV1_current",
       "type":"double",
-      "unit":"I",
+      "unit":"A",
       "global": true
     },
     {
-      "key":"Battery_federate/EV2",
+      "key":"Battery_federate/EV2_current",
       "type":"double",
-      "unit":"I",
+      "unit":"A",
       "global": true
     },
     {
-      "key":"Battery_federate/EV3",
+      "key":"Battery_federate/EV3_current",
       "type":"double",
-      "unit":"I",
+      "unit":"A",
       "global": true
     },
     {
-      "key":"Battery_federate/EV4",
+      "key":"Battery_federate/EV4_current",
       "type":"double",
-      "unit":"I",
+      "unit":"A",
       "global": true
     },
     {
-      "key":"Battery_federate/EV5",
+      "key":"Battery_federate/EV5_current",
       "type":"double",
-      "unit":"I",
+      "unit":"A",
       "global": true
     }
   ]
