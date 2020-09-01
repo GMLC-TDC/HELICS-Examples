@@ -153,7 +153,7 @@ if __name__ == "__main__":
     # charging current and switch to constant voltage charging mode.
     constant_voltage = {}
     for j, EV in enumerate(EVlist):
-        constant_voltage[j] = charge_rate[EV-1] / critical_charging_current
+        constant_voltage[j] = (charge_rate[EV-1] * 1000) / critical_charging_current
         logger.info(f'voltage: {constant_voltage[j]}')
 
     # Set the SOCs of the initial EV fleet to arbitrary values
@@ -164,7 +164,7 @@ if __name__ == "__main__":
     power = []
 
     # Blocking call for a time request at simulation time 0
-    initial_time = 60
+    initial_time = 90
     logger.debug(f'Requesting initial time {initial_time}')
     t = h.helicsFederateRequestTime(fed, initial_time )
     logger.debug(f'Granted time {t}')
@@ -201,7 +201,7 @@ if __name__ == "__main__":
 
         for j in range(0,end_count):
 
-            logger.debug(f'EV {j}:')
+            logger.debug(f'EV {j} time {t}')
             # Model the physics of the battery charging. This happens
             #   every time step whether a message comes in or not and always
             #   uses the latest value provided by the battery model.

@@ -75,16 +75,18 @@ if __name__ == "__main__":
     # Diagnostics to confirm JSON config correctly added the required
     #   publications and subscriptions
     subid = {}
+    sub_name = {}
     for i in range(0, sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name = h.helicsSubscriptionGetKey(subid[i])
-        logger.info(f'\tRegistered subscription---> {sub_name}')
+        sub_name[i] = h.helicsSubscriptionGetKey(subid[i])
+        logger.info(f'\tRegistered subscription---> {sub_name[i]}')
 
     pubid = {}
+    pub_name = {}
     for i in range(0, pub_count):
         pubid[i] = h.helicsFederateGetPublicationByIndex(fed, i)
-        pub_name = h.helicsPublicationGetKey(pubid[i])
-        logger.info(f'\tRegistered publication---> {pub_name}')
+        pub_name[i] = h.helicsPublicationGetKey(pubid[i])
+        logger.info(f'\tRegistered publication---> {pub_name[i]}')
 
 
     ##############  Entering Execution Mode  ##################################
@@ -125,19 +127,21 @@ if __name__ == "__main__":
         t = grantedtime
 
         for j in range(0,sub_count):
-            logger.debug(f'Battery {j}')
+            logger.debug(f'Battery {j} time {t}')
 
             # Get the applied charging voltage from the EV
             charging_voltage = h.helicsInputGetDouble((subid[j]))
-            logger.debug(f'\tvoltage {charging_voltage}')
-            logger.debug(f'\tfrom input {h.helicsSubscriptionGetKey(subid[j])}')
+            logger.debug(f'\tReceived voltage {charging_voltage} from input'
+                         f' {h.helicsSubscriptionGetKey(subid[j])}')
             # EV is fully charged and a new EV is moving in:
             if charging_voltage == 0:
                 current_soc[j] = (np.random.randint(0,80))/100
 
             # Calculate charging current and update SOC
-            R = batt_cell_series * np.interp(socs, effective_R,
-                                              current_soc[j])
+            R = (batt_cell_series / batt_cell_parallel) * np.interp(
+                    current_soc[j],
+                    socs,
+                    effective_R)
             logger.debug(f'\t Effective R (ohms): {R}')
             charging_current = charging_voltage / R
             logger.debug(f'\t Charging current (A): {charging_current}')
@@ -151,6 +155,8 @@ if __name__ == "__main__":
 
             # Publish out charging current
             h.helicsPublicationPublishDouble(pubid[j], charging_current)
+            logger.debug(f'\tPublished {pub_name[j]} with value '
+                         f'{charging_current}')
 
         # Data collection vectors
         time_sim.append(t)
