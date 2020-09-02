@@ -133,11 +133,14 @@ if __name__ == "__main__":
     # current mode. We're going to assume this value is invariant with
     # charging level and it is the charging voltage that changes.
     # TODO: Define this value for reals
-    critical_charging_current = 1
+    critical_charging_current = 4.5
 
     # SOC at which the charging mode changes from constant current to
     # constant voltage
     critical_soc = 0.75
+
+    # Charging adjustment gain factor.
+    voltage_adj_gain = 0.01
 
     hours = 24*7 # one week
     total_interval = int(60 * 60 * hours)
@@ -154,7 +157,7 @@ if __name__ == "__main__":
     constant_voltage = {}
     for j, EV in enumerate(EVlist):
         constant_voltage[j] = (charge_rate[EV-1] * 1000) / critical_charging_current
-        logger.info(f'voltage: {constant_voltage[j]}')
+        logger.info(f'constant voltage value: {constant_voltage[j]}')
 
     # Set the SOCs of the initial EV fleet to arbitrary values
     currentsoc = np.linspace(0.1,0.5,num=end_count)
@@ -164,7 +167,7 @@ if __name__ == "__main__":
     power = []
 
     # Blocking call for a time request at simulation time 0
-    initial_time = 90
+    initial_time = 60
     logger.debug(f'Requesting initial time {initial_time}')
     t = h.helicsFederateRequestTime(fed, initial_time )
     logger.debug(f'Granted time {t}')
@@ -201,13 +204,13 @@ if __name__ == "__main__":
 
         for j in range(0,end_count):
 
-            logger.debug(f'EV {j} time {t}')
+            logger.debug(f'EV {j+1} time {t}')
             # Model the physics of the battery charging. This happens
             #   every time step whether a message comes in or not and always
             #   uses the latest value provided by the battery model.
             charging_current = h.helicsInputGetDouble((subid[j]))
-            logger.debug(f'\tCharging current: {charging_current}')
-            logger.debug(f'\tfrom input {h.helicsSubscriptionGetKey(subid[j])}')
+            logger.debug(f'\tCharging current: {charging_current:.2f} from '
+                         f'input {h.helicsSubscriptionGetKey(subid[j])}')
 
             if new_EV[j]:
                 charging_voltage[j] = 0
@@ -246,10 +249,10 @@ if __name__ == "__main__":
                     #   (in the constant voltage charging regime) Small
                     #   differences translate into low SOCs above 0.75
                     current_factor = current_diff / critical_charging_current
-                    logger.debug(f'\t Current factor: {current_factor}')
+                    logger.debug(f'\t Current factor: {current_factor:.2f}')
                     currentsoc[j] = critical_soc + (current_factor / (1 -
                                                                       critical_soc) )
-                logger.debug(f'\t EV SOC estimate: {currentsoc[j]}')
+                logger.debug(f'\t EV SOC estimate: {currentsoc[j]:.4f}')
 
 
 
@@ -268,18 +271,21 @@ if __name__ == "__main__":
                         # TODO: implement a good-enough contant current charging
                         #  algorithm
                         logger.debug(f'\t Constant current charging')
-                        current_difference = charging_current - critical_charging_current
+                        current_difference = critical_charging_current - charging_current
                         current_factor_diff = current_difference / critical_charging_current
-                        charging_voltage[j] = charging_voltage[j] * ( 1+
+                        charging_voltage[j] = charging_voltage[j] * \
+                                              voltage_adj_gain * ( 1+
                                                                  current_factor_diff)
-                        logger.debug(f'\t Current percentage difference:'
-                                     f' {current_factor_diff}')
+                        if charging_voltage[j] < 0:
+                            charging_voltage[j] = 1
+                        logger.debug(f'\t Current factor difference:'
+                                     f' {current_factor_diff:.2f}')
                         logger.debug((f'\t New charging voltage:'
-                                     f' {charging_voltage[j]}'))
+                                     f' {charging_voltage[j]:.2f}'))
                     else:
                         # Constant voltage charging
                         logger.debug(f'\t Constant voltage charging')
-                        logger.debug(f'\t New charging voltage: {charging_voltage[j]}')
+                        logger.debug(f'\t New charging voltage: {charging_voltage[j]:.2f}')
 
 
             # Publish updated charging voltage

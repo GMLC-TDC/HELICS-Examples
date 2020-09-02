@@ -30,11 +30,8 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 # Define battery physics as empirical values
-socs = np.array([0, 0.0667, 0.1333, 0.2, 0.2667, 0.3333, 0.4, 0.4667, 0.5333,
-                0.6, 0.6667, 0.7333, 0.8, 0.8667, 0.9333, 1])
-effective_R = np.array([2, 2.2222, 2.4444, 2.6667, 2.6815, 2.6963, 2.7111,
-                        2.7259, 2.7407, 2.7556, 2.7704, 2.7852, 2.8, 3.8182,
-                        6, 21])
+socs = np.array([0, 1])
+effective_R = np.array([10, 150])
 
 
 def destroy_federate(fed):
@@ -96,7 +93,7 @@ if __name__ == "__main__":
 
     hours = 24*7 # one week
     total_interval = int(60 * 60 * hours)
-    update_interval = 60 # updates every minute
+    update_interval = 60 # seconds
     grantedtime = -1
 
     batt_size = 62  # kWh
@@ -127,11 +124,11 @@ if __name__ == "__main__":
         t = grantedtime
 
         for j in range(0,sub_count):
-            logger.debug(f'Battery {j} time {t}')
+            logger.debug(f'Battery {j+1} time {t}')
 
             # Get the applied charging voltage from the EV
             charging_voltage = h.helicsInputGetDouble((subid[j]))
-            logger.debug(f'\tReceived voltage {charging_voltage} from input'
+            logger.debug(f'\tReceived voltage {charging_voltage:.2f} from input'
                          f' {h.helicsSubscriptionGetKey(subid[j])}')
             # EV is fully charged and a new EV is moving in:
             if charging_voltage == 0:
@@ -142,21 +139,21 @@ if __name__ == "__main__":
                     current_soc[j],
                     socs,
                     effective_R)
-            logger.debug(f'\t Effective R (ohms): {R}')
+            logger.debug(f'\t Effective R (ohms): {R:.2f}')
             charging_current = charging_voltage / R
-            logger.debug(f'\t Charging current (A): {charging_current}')
-            added_energy = charging_current * charging_voltage * \
-                           update_interval/3600
-            logger.debug(f'\t Added energy (kWh): {added_energy}')
-            current_soc[j] = current_soc[j] + added_energy
-            logger.debug(f'\t SOC: {current_soc[j]}')
+            logger.debug(f'\t Charging current (A): {charging_current:.2f}')
+            added_energy = (charging_current * charging_voltage * \
+                           update_interval/3600) / 1000
+            logger.debug(f'\t Added energy (kWh): {added_energy:.2f}')
+            current_soc[j] = current_soc[j] + added_energy / batt_size
+            logger.debug(f'\t SOC: {current_soc[j]:.4f}')
 
 
 
             # Publish out charging current
             h.helicsPublicationPublishDouble(pubid[j], charging_current)
             logger.debug(f'\tPublished {pub_name[j]} with value '
-                         f'{charging_current}')
+                         f'{charging_current:.2f}')
 
         # Data collection vectors
         time_sim.append(t)
