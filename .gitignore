@@ -252,3 +252,4 @@ tags
 ### MATLAB ###
 *.mex*
 python/BLOSEM_tutorial/.idea
+.DS_Store
