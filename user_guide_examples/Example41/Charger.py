@@ -30,6 +30,7 @@ import matplotlib.pyplot as plt
 
 
 logger = logging.getLogger(__name__)
+logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.DEBUG)
 
 def destroy_federate(fed):
@@ -115,13 +116,13 @@ if __name__ == "__main__":
     ##############  Registering  federate from json  ##########################
     fed = h.helicsCreateCombinationFederateFromConfig("ChargerConfig.json")
     federate_name = h.helicsFederateGetName(fed)
-    logging.info(f'Created federate {federate_name}')
+    logger.info(f'Created federate {federate_name}')
     end_count = h.helicsFederateGetEndpointCount(fed)
-    logging.info(f'\tNumber of endpoints: {end_count}')
+    logger.info(f'\tNumber of endpoints: {end_count}')
     sub_count = h.helicsFederateGetInputCount(fed)
-    logging.info(f'\tNumber of subscriptions: {sub_count}')
+    logger.info(f'\tNumber of subscriptions: {sub_count}')
     pub_count = h.helicsFederateGetPublicationCount(fed)
-    logging.info(f'\tNumber of publications: {pub_count}')
+    logger.info(f'\tNumber of publications: {pub_count}')
     print(f'Created federate {federate_name}')
     print(f'\tNumber of endpoints: {end_count}')
     print(f'\tNumber of subscriptions: {sub_count}')

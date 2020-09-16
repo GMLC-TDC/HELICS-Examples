@@ -27,6 +27,7 @@ import matplotlib.pyplot as plt
 
 
 logger = logging.getLogger(__name__)
+logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.DEBUG)
 
 # Define battery physics as empirical values
@@ -80,18 +81,16 @@ def get_new_battery(numBattery):
 if __name__ == "__main__":
     np.random.seed(2608)
 
-    ##############  Registering  federate from json  ##########################
-    name = "Battery_federate"
+    ##########  Registering  federate and configuring from JSON################
     fed = h.helicsCreateValueFederateFromConfig("BatteryConfig.json")
     federate_name = h.helicsFederateGetName(fed)
-    logging.info(f'Created federate {federate_name}')
+    logger.info(f'Created federate {federate_name}')
+    print(f'Created federate {federate_name}')
 
     sub_count = h.helicsFederateGetInputCount(fed)
-    logging.info(f'\tNumber of subscriptions: {sub_count}')
+    logger.debug(f'\tNumber of subscriptions: {sub_count}')
     pub_count = h.helicsFederateGetPublicationCount(fed)
-    logging.info(f'\tNumber of publications: {pub_count}')
-    print(f'\tNumber of subscriptions: {sub_count}')
-    print(f'\tNumber of publications: {pub_count}')
+    logger.debug(f'\tNumber of publications: {pub_count}')
 
     # Diagnostics to confirm JSON config correctly added the required
     #   publications and subscriptions
@@ -100,14 +99,17 @@ if __name__ == "__main__":
     for i in range(0, sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
         sub_name[i] = h.helicsSubscriptionGetKey(subid[i])
-        logger.info(f'\tRegistered subscription---> {sub_name[i]}')
+        logger.debug(f'\tRegistered subscription---> {sub_name[i]}')
 
     pubid = {}
     pub_name = {}
     for i in range(0, pub_count):
         pubid[i] = h.helicsFederateGetPublicationByIndex(fed, i)
         pub_name[i] = h.helicsPublicationGetKey(pubid[i])
-        logger.info(f'\tRegistered publication---> {pub_name[i]}')
+        logger.debug(f'\tRegistered publication---> {pub_name[i]}')
+
+
+
 
 
     ##############  Entering Execution Mode  ##################################

@@ -46,7 +46,7 @@ if __name__ == "__main__":
     ##############  Registering  federate from json  ##########################
     fed = h.helicsCreateMessageFederateFromConfig("ControllerConfig.json")
     federate_name = h.helicsFederateGetName(fed)
-    logging.info(f'Created federate {federate_name}')
+    logger.info(f'Created federate {federate_name}')
 
 
     #### Register endpoint #####
