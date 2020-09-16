@@ -76,7 +76,7 @@ if __name__ == "__main__":
     #   (helics_time_maxtime is the largest time that HELICS can internally
     #   represent and is an approximation for a point in time very far in
     #   in the future).
-    fake_max_time = h.HELICS_TIME_MAXTIME/1000
+    fake_max_time = int(h.HELICS_TIME_MAXTIME/1000)
     starttime = fake_max_time
     logger.debug(f'Requesting initial time {starttime}')
     grantedtime = h.helicsFederateRequestTime (fed, starttime)
