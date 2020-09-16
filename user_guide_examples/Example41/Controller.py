@@ -61,7 +61,7 @@ if __name__ == "__main__":
 
     hours = 24*7 # one week
     total_interval = int(60 * 60 * hours)
-    grantedtime = -1
+    grantedtime = 0
 
     # It is common in HELICS for controllers to have slightly weird timing
     #   Generally, controllers only need to produce new control values when
@@ -81,13 +81,12 @@ if __name__ == "__main__":
     logger.debug(f'Requesting initial time {starttime}')
     grantedtime = h.helicsFederateRequestTime (fed, starttime)
     logger.debug(f'Granted time {grantedtime}')
-    t = grantedtime
 
 
     time_sim = []
     soc = {}
 
-    while t < total_interval:
+    while grantedtime < total_interval:
 
         # In HELICS, when multiple messages arrive at an endpoint they
         # queue up and are popped off one-by-one with the
@@ -100,7 +99,7 @@ if __name__ == "__main__":
             currentsoc = h.helicsMessageGetString(msg)
             source = h.helicsMessageGetOriginalSource(msg)
             logger.debug(f'Received message from endpoint {source}'
-                         f' at time {t}'
+                         f' at time {grantedtime}'
                          f' with SOC {currentsoc}')
 
             # Send back charging command based on current SOC
@@ -115,7 +114,7 @@ if __name__ == "__main__":
             message = str(instructions)
             h.helicsEndpointSendMessageRaw(endid, source, message.encode())
             logger.debug(f'Sent message to endpoint {source}'
-                         f' at time {t}'
+                         f' at time {grantedtime}'
                          f' with payload {instructions}')
 
             # Store SOC for later analysis/graphing
@@ -123,7 +122,7 @@ if __name__ == "__main__":
                 soc[source] = []
             soc[source].append(float(currentsoc))
 
-        time_sim.append(t)
+        time_sim.append(grantedtime)
 
         # Since we've dealt with all the messages that are queued, there's
         #   nothing else for the federate to do until/unless another
@@ -132,7 +131,6 @@ if __name__ == "__main__":
         logger.debug(f'Requesting time {fake_max_time}')
         grantedtime = h.helicsFederateRequestTime (fed, fake_max_time)
         logger.info(f'Granted time: {grantedtime}')
-        t = grantedtime
 
     # Close out co-simulation execution cleanly now that we're done.
     destroy_federate(fed)

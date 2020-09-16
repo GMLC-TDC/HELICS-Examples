@@ -156,7 +156,7 @@ if __name__ == "__main__":
     update_interval = int(h.helicsFederateGetTimeProperty(
                             fed,
                             h.HELICS_PROPERTY_TIME_PERIOD))
-    grantedtime = -1
+    grantedtime = 0
 
     # Generate an initial fleet of EVs, one for each previously defined
     #   endpoint. This gives each EV a unique link to the EV controller
@@ -172,8 +172,8 @@ if __name__ == "__main__":
     # Blocking call for a time request at simulation time 0
     initial_time = 60
     logger.debug(f'Requesting initial time {initial_time}')
-    t = h.helicsFederateRequestTime(fed, initial_time )
-    logger.debug(f'Granted time {t}')
+    grantedtime = h.helicsFederateRequestTime(fed, initial_time )
+    logger.debug(f'Granted time {grantedtime}')
 
 
     # Apply initial charging voltage
@@ -192,19 +192,17 @@ if __name__ == "__main__":
 
     ########## Main co-simulation loop ########################################
     # As long as granted time is in the time range to be simulated...
-    while t < total_interval:
+    while grantedtime < total_interval:
 
         # Time request for the next physical interval to be simulated
-        requested_time = (t+update_interval)
+        requested_time = (grantedtime + update_interval)
         logger.debug(f'Requesting time {requested_time}')
         grantedtime = h.helicsFederateRequestTime (fed, requested_time)
         logger.debug(f'Granted time {grantedtime}')
 
-        t = grantedtime
-
         for j in range(0,end_count):
 
-            logger.debug(f'EV {j+1} time {t}')
+            logger.debug(f'EV {j+1} time {grantedtime}')
             # Model the physics of the battery charging. This happens
             #   every time step whether a message comes in or not and always
             #   uses the latest value provided by the battery model.
@@ -237,7 +235,7 @@ if __name__ == "__main__":
                 msg = h.helicsEndpointGetMessage(endid[j])
                 instructions = h.helicsMessageGetString(msg)
                 logger.debug(f'\tReceived message at endpoint {endpoint_name}'
-                             f' at time {t}'
+                             f' at time {grantedtime}'
                              f' with command {instructions}')
 
                 # Update charging state based on message from controller
@@ -253,22 +251,22 @@ if __name__ == "__main__":
             else:
                 logger.debug(f'\tNo messages at endpoint {endpoint_name} '
                              f'recieved at '
-                             f'time {t}')
+                             f'time {grantedtime}')
 
             # Publish updated charging voltage
             h.helicsPublicationPublishDouble(pubid[j], charging_voltage[j])
             logger.debug(f'\tPublishing charging voltage of {charging_voltage[j]} '
-                         f' at time {t}')
+                         f' at time {grantedtime}')
 
             # Send message to Controller with SOC every 15 minutes
-            if t % 900 == 0:
+            if grantedtime % 900 == 0:
                 destination_name = str(
                     h.helicsEndpointGetDefaultDestination(endid[j]))
                 h.helicsEndpointSendMessageRaw(endid[j], "",
                                                f'{currentsoc[j]:4f}'.encode(
                                                ))  #
                 logger.debug(f'Sent message from endpoint {endpoint_name}'
-                             f' at time {t}'
+                             f' at time {grantedtime}'
                              f' with payload SOC {currentsoc[j]:4f}')
 
         # Calculate the total power required by all chargers. This is the
@@ -279,7 +277,7 @@ if __name__ == "__main__":
             total_power += charge_rate[(EVlist[j]-1)]
 
         # Data collection vectors
-        time_sim.append(t)
+        time_sim.append(grantedtime)
         power.append(total_power)
 
 

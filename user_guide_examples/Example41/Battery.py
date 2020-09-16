@@ -15,16 +15,9 @@ trevor.hardy@pnnl.gov
 """
 
 import helics as h
-import random
-import string
-import time
-from datetime import datetime, timedelta
-import json
 import logging
 import numpy as np
-import sys
 import matplotlib.pyplot as plt
-import time
 
 
 logger = logging.getLogger(__name__)
@@ -118,7 +111,7 @@ if __name__ == "__main__":
     update_interval = int(h.helicsFederateGetTimeProperty(
                                 fed,
                                 h.HELICS_PROPERTY_TIME_PERIOD))
-    grantedtime = -1
+    grantedtime = 0
 
     # Define battery physics as empirical values
     socs = np.array([0, 1])
@@ -137,21 +130,17 @@ if __name__ == "__main__":
     current = []
     soc = {}
 
-    t = 0
-
     # As long as granted time is in the time range to be simulated...
-    while t < total_interval:
+    while grantedtime < total_interval:
 
         # Time request for the next physical interval to be simulated
-        requested_time = (t+update_interval)
+        requested_time = (grantedtime+update_interval)
         logger.debug(f'Requesting time {requested_time}')
         grantedtime = h.helicsFederateRequestTime (fed, requested_time)
         logger.debug(f'Granted time {grantedtime}')
 
-        t = grantedtime
-
         for j in range(0,sub_count):
-            logger.debug(f'Battery {j+1} time {t}')
+            logger.debug(f'Battery {j+1} time {grantedtime}')
 
             # Get the applied charging voltage from the EV
             charging_voltage = h.helicsInputGetDouble((subid[j]))
@@ -191,7 +180,7 @@ if __name__ == "__main__":
             soc[subid[j]].append(float(current_soc[j]))
 
         # Data collection vectors
-        time_sim.append(t)
+        time_sim.append(grantedtime)
         current.append(charging_current)
 
 
