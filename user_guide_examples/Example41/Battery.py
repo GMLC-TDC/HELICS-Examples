@@ -117,8 +117,14 @@ if __name__ == "__main__":
 
     hours = 24*7 # one week
     total_interval = int(60 * 60 * hours)
-    update_interval = 60 # seconds
+    update_interval = int(h.helicsFederateGetTimeProperty(
+                                fed,
+                                h.HELICS_PROPERTY_TIME_PERIOD))
     grantedtime = -1
+
+    # Define battery physics as empirical values
+    socs = np.array([0, 1])
+    effective_R = np.array([8, 150])
 
     batt_list = get_new_battery(pub_count)
 

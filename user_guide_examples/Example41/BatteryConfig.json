@@ -2,7 +2,7 @@
   "name": "Battery_federate",
   "loglevel": 1,
   "coreType": "zmq",
-  "timedelta": 1,
+  "period": 60,
   "uninterruptible": false,
   "terminate_on_error": true,
   "publications":[

@@ -158,7 +158,9 @@ if __name__ == "__main__":
 
     hours = 24*7 # one week
     total_interval = int(60 * 60 * hours)
-    update_interval = 60 # updates every minute
+    update_interval = int(h.helicsFederateGetTimeProperty(
+                            fed,
+                            h.HELICS_PROPERTY_TIME_PERIOD))
     grantedtime = -1
 
     # Generate an initial fleet of EVs, one for each previously defined
