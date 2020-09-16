@@ -1,5 +1,5 @@
 {
-  "name": "EV_federate",
+  "name": "Charger",
   "loglevel": 1,
   "coreType": "zmq",
   "period": 60,
@@ -7,58 +7,58 @@
   "terminate_on_error": true,
   "endpoints": [
     {
-      "name": "EV_federate/EV1.soc",
-      "destination": "EVController_federate/endpoint",
+      "name": "Charger/EV1.soc",
+      "destination": "Controller/ep",
       "global": true
     },
     {
-      "name": "EV_federate/EV2.soc",
-      "destination": "EVController_federate/endpoint",
+      "name": "Charger/EV2.soc",
+      "destination": "Controller/ep",
       "global": true
     },
     {
-      "name": "EV_federate/EV3.soc",
-      "destination": "EVController_federate/endpoint",
+      "name": "Charger/EV3.soc",
+      "destination": "Controller/ep",
       "global": true
     },
     {
-      "name": "EV_federate/EV4.soc",
-      "destination": "EVController_federate/endpoint",
+      "name": "Charger/EV4.soc",
+      "destination": "Controller/ep",
       "global": true
     },
     {
-      "name": "EV_federate/EV5.soc",
-      "destination": "EVController_federate/endpoint",
+      "name": "Charger/EV5.soc",
+      "destination": "Controller/ep",
       "global": true
     }
   ],
   "publications":[
     {
-      "key":"EV_federate/EV1_voltage",
+      "key":"Charger/EV1_voltage",
       "type":"double",
       "unit":"V",
       "global": true
     },
     {
-      "key":"EV_federate/EV2_voltage",
+      "key":"Charger/EV2_voltage",
       "type":"double",
       "unit":"V",
       "global": true
     },
     {
-      "key":"EV_federate/EV3_voltage",
+      "key":"Charger/EV3_voltage",
       "type":"double",
       "unit":"V",
       "global": true
     },
     {
-      "key":"EV_federate/EV4_voltage",
+      "key":"Charger/EV4_voltage",
       "type":"double",
       "unit":"V",
       "global": true
     },
     {
-      "key":"EV_federate/EV5_voltage",
+      "key":"Charger/EV5_voltage",
       "type":"double",
       "unit":"V",
       "global": true
@@ -66,31 +66,31 @@
   ],
   "subscriptions":[
     {
-      "key":"Battery_federate/EV1_current",
+      "key":"Battery/EV1_current",
       "type":"double",
       "unit":"A",
       "global": true
     },
     {
-      "key":"Battery_federate/EV2_current",
+      "key":"Battery/EV2_current",
       "type":"double",
       "unit":"A",
       "global": true
     },
     {
-      "key":"Battery_federate/EV3_current",
+      "key":"Battery/EV3_current",
       "type":"double",
       "unit":"A",
       "global": true
     },
     {
-      "key":"Battery_federate/EV4_current",
+      "key":"Battery/EV4_current",
       "type":"double",
       "unit":"A",
       "global": true
     },
     {
-      "key":"Battery_federate/EV5_current",
+      "key":"Battery/EV5_current",
       "type":"double",
       "unit":"A",
       "global": true
