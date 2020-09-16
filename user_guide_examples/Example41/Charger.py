@@ -92,12 +92,28 @@ def calc_charging_voltage(EV_list):
 
 
 def estimate_SOC(charging_V, charging_A):
+    '''
+    The charger has no direct knowledge of the SOC of the EV battery it
+    is charging but instead must estimate it based on the effective resistance
+    of the battery which is calculated from the applied charging voltage and
+    measured charging current. The effective resistance model is used here is
+    identical to that of the actual battery; if both the charging voltage
+    and current were measured perfectly the SOC estimate here would exactly
+    match the true SOC modeled by the battery. For fun, though, a small
+    amount of Gaussian noise is added to the current value. This noise
+    creates larger errors as the charging current goes down (EV battery
+    reaching full SOC).
+
+    :param charging_V: Applied charging voltage
+    :param charging_A: Charging current as passed back by the battery federate
+    :return: SOC estimate
+    '''
     socs = np.array([0, 1])
     effective_R = np.array([8, 150])
     mu = 0
     sigma = 0.2
     noise = np.random.normal(mu, sigma)
-    measured_A = charging_current + noise
+    measured_A = charging_A + noise
     measured_R = charging_V / measured_A
     SOC_estimate = np.interp(measured_R, effective_R, socs)
 
@@ -241,7 +257,7 @@ if __name__ == "__main__":
                 # Update charging state based on message from controller
                 # The protocol used by the EV and the EV Controller is simple:
                 #       EV Controller sends "1" - keep charging
-                #       EV Controller sends andything else: stop charging
+                #       EV Controller sends anything else: stop charging
                 # The default state is charging (1) so we only need to
                 #   do something if the controller says to stop
                 if int(instructions) == 0:
