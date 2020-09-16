@@ -24,15 +24,14 @@ import logging
 import numpy as np
 import sys
 import matplotlib.pyplot as plt
+import time
 
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.DEBUG)
 
-# Define battery physics as empirical values
-socs = np.array([0, 1])
-effective_R = np.array([8, 150])
+
 
 
 def destroy_federate(fed):
@@ -55,16 +54,13 @@ def destroy_federate(fed):
 
 def get_new_battery(numBattery):
     '''
-    Using hard-coded probabilities, a distribution of EVs with support
-    for specific charging levels are generated. The number of EVs
-    generated is defined by the user.
+    Using hard-coded probabilities, a distribution of battery of
+    fixed battery sizes are generated. The number of batteries is a user
+    provided parameter.
 
-    :param numEVs: Number of EVs
+    :param numBattery: Number of batteries to generate
     :return
-        numLvL1: Number of new EVs that will charge at level 1
-        numLvL2: Number of new EVs that will charge at level 2
-        numLvL3: Number of new EVs that will charge at level 3
-        listOfEVs: List of all EVs (and their charging levels) generated
+        listOfBatts: List of generated batteries
 
     '''
 

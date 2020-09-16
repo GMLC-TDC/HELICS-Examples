@@ -18,14 +18,8 @@ allison.m.campbell@pnnl.gov, trevorhardy@pnnl.gov
 """
 
 import helics as h
-import random
-import string
-import time
-from datetime import datetime, timedelta
-import json
 import logging
 import numpy as np
-import sys
 import matplotlib.pyplot as plt
 
 
@@ -101,7 +95,7 @@ def estimate_SOC(charging_V, charging_A):
     socs = np.array([0, 1])
     effective_R = np.array([8, 150])
     mu = 0
-    sigma = 0.1
+    sigma = 0.2
     noise = np.random.normal(mu, sigma)
     measured_A = charging_current + noise
     measured_R = charging_V / measured_A
