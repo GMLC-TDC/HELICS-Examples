@@ -42,7 +42,7 @@ def destroy_federate(fed):
     status = h.helicsFederateFinalize(fed)
     h.helicsFederateFree(fed)
     h.helicsCloseLibrary()
-    print("EV: Federate finalized")
+    logger.info('Federate finalized')
 
 
 def get_new_EV(numEVs):

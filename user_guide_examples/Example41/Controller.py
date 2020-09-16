@@ -39,7 +39,7 @@ def destroy_federate(fed):
     status = h.helicsFederateFinalize(fed)
     h.helicsFederateFree(fed)
     h.helicsCloseLibrary()
-    print("EVController: Federate finalized")
+    logger.info('Federate finalized')
 
 
 if __name__ == "__main__":
