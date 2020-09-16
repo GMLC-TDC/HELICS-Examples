@@ -158,14 +158,14 @@ if __name__ == "__main__":
 
             # Calculate charging current and update SOC
             R =  np.interp(current_soc[j], socs, effective_R)
-            logger.debug(f'\t Effective R (ohms): {R:.2f}')
+            logger.debug(f'\tEffective R (ohms): {R:.2f}')
             charging_current = charging_voltage / R
-            logger.debug(f'\t Charging current (A): {charging_current:.2f}')
+            logger.debug(f'\tCharging current (A): {charging_current:.2f}')
             added_energy = (charging_current * charging_voltage * \
                            update_interval/3600) / 1000
-            logger.debug(f'\t Added energy (kWh): {added_energy:.2f}')
+            logger.debug(f'\tAdded energy (kWh): {added_energy:.4f}')
             current_soc[j] = current_soc[j] + added_energy / batt_list[j]
-            logger.debug(f'\t SOC: {current_soc[j]:.4f}')
+            logger.debug(f'\tSOC: {current_soc[j]:.4f}')
 
 
 
