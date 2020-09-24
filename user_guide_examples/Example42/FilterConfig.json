@@ -1,0 +1,70 @@
+{
+  "name": "Filter",
+  "loglevel": 1,
+  "coreType": "zmq",
+  "period": 1,
+  "uninterruptible": false,
+  "terminate_on_error": true,
+  "endpoints": [
+    {
+      "name": "filter/main",
+      "global": true
+    }
+  ],
+  "filters": [
+    {
+      "name": "fromEV1.soc",
+      "sourcetargets": "Charger/EV1.soc",
+      "operation": "reroute",
+      "properties": {
+        "name": "newdestination",
+        "value": "filter/main"
+      }
+    },
+    {
+      "name": "fromEV2.soc",
+      "sourcetargets": "Charger/EV2.soc",
+      "operation": "reroute",
+      "properties": {
+        "name": "newdestination",
+        "value": "filter/main"
+      }
+    },
+    {
+      "name": "fromEV3.soc",
+      "sourcetargets": "Charger/EV3.soc",
+      "operation": "reroute",
+      "properties": {
+        "name": "newdestination",
+        "value": "filter/main"
+      }
+    },
+    {
+      "name": "fromEV4.soc",
+      "sourcetargets": "Charger/EV4.soc",
+      "operation": "reroute",
+      "properties": {
+        "name": "newdestination",
+        "value": "filter/main"
+      }
+    },
+    {
+      "name": "fromEV5.soc",
+      "sourcetargets": "Charger/EV5.soc",
+      "operation": "reroute",
+      "properties": {
+        "name": "newdestination",
+        "value": "filter/main"
+      }
+    },
+    {
+      "name": "fromController/ep",
+      "sourcetargets": "Controller/ep",
+      "operation": "reroute",
+      "properties": {
+        "name": "newdestination",
+        "value": "filter/main"
+      }
+    }
+  ]
+}
