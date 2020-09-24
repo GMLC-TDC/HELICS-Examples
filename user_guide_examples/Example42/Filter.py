@@ -281,15 +281,14 @@ def run_cosim(fed, endid):
 
         # After filtering, send all messages whose time has come (or past;
         #   in which case something has gone wrong)
-        if eq:
-            while eq[0]['time'] <= grantedtime:
-                h.helicsEndpointSendMessageRaw(endid, eq[0]['dest'],
-                                               eq[0]['payload'].encode())
-                logger.debug(f'Sent message from endpoint {endid}'
-                             f' to endpoint {eq[0]["dest"]}'
-                             f' at time {grantedtime}'
-                             f' with message {eq[0]["payload"]}')
-                del eq[0]
+        while eq and eq[0]['time'] <= grantedtime:
+            h.helicsEndpointSendMessageRaw(endid, eq[0]['dest'],
+                                           eq[0]['payload'].encode())
+            logger.debug(f'Sent message from endpoint {endid}'
+                         f' to endpoint {eq[0]["dest"]}'
+                         f' at time {grantedtime}'
+                         f' with message {eq[0]["payload"]}')
+            del eq[0]
 
 
         if eq:
