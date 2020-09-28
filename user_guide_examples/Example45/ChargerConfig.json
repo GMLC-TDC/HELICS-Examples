@@ -1,0 +1,30 @@
+{
+  "name": "Charger",
+  "loglevel": 1,
+  "coreType": "zmq",
+  "period": 60,
+  "uninterruptible": false,
+  "terminate_on_error": true,
+  "publications":[
+    {
+      "key":"Charger/EV_voltage",
+      "type":"double",
+      "unit":"V",
+      "global": true
+    }
+  ],
+  "inputs":[
+    {
+      "key":"Battery/charging_current",
+      "type":"double",
+      "global": true,
+      "multi_input_handling_method": "sum",
+      "targets": [
+        "Battery/EV1_current",
+        "Battery/EV2_current",
+        "Battery/EV3_current",
+        "Battery/EV4_current",
+        "Battery/EV5_current"]
+    }
+  ]
+}
