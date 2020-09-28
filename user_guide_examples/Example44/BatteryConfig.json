@@ -5,6 +5,7 @@
   "period": 60,
   "uninterruptible": false,
   "terminate_on_error": true,
+  "wait_for_current_time_update": true,
   "brokerPort": 23700,
   "publications":[
     {
