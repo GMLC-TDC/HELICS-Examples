@@ -10,29 +10,25 @@
       "directory": ".",
       "exec": "python -u Charger.py 1",
       "host": "localhost",
-      "name": "Charger",
-      "loglevel": 1
+      "name": "Charger"
     },
     {
       "directory": ".",
       "exec": "python -u Controller.py 1",
       "host": "localhost",
-      "name": "Controller",
-      "loglevel": 1
+      "name": "Controller"
     },
     {
       "directory": ".",
       "exec": "python -u Battery.py 1",
       "host": "localhost",
-      "name": "Battery",
-      "loglevel": 1
+      "name": "Battery"
     },
     {
       "directory": ".",
       "exec": "python -u Filter.py ",
       "host": "localhost",
-      "name": "Filter",
-      "loglevel": 1
+      "name": "Filter"
     }
   ],
   "name": "EV_toy"
