@@ -1,0 +1,12 @@
+{
+  "comms": [
+    {
+      "type": "zmq",
+      "interfaceport": 23410
+    },
+    {
+      "type": "zmq",
+      "interfaceport": 23700
+    }
+  ]
+}
