@@ -14,7 +14,7 @@ EV is moved into the charging terminal (with a randomly assigned charging
 level) and begins charging.
 
 @author: Allison M. Campbell, Trevor Hardy
-allison.m.campbell@pnnl.gov, trevorhardy@pnnl.gov
+allison.m.campbell@pnnl.gov, trevor.hardy@pnnl.gov
 """
 
 import helics as h
