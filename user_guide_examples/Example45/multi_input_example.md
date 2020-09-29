@@ -1,0 +1,1 @@
+This is a multi-input example and it is entirely working.

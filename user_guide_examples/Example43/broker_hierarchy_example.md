@@ -1,0 +1,1 @@
+This example is not working. Trevor will probably need some help from a developer to get the broker set-up working correctly to allow multiple brokers on one machine in a hierarchy.
