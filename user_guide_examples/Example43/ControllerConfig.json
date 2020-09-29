@@ -1,0 +1,15 @@
+
+{
+  "name": "Controller",
+  "loglevel": 1,
+  "coreType": "zmq",
+  "timedelta": 1,
+  "uninterruptible": false,
+  "terminate_on_error": true,
+  "endpoints": [
+    {
+      "name": "Controller/ep",
+      "global": true
+    }
+  ]
+}

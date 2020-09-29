@@ -1,0 +1,25 @@
+{
+  "name": "Controller_and_Charger"
+  "federates": [
+    {
+      "directory": ".",
+      "exec": "helics_broker -f 2 --brokerport=202002 --broker_address:10.0.1.17:20200"",
+      "host": "localhost",
+      "name": "broker2"
+    },
+    {
+      "directory": ".",
+      "exec": "python -u Charger.py 1",
+      "host": "localhost",
+      "name": "Charger",
+      "loglevel": 1
+    },
+    {
+      "directory": ".",
+      "exec": "python -u Controller.py 1",
+      "host": "localhost",
+      "name": "Controller",
+      "loglevel": 1
+    }
+  ]
+}

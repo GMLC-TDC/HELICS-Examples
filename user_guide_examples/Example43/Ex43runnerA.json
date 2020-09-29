@@ -1,0 +1,11 @@
+{
+  "name": "main_broker",
+  "federates": [    
+    {
+      "directory": ".",
+      "exec": "helics_broker -f 2 --brokerport=20200",
+      "host": "localhost",
+      "name": "main_broker"
+    },
+  ]
+}
