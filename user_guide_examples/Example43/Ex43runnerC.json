@@ -3,7 +3,7 @@
   "federates": [
     {
       "directory": ".",
-      "exec": "helics_broker -f 2 --brokerport=202002 --broker_address:10.0.1.17:20200"",
+      "exec": "helics_broker -f 2 --brokerport=202002 --broker_address:10.0.1.17:20200",
       "host": "localhost",
       "name": "broker2"
     },
