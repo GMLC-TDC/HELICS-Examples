@@ -2,6 +2,7 @@
   "name": "Battery",
   "loglevel": 1,
   "coreType": "zmq",
+  "coreInit": "--broker_address=tcp://127.0.0.1:20300",
   "period": 60,
   "uninterruptible": false,
   "terminate_on_error": true,

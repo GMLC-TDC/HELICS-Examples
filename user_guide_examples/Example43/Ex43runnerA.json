@@ -3,9 +3,9 @@
   "federates": [    
     {
       "directory": ".",
-      "exec": "helics_broker -f 2 --brokerport=20200",
+      "exec": "helics_broker -f 2 --timeout='10s' --brokerport=20200",
       "host": "localhost",
-      "name": "main_broker"
-    },
+      "name": "brokerA"
+    }
   ]
 }

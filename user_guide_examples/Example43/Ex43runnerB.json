@@ -3,9 +3,9 @@
   "federates": [
     {
       "directory": ".",
-      "exec": "helics_broker -f 1 --loglevel=7 --brokerport=202001 --broker_address:10.0.1.17:20200",
+      "exec": "helics_broker -f 1 --loglevel=7 --timeout='10s' --brokerport=20300 --broker_address=tcp://127.0.0.1:20200",
       "host": "localhost",
-      "name": "broker1"
+      "name": "brokerB"
     },
     {
       "directory": ".",

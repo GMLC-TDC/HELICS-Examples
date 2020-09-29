@@ -1,11 +1,11 @@
 {
-  "name": "Controller_and_Charger"
+  "name": "Controller_and_Charger",
   "federates": [
     {
       "directory": ".",
-      "exec": "helics_broker -f 2 --brokerport=202002 --broker_address:10.0.1.17:20200",
+      "exec": "helics_broker -f 2 --timeout='10s' --brokerport=20400 --broker_address=tcp://127.0.0.1:20200",
       "host": "localhost",
-      "name": "broker2"
+      "name": "brokerC"
     },
     {
       "directory": ".",
