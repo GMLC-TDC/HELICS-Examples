@@ -102,24 +102,15 @@ if __name__ == "__main__":
     fed = h.helicsCreateCombinationFederateFromConfig("ChargerConfig.json")
     federate_name = h.helicsFederateGetName(fed)
     logger.info(f'Created federate {federate_name}')
-    end_count = h.helicsFederateGetEndpointCount(fed)
-    logger.info(f'\tNumber of endpoints: {end_count}')
+    print(f'Created federate {federate_name}'
+
     sub_count = h.helicsFederateGetInputCount(fed)
-    logger.info(f'\tNumber of subscriptions: {sub_count}')
+    logger.debug(f'\tNumber of subscriptions: {sub_count}')
     pub_count = h.helicsFederateGetPublicationCount(fed)
-    logger.info(f'\tNumber of publications: {pub_count}')
-    print(f'Created federate {federate_name}')
-    print(f'\tNumber of endpoints: {end_count}')
-    print(f'\tNumber of subscriptions: {sub_count}')
-    print(f'\tNumber of publications: {pub_count}')
+    logger.debug(f'\tNumber of publications: {pub_count}')
 
     # Diagnostics to confirm JSON config correctly added the required
-    #   endpoints, publications, and subscriptions.
-    endid = {}
-    for i in range(0, end_count):
-        endid[i] = h.helicsFederateGetEndpointByIndex(fed, i)
-        end_name = h.helicsEndpointGetName(endid[i])
-        logger.debug(f'\tRegistered Endpoint ---> {end_name}')
+    #   publications, and subscriptions.
     subid = {}
     for i in range(0, sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
@@ -140,21 +131,20 @@ if __name__ == "__main__":
     # Definition of charging power level (in kW) for level 1, 2, 3 chargers
     charge_rate = [1.8,7.2,50]
 
+    # Generate an initial fleet of EVs, one for each previously defined
+    #   handle. This gives each EV a unique link to the EV controller
+    #   federate.
+    numLvl1,numLvl2,numLvl3,EVlist = get_new_EV(pub_count)
+    charging_voltage = calc_charging_voltage(EVlist)
+    currentsoc = {}
 
 
     hours = 24 * 7
     total_interval = int(60 * 60 * hours)
     update_interval = int(h.helicsFederateGetTimeProperty(
                             fed,
-                            h.HELICS_PROPERTY_TIME_PERIOD))
+                            h.helics_property_time_period))
     grantedtime = 0
-
-    # Generate an initial fleet of EVs, one for each previously defined
-    #   endpoint. This gives each EV a unique link to the EV controller
-    #   federate.
-    numLvl1,numLvl2,numLvl3,EVlist = get_new_EV(pub_count)
-    charging_voltage = calc_charging_voltage(EVlist)
-    currentsoc = {}
 
     # Data collection lists
     time_sim = []

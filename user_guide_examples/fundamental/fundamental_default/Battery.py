@@ -56,7 +56,7 @@ def destroy_federate(fed):
 
 def get_new_battery(numBattery):
     '''
-    Using hard-coded probabilities, a distribution of battery of
+    Using hard-coded probabilities, a distribution of batteries of
     fixed battery sizes are generated. The number of batteries is a user
     provided parameter.
 
@@ -93,33 +93,26 @@ if __name__ == "__main__":
     # Diagnostics to confirm JSON config correctly added the required
     #   publications and subscriptions
     subid = {}
-    sub_name = {}
     for i in range(0, sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
         sub_name[i] = h.helicsSubscriptionGetKey(subid[i])
         logger.debug(f'\tRegistered subscription---> {sub_name[i]}')
 
     pubid = {}
-    pub_name = {}
     for i in range(0, pub_count):
         pubid[i] = h.helicsFederateGetPublicationByIndex(fed, i)
-        pub_name[i] = h.helicsPublicationGetKey(pubid[i])
-        logger.debug(f'\tRegistered publication---> {pub_name[i]}')
-
-
-
-
+        pub_name = h.helicsPublicationGetKey(pubid[i])
+        logger.debug(f'\tRegistered publication---> {pub_name}')
 
     ##############  Entering Execution Mode  ##################################
     h.helicsFederateEnterExecutingMode(fed)
     logger.info('Entered HELICS execution mode')
 
-
     hours = 24 * 7
     total_interval = int(60 * 60 * hours)
     update_interval = int(h.helicsFederateGetTimeProperty(
                                 fed,
-                                h.HELICS_PROPERTY_TIME_PERIOD))
+                                h.helics_property_time_period))
     grantedtime = 0
 
     # Define battery physics as empirical values
@@ -131,8 +124,6 @@ if __name__ == "__main__":
     current_soc = {}
     for i in range (0, pub_count):
         current_soc[i] = (np.random.randint(0,60))/100
-
-
 
     # Data collection lists
     time_sim = []
@@ -158,7 +149,6 @@ if __name__ == "__main__":
             logger.debug(f'\tReceived voltage {charging_voltage:.2f} from input'
                          f' {h.helicsSubscriptionGetKey(subid[0])}')
 
-
             # Calculate charging current and update SOC
             R =  np.interp(current_soc[j], socs, effective_R)
             logger.debug(f'\tEffective R (ohms): {R:.2f}')
@@ -175,11 +165,6 @@ if __name__ == "__main__":
             current_soc[j] = current_soc[j] + added_energy / batt_list[j]
             logger.debug(f'\tSOC: {current_soc[j]:.4f}')
 
-
-
-
-
-
             # Publish out charging current
             h.helicsPublicationPublishDouble(pubid[j], charging_current)
             logger.debug(f'\tPublished {pub_name[j]} with value '
@@ -192,8 +177,6 @@ if __name__ == "__main__":
 
         # Data collection vectors
         time_sim.append(grantedtime)
-
-
 
     # Cleaning up HELICS stuff once we've finished the co-simulation.
     destroy_federate(fed)
