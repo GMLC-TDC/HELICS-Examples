@@ -102,7 +102,7 @@ if __name__ == "__main__":
     fed = h.helicsCreateCombinationFederateFromConfig("ChargerConfig.json")
     federate_name = h.helicsFederateGetName(fed)
     logger.info(f'Created federate {federate_name}')
-    print(f'Created federate {federate_name}'
+    print(f'Created federate {federate_name}')
 
     sub_count = h.helicsFederateGetInputCount(fed)
     logger.debug(f'\tNumber of subscriptions: {sub_count}')
@@ -176,7 +176,6 @@ if __name__ == "__main__":
         logger.debug(f'Granted time {grantedtime}')
 
         for j in range(0, pub_count):
-
             logger.debug(f'EV {j + 1} time {grantedtime}')
             # Model the physics of the battery charging. This happens
             #   every time step whether a message comes in or not and always
@@ -184,7 +183,6 @@ if __name__ == "__main__":
             charging_current[j] = h.helicsInputGetDouble((subid[j]))
             logger.debug(f'\tCharging current: {charging_current[j]:.2f} from '
                          f'input {h.helicsSubscriptionGetKey(subid[j])}')
-
 
             # Publish updated charging voltage
             h.helicsPublicationPublishDouble(pubid[j], charging_voltage[j])

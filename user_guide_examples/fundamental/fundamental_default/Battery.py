@@ -26,14 +26,11 @@ import helics as h
 import logging
 import numpy as np
 import matplotlib.pyplot as plt
-import sys
 
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.DEBUG)
-
-
 
 
 def destroy_federate(fed):
@@ -66,10 +63,14 @@ def get_new_battery(numBattery):
 
     '''
 
-    # Probabilities of a new EV charging at the specified level.
+    # Probabilities of a new EV battery having small capacity (lvl1),
+    # medium capacity (lvl2), and large capacity (lvl3).
     lvl1 = 0.2
     lvl2 = 0.2
     lvl3 = 0.6
+
+    # Batteries have different sizes:
+    # [25,62,100]
     listOfBatts = np.random.choice([25,62,100],numBattery,p=[lvl1,lvl2,
                                                        lvl3]).tolist()
 
@@ -95,7 +96,7 @@ if __name__ == "__main__":
     subid = {}
     for i in range(0, sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name[i] = h.helicsSubscriptionGetKey(subid[i])
+        sub_name = h.helicsSubscriptionGetKey(subid[i])
         logger.debug(f'\tRegistered subscription---> {sub_name[i]}')
 
     pubid = {}
@@ -108,13 +109,6 @@ if __name__ == "__main__":
     h.helicsFederateEnterExecutingMode(fed)
     logger.info('Entered HELICS execution mode')
 
-    hours = 24 * 7
-    total_interval = int(60 * 60 * hours)
-    update_interval = int(h.helicsFederateGetTimeProperty(
-                                fed,
-                                h.helics_property_time_period))
-    grantedtime = 0
-
     # Define battery physics as empirical values
     socs = np.array([0, 1])
     effective_R = np.array([8, 150])
@@ -124,6 +118,13 @@ if __name__ == "__main__":
     current_soc = {}
     for i in range (0, pub_count):
         current_soc[i] = (np.random.randint(0,60))/100
+
+    hours = 24 * 7
+    total_interval = int(60 * 60 * hours)
+    update_interval = int(h.helicsFederateGetTimeProperty(
+                                fed,
+                                h.helics_property_time_period))
+    grantedtime = 0
 
     # Data collection lists
     time_sim = []
