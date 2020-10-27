@@ -111,6 +111,7 @@ if __name__ == "__main__":
 
     # Define battery physics as empirical values
     socs = np.array([0, 1])
+    # 8 ohms to 150 ohms
     effective_R = np.array([8, 150])
 
     batt_list = get_new_battery(pub_count)
@@ -160,6 +161,7 @@ if __name__ == "__main__":
             else:
                 charging_current = charging_voltage / R
             logger.debug(f'\tCharging current (A): {charging_current:.2f}')
+
             added_energy = (charging_current * charging_voltage * \
                            update_interval/3600) / 1000
             logger.debug(f'\tAdded energy (kWh): {added_energy:.4f}')
