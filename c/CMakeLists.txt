@@ -25,4 +25,5 @@ add_subdirectory(hello_world)
 add_subdirectory(nonlings)
 
 add_subdirectory(messageFederate1)
+add_subdirectory(filterFederate1)
 add_subdirectory(pi-exchange)

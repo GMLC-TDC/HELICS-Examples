@@ -5,6 +5,7 @@ the top-level NOTICE for additional details. All rights reserved.
 SPDX-License-Identifier: BSD-3-Clause
 */
 #include <helics/shared_api_library/MessageFederate.h>
+#include <helics/shared_api_library/MessageFilters.h>
 #include <stdio.h>
 #include <string.h>
 #ifdef _MSC_VER
@@ -25,26 +26,22 @@ static const helics::ArgDescriptors InfoArgs{
 */
 static const char defTarget[] = "fed";
 static const char defTargetEndpoint[] = "endpoint";
-static const char defSourceEndpoint[] = "endpoint";
+static const char defLocalEndpoint[] = "endpoint";
 
 int main (int argc, char *argv[])
 {
     helics_federate_info fedinfo = helicsCreateFederateInfo();
     const char *target = defTarget;
     const char *endpoint = defTargetEndpoint;
-    const char *source = defSourceEndpoint;
+    const char *source = defLocalEndpoint;
     char *targetEndpoint = NULL;
     int ii;
-    helics_federate mFed = NULL;
+    helics_federate fFed = NULL;
     helics_endpoint ept = NULL;
+    helics_filter filt = NULL;
     const char *str=NULL;
-    char message[1024];
-    helics_time newTime = 0.0;
+    helics_time newTime;
     helics_error err = helicsErrorInitialize();
-
-    /* set the grant interval to 1 second*/
-    helicsFederateInfoSetTimeProperty(fedinfo, helics_property_time_period, 1.0, &err);
-
     for (ii = 1; ii < argc; ++ii)
     {
 
@@ -65,9 +62,9 @@ int main (int argc, char *argv[])
         }
         else if ((strcmp(argv[ii], "--help") == 0)||(strcmp(argv[ii],"-?")==0))
         {
-            printf(" --target <target federate name>  ,the name of the federate to send messages to\n");
+            printf(" --target <target federate name>  ,the name of the federate to filter messages from\n");
             printf(" --endpoint <target endpoint name> , the name of the endpoint to send message to\n");
-            printf(" --source <endpoint>, the name of the source endpoint to create\n");
+            printf(" --source <endpoint>, the name of the local endpoint to create\n");
             printf(" --help, -? display help\n");
             return 0;
         }
@@ -75,40 +72,43 @@ int main (int argc, char *argv[])
     }
 
     helicsFederateInfoLoadFromArgs(fedinfo, argc, (const char * const*)argv,&err);
-    mFed = helicsCreateMessageFederate("fed",fedinfo,&err);
+
+    fFed = helicsCreateMessageFederate("ffed",fedinfo,&err);
 
     targetEndpoint = (char *)malloc(strlen(target) + 2 + strlen(endpoint));
     strcpy(targetEndpoint, target);
     strcat(targetEndpoint, "/");
     strcat(targetEndpoint, endpoint);
 
-    str=helicsFederateGetName(mFed);
-    printf("registering endpoint \"%s\" for %s\n", source, str);
+    str=helicsFederateGetName(fFed);
+    printf("registering endpoint %s for %s\n", source, str);
     /*this line actually creates an endpoint */
-    ept = helicsFederateRegisterEndpoint(mFed, source, "",&err);
+    ept = helicsFederateRegisterEndpoint(fFed, source, "",&err);
 
+    /* create a delay filter*/
+    filt = helicsFederateRegisterFilter(fFed, helics_filter_type_delay, "filter", &err);
+    helicsFilterAddSourceTarget(filt, targetEndpoint, &err);
+    helicsFilterSet(filt, "delay", 0.5, &err);
+    printf("initial delay set to 0.5\n");
     printf("entering init Mode\n");
-    helicsFederateEnterInitializingMode(mFed,&err);
+    helicsFederateEnterInitializingMode(fFed,&err);
     printf("entered init Mode\n");
-    helicsFederateEnterExecutingMode(mFed,&err);
+    helicsFederateEnterExecutingMode(fFed,&err);
     printf("entered execution Mode\n");
-    for (ii=1; ii<10; ++ii) {
-        snprintf(message,1024, "<message sent from %s to %s at time %d>", str, targetEndpoint, ii-1);
-        helicsEndpointSendMessageRaw(ept, targetEndpoint, message, (int)(strlen(message)),&err);
+        newTime=helicsFederateRequestTime(fFed, 4.0, &err);
+        
+        printf("granted time %f\n", newTime);
+        helicsFilterSet(filt, "delay", 1.5, &err);
+        printf("delay set to 1.5\n");
+        newTime = helicsFederateRequestTime(fFed, 8.0, &err);
 
-        printf("sent %s to %s at time %f\n", message,targetEndpoint,newTime);
-        newTime=helicsFederateRequestTime(mFed, (helics_time)ii, &err);
-
-        printf("%s granted time %f\n",helicsFederateGetName(mFed), newTime);
-        while (helicsEndpointHasMessage(ept)==helics_true)
-        {
-            helics_message_object nmessage = helicsEndpointGetMessageObject(ept);
-            printf("received message from %s time(%f) at time %f ::%s\n", helicsMessageGetSource(nmessage), helicsMessageGetTime(nmessage),newTime, helicsMessageGetString(nmessage));
-        }
-
-    }
+        printf("granted time %f\n", newTime);
+        helicsFilterSet(filt, "delay", 0.75, &err);
+        printf("delay set to 0.75\n");
+        /* request time at max*/
+        newTime = helicsFederateRequestTime(fFed, 20.0, &err);
     printf("finalizing federate\n");
-    helicsFederateDestroy(mFed);
+    helicsFederateDestroy(fFed);
 
     return 0;
 }

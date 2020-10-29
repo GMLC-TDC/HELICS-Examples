@@ -10,13 +10,37 @@
 cmake_minimum_required(VERSION 3.4)
 cmake_policy(VERSION 3.4)
 
-project (HELICS-EXAMPLES VERSION 2.3.0)
+project (HELICS-EXAMPLES VERSION 2.6.0)
 
 # -----------------------------------------------------------------------------
 # include some common macros
 # -----------------------------------------------------------------------------
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 include(GNUInstallDirs)
+
+# -----------------------------------------------------------------------------
+# set the binary output directories
+# -----------------------------------------------------------------------------
+if(NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
+        set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib" CACHE PATH
+                                                                           "Archive output dir."
+        )
+    endif()
+    if(NOT CMAKE_LIBRARY_OUTPUT_DIRECTORY)
+        set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib" CACHE PATH
+                                                                           "Library output dir."
+        )
+    endif()
+    if(NOT CMAKE_PDB_OUTPUT_DIRECTORY)
+        set(CMAKE_PDB_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+            CACHE PATH "PDB (MSVC debug symbol)output dir."
+        )
+    endif()
+    if(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
+        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+            CACHE PATH "Executable/dll output dir."
+        )
+    endif()
 
 # -------------------------------------------------------------
 # setting the RPATH
