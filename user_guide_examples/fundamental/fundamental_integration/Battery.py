@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on 9/28/2020
+Created on 10/27/2020
 
 This is a simple battery value federate that models the physics of an EV
 battery as it is being charged. The federate receives a voltage signal
@@ -18,8 +18,11 @@ individually, each battery ceases charging when its SOC reaches 100%.
 This modification is made to allow for the easy demonstration of a multi-
 source input, defined in ChargerController.json.
 
-@author: Trevor Hardy
-trevor.hardy@pnnl.gov
+This model differs from the Base Example in that it creates federates and
+registers them with the HELICS API.
+
+@author: Allison M. Campbell
+allison.m.campbell@pnnl.gov
 """
 
 import helics as h
@@ -50,6 +53,24 @@ def destroy_federate(fed):
     h.helicsCloseLibrary()
     logger.info('Federate finalized')
 
+def create_value_federate(fedinitstring,name,period):
+    fedinfo = h.helicsCreateFederateInfo()
+    # "coreType": "zmq",
+    h.helicsFederateInfoSetCoreTypeFromString(fedinfo, "zmq")
+    h.helicsFederateInfoSetCoreInitString(fedinfo, fedinitstring)
+    # "loglevel": 1,
+    h.helicsFederateInfoSetIntegerProperty(fedinfo, h.helics_property_int_log_level, 1)
+    # "period": 60,
+    h.helicsFederateInfoSetTimeProperty(fedinfo, h.helics_property_time_period, period)
+    # "uninterruptible": false,
+    h.helicsFederateInfoSetFlagOption(fedinfo, h.helics_flag_uninterruptible, False)
+    # "terminate_on_error": true,
+    h.helicsFederateInfoSetFlagOption(fedinfo, 72, True)
+    # "wait_for_current_time_update": true,
+    h.helicsFederateInfoSetFlagOption(fedinfo, h.helics_flag_wait_for_current_time_update, True)
+    # "name": "Battery",
+    fed = h.helicsCreateValueFederate(name, fedinfo)
+    return fed
 
 def get_new_battery(numBattery):
     '''
@@ -80,30 +101,38 @@ def get_new_battery(numBattery):
 if __name__ == "__main__":
     np.random.seed(2622)
 
-    ##########  Registering  federate and configuring from JSON################
-    fed = h.helicsCreateValueFederateFromConfig("BatteryConfig.json")
-    federate_name = h.helicsFederateGetName(fed)
-    logger.info(f'Created federate {federate_name}')
-    print(f'Created federate {federate_name}')
+    ##########  Registering  federate and configuring with API################
+    fedinitstring = " --federates=1"
+    name = "Battery"
+    period = 60
+    fed = create_value_federate(fedinitstring,name,period)
+    logger.info(f'Created federate {name}')
+    print(f'Created federate {name}')
+
+    num_EVs = 5
+    pub_count = num_EVs
+    pubid = {}
+    for i in range(0,pub_count):
+        # "key":"Battery/EV1_current",
+        pub_name = f'Battery/EV{i+1}_current'
+        pubid[i] = h.helicsFederateRegisterGlobalTypePublication(
+                    fed, pub_name, 'double', 'A')
+        logger.debug(f'\tRegistered publication---> {pub_name}')
+
+    sub_count = num_EVs
+    subid = {}
+    for i in range(0,sub_count):
+        sub_name = f'Charger/EV{i+1}_voltage'
+        subid[i] = h.helicsFederateRegisterSubscription(
+                    fed, sub_name, 'V')
+        logger.debug(f'\tRegistered subscription---> {sub_name[i]}')
+
 
     sub_count = h.helicsFederateGetInputCount(fed)
     logger.debug(f'\tNumber of subscriptions: {sub_count}')
     pub_count = h.helicsFederateGetPublicationCount(fed)
     logger.debug(f'\tNumber of publications: {pub_count}')
 
-    # Diagnostics to confirm JSON config correctly added the required
-    #   publications and subscriptions
-    subid = {}
-    for i in range(0, sub_count):
-        subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name = h.helicsSubscriptionGetKey(subid[i])
-        logger.debug(f'\tRegistered subscription---> {sub_name[i]}')
-
-    pubid = {}
-    for i in range(0, pub_count):
-        pubid[i] = h.helicsFederateGetPublicationByIndex(fed, i)
-        pub_name = h.helicsPublicationGetKey(pubid[i])
-        logger.debug(f'\tRegistered publication---> {pub_name}')
 
     ##############  Entering Execution Mode  ##################################
     h.helicsFederateEnterExecutingMode(fed)
@@ -112,7 +141,6 @@ if __name__ == "__main__":
     # Define battery physics as empirical values
     socs = np.array([0, 1])
     # 8 ohms to 150 ohms
-    #
     effective_R = np.array([8, 150])
 
     batt_list = get_new_battery(pub_count)
