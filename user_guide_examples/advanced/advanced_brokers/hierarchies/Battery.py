@@ -57,12 +57,14 @@ def get_new_battery(numBattery):
 
     '''
 
-    # Probabilities of a new EV charging at the specified level.
-    lvl1 = 0.2
-    lvl2 = 0.2
-    lvl3 = 0.6
-    listOfBatts = np.random.choice([25,62,100],numBattery,p=[lvl1,lvl2,
-                                                       lvl3]).tolist()
+    # Probabilities of a new EV having a battery at a given capacity. 
+    #   The three random values (25,62, 100) are the kWh of the randomly
+    #   selected battery.
+    size_1 = 0.2
+    size_2 = 0.2
+    size_3 = 0.6
+    listOfBatts = np.random.choice([25,62,100],numBattery,p=[size_1,size_2,
+                                                       size_3]).tolist()
 
     return listOfBatts
 
