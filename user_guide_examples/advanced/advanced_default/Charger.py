@@ -210,15 +210,6 @@ if __name__ == "__main__":
                      f' at time {grantedtime}')
 
 
-    # Once granted an initial time, send the initial SOCs to the EV
-    #   Controller
-    # for j in range(0,end_count):
-    #    destination_name = str(h.helicsEndpointGetDefaultDestination(endid[
-    #    j]))
-    #    h.helicsEndpointSendMessageRaw(endid[j], "", str(currentsoc[
-    #    j]).encode()) #
-
-
     ########## Main co-simulation loop ########################################
     # As long as granted time is in the time range to be simulated...
     while grantedtime < total_interval:
@@ -291,7 +282,7 @@ if __name__ == "__main__":
             if grantedtime % 900 == 0:
                 destination_name = str(
                     h.helicsEndpointGetDefaultDestination(endid[j]))
-                h.helicsEndpointSendMessageRaw(endid[j], "",
+                h.helicsEndpointSendBytesTo(endid[j], "",
                                                f'{currentsoc[j]:4f}'.encode(
                                                ))  #
                 logger.debug(f'Sent message from endpoint {endpoint_name}'
@@ -302,8 +293,11 @@ if __name__ == "__main__":
         #   primary metric of interest, to understand the power profile
         #   and capacity requirements required for this charging garage.
         total_power = 0
-        for j in range(0,end_count):
-            total_power += charge_rate[(EVlist[j]-1)]
+        #logger.debug(f'Calculating charging power')
+        for j in range(0,pub_count):
+            charging_power = charge_rate[(EVlist[j]-1)]
+            total_power += charging_power
+            #logger.debug(f'\tCharging power in kW for EV{j+1}: {charging_power}')
 
         # Data collection vectors
         time_sim.append(grantedtime)
@@ -325,4 +319,6 @@ if __name__ == "__main__":
     plt.grid(True)
     plt.xlabel('time (hr)')
     plt.title('Instantaneous Power Draw from 5 EVs')
+    # Saving graph to file
+    plt.savefig('advanced_default_charging_power.png', format='png')
     plt.show()
