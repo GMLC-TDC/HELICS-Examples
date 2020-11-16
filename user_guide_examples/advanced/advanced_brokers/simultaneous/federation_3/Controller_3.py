@@ -44,7 +44,7 @@ def destroy_federate(fed):
 
 if __name__ == "__main__":
     ##############  Registering  federate from json  ##########################
-    fed = h.helicsCreateMessageFederateFromConfig("ControllerConfig.json")
+    fed = h.helicsCreateMessageFederateFromConfig("ControllerConfig_3.json")
     federate_name = h.helicsFederateGetName(fed)
     logger.info(f'Created federate {federate_name}')
 
@@ -144,7 +144,7 @@ if __name__ == "__main__":
     plt.figure()
 
     fig, axs = plt.subplots(5, sharex=True, sharey=True)
-    fig.suptitle('SOC at each charging port')
+    fig.suptitle('Federation 3: SOC at each charging port')
 
     axs[0].plot(xaxis, y[0], color='tab:blue', linestyle='-')
     axs[0].set_yticks(np.arange(0,1.25,0.5))
@@ -170,7 +170,7 @@ if __name__ == "__main__":
     #for ax in axs():
 #        ax.label_outer()
     # Saving graph to file
-    plt.savefig('advanced_default_estimated_SOCs.png', format='png')
+    # plt.savefig('advanced_default_estimated_SOCs.png', format='png')
     plt.show()
 
 

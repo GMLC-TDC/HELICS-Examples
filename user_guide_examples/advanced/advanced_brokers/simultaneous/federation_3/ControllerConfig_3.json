@@ -1,0 +1,16 @@
+
+{
+  "name": "Controller",
+  "loglevel": 1,
+  "coreType": "zmq",
+  "brokerPort": "20300",
+  "timedelta": 1,
+  "uninterruptible": false,
+  "terminate_on_error": true,
+  "endpoints": [
+    {
+      "name": "Controller/ep",
+      "global": true
+    }
+  ]
+}

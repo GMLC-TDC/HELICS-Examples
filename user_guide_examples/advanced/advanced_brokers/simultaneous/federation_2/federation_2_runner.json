@@ -2,28 +2,28 @@
   "federates": [    
     {
       "directory": ".",
-      "exec": "helics_broker -f 3 --loglevel=7",
+      "exec": "helics_broker -f 3 --loglevel=1 --port=20200",
       "host": "localhost",
       "name": "broker"
     },
     {
       "directory": ".",
-      "exec": "python -u Charger.py 1",
+      "exec": "python -u Charger_2.py",
       "host": "localhost",
-      "name": "Charger"
+      "name": "Charger_2"
     },
     {
       "directory": ".",
-      "exec": "python -u Controller.py 1",
+      "exec": "python -u Controller_2.py",
       "host": "localhost",
-      "name": "Controller"
+      "name": "Controller_2"
     },
     {
       "directory": ".",
-      "exec": "python -u Battery.py 1",
+      "exec": "python -u Battery_2.py",
       "host": "localhost",
-      "name": "Battery"
+      "name": "Battery_2"
     }
   ],
-  "name": "EV_toy"
+  "name": "federation_2"
 }

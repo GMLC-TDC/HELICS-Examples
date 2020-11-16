@@ -70,10 +70,10 @@ def get_new_battery(numBattery):
 
 
 if __name__ == "__main__":
-    np.random.seed(2608)
+    np.random.seed(2610)
 
     ##########  Registering  federate and configuring from JSON################
-    fed = h.helicsCreateValueFederateFromConfig("BatteryConfig.json")
+    fed = h.helicsCreateValueFederateFromConfig("BatteryConfig_2.json")
     federate_name = h.helicsFederateGetName(fed)
     logger.info(f'Created federate {federate_name}')
     print(f'Created federate {federate_name}')
@@ -198,7 +198,7 @@ if __name__ == "__main__":
     plt.figure()
 
     fig, axs = plt.subplots(5, sharex=True, sharey=True)
-    fig.suptitle('SOC of each EV Battery')
+    fig.suptitle('Federation 2: SOC of each EV Battery')
 
     axs[0].plot(xaxis, y[0], color='tab:blue', linestyle='-')
     axs[0].set_yticks(np.arange(0,1.25,0.5))
@@ -224,7 +224,7 @@ if __name__ == "__main__":
     #for ax in axs():
 #        ax.label_outer()
     # Saving graph to file
-    plt.savefig('advanced_default_battery_SOCs.png', format='png')
+    #nplt.savefig('advanced_default_battery_SOCs.png', format='png')
 
     plt.show()
     
