@@ -3,7 +3,7 @@
   "name": "Controller",
   "loglevel": 1,
   "coreType": "zmq",
-  "coreInit": "--broker_address=tcp://127.0.0.1:20400",
+  "brokerAddress": "tcp://127.0.0.1:25400",
   "timedelta": 1,
   "uninterruptible": false,
   "terminate_on_error": true,

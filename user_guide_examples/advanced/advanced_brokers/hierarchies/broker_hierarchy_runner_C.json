@@ -3,20 +3,20 @@
   "federates": [
     {
       "directory": ".",
-      "exec": "helics_broker -f 2 --timeout='10s' --brokerport=20400 --broker_address=tcp://127.0.0.1:20200",
+      "exec": "helics_broker -f 2 --loglevel=7 --timeout='10s' --port=25400 --broker_address=tcp://127.0.0.1:25200",
       "host": "localhost",
       "name": "brokerC"
     },
     {
       "directory": ".",
-      "exec": "python -u Charger.py 1",
+      "exec": "python -u Charger.py",
       "host": "localhost",
       "name": "Charger",
       "loglevel": 1
     },
     {
       "directory": ".",
-      "exec": "python -u Controller.py 1",
+      "exec": "python -u Controller.py",
       "host": "localhost",
       "name": "Controller",
       "loglevel": 1

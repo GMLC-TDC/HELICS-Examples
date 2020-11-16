@@ -76,7 +76,7 @@ if __name__ == "__main__":
     #   (helics_time_maxtime is the largest time that HELICS can internally
     #   represent and is an approximation for a point in time very far in
     #   in the future).
-    fake_max_time = int(h.HELICS_TIME_MAXTIME/1000)
+    fake_max_time = int(h.HELICS_TIME_MAXTIME)
     starttime = fake_max_time
     logger.debug(f'Requesting initial time {starttime}')
     grantedtime = h.helicsFederateRequestTime (fed, starttime)
@@ -112,7 +112,7 @@ if __name__ == "__main__":
             else:
                 instructions = 0
             message = str(instructions)
-            h.helicsEndpointSendMessageRaw(endid, source, message.encode())
+            h.helicsEndpointSendBytesTo(endid, source, message.encode())
             logger.debug(f'Sent message to endpoint {source}'
                          f' at time {grantedtime}'
                          f' with payload {instructions}')
@@ -148,27 +148,29 @@ if __name__ == "__main__":
 
     axs[0].plot(xaxis, y[0], color='tab:blue', linestyle='-')
     axs[0].set_yticks(np.arange(0,1.25,0.5))
-    axs[0].set(ylabel='EV1')
+    axs[0].set(ylabel='Port 1')
     axs[0].grid(True)
 
     axs[1].plot(xaxis, y[1], color='tab:blue', linestyle='-')
-    axs[1].set(ylabel='EV2')
+    axs[1].set(ylabel='Port 2')
     axs[1].grid(True)
 
     axs[2].plot(xaxis, y[2], color='tab:blue', linestyle='-')
-    axs[2].set(ylabel='EV3')
+    axs[2].set(ylabel='Port 3')
     axs[2].grid(True)
 
     axs[3].plot(xaxis, y[3], color='tab:blue', linestyle='-')
-    axs[3].set(ylabel='EV4')
+    axs[3].set(ylabel='Port 4')
     axs[3].grid(True)
 
     axs[4].plot(xaxis, y[4], color='tab:blue', linestyle='-')
-    axs[4].set(ylabel='EV5')
+    axs[4].set(ylabel='Port 5')
     axs[4].grid(True)
     plt.xlabel('time (hr)')
     #for ax in axs():
 #        ax.label_outer()
+    # Saving graph to file
+    plt.savefig('advanced_default_estimated_SOCs.png', format='png')
     plt.show()
 
 

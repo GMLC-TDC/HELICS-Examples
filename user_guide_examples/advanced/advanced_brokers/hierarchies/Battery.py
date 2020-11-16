@@ -4,7 +4,7 @@ Created on 8/31/2020
 
 This is a simple battery value federate that models the physics of an EV
 battery as it is being charged. The federate receives a voltage signal
-representing the votlage applied to the charging terminals of the battery
+representing the voltage applied to the charging terminals of the battery
 and based on its internally modeled SOC, calculates the current draw of
 the battery and sends it back to the EV federate. Note that this SOC should
 be considered the true SOC of the battery which may be different than the
@@ -202,25 +202,31 @@ if __name__ == "__main__":
 
     axs[0].plot(xaxis, y[0], color='tab:blue', linestyle='-')
     axs[0].set_yticks(np.arange(0,1.25,0.5))
-    axs[0].set(ylabel='Batt1')
+    axs[0].set(ylabel='Batt at\nport 1')
     axs[0].grid(True)
 
     axs[1].plot(xaxis, y[1], color='tab:blue', linestyle='-')
-    axs[1].set(ylabel='Batt2')
+    axs[1].set(ylabel='Batt a\nport 2')
     axs[1].grid(True)
 
     axs[2].plot(xaxis, y[2], color='tab:blue', linestyle='-')
-    axs[2].set(ylabel='Batt3')
+    axs[2].set(ylabel='Batt at\nport 3')
     axs[2].grid(True)
 
     axs[3].plot(xaxis, y[3], color='tab:blue', linestyle='-')
-    axs[3].set(ylabel='Batt4')
+    axs[3].set(ylabel='Batt at\nport 4')
     axs[3].grid(True)
 
     axs[4].plot(xaxis, y[4], color='tab:blue', linestyle='-')
-    axs[4].set(ylabel='Batt5')
+    axs[4].set(ylabel='Batt at\nport 5')
     axs[4].grid(True)
     plt.xlabel('time (hr)')
     #for ax in axs():
 #        ax.label_outer()
+    # Saving graph to file
+    plt.savefig('advanced_default_battery_SOCs.png', format='png')
+
     plt.show()
+    
+
+    
