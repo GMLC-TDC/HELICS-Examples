@@ -170,7 +170,7 @@ if __name__ == "__main__":
     #for ax in axs():
 #        ax.label_outer()
     # Saving graph to file
-    plt.savefig('advanced_default_estimated_SOCs.png', format='png')
+    #plt.savefig('advanced_hierarchy_estimated_SOCs.png', format='png')
     plt.show()
 
 
