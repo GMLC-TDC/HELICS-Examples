@@ -2,28 +2,28 @@
   "federates": [    
     {
       "directory": ".",
-      "exec": "helics_broker --type=multi --config=multi_broker_config.json --name=root_broker",
+      "exec": "helics_broker --coreType=multi --config=multi_broker_config.json --name=root_broker",
       "host": "localhost",
       "name": "broker"
     },
     {
       "directory": ".",
-      "exec": "python -u Charger.py 1",
+      "exec": "python -u Charger.py",
       "host": "localhost",
       "name": "Charger"
     },
     {
       "directory": ".",
-      "exec": "python -u Controller.py 1",
+      "exec": "python -u Controller.py",
       "host": "localhost",
       "name": "Controller"
     },
     {
       "directory": ".",
-      "exec": "python -u Battery.py 1",
+      "exec": "python -u Battery.py",
       "host": "localhost",
       "name": "Battery"
     }
   ],
-  "name": "EV_toy"
+  "name": "multi_broker"
 }
