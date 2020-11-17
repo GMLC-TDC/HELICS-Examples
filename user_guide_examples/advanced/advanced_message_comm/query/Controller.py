@@ -169,6 +169,8 @@ if __name__ == "__main__":
     plt.xlabel('time (hr)')
     #for ax in axs():
 #        ax.label_outer()
+    # Saving graph to file
+    #plt.savefig('advanced_query_estimated_SOCs.png', format='png')
     plt.show()
 
 

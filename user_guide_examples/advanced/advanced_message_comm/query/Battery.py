@@ -78,11 +78,10 @@ def get_new_battery(numBattery):
 
 def eval_data_flow_graph(fed):
     query = h.helicsCreateQuery("broker", "data_flow_graph")
-    data_flow_graph = h.helicsQueryExecute(query, fed)
+    graph = h.helicsQueryExecute(query, fed)
     #logger.debug(f'Data flow graph: {data_flow_graph}')
 
     # Processing data flow graph to confirm correct configuration
-    graph = json.loads(data_flow_graph)
     handle_lut = {}
     federates_lut = {}
     for core in graph['cores']:
@@ -375,4 +374,6 @@ if __name__ == "__main__":
     plt.xlabel('time (hr)')
     #for ax in axs():
 #        ax.label_outer()
+    # Saving graph to file
+    #plt.savefig('advanced_query_battery_SOCs.png', format='png')
     plt.show()
