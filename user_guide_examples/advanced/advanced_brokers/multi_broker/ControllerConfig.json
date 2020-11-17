@@ -2,11 +2,11 @@
 {
   "name": "Controller",
   "loglevel": 1,
-  "coreType": "zmq",
+  "coreType": "udp",
   "timedelta": 1,
   "uninterruptible": false,
   "terminate_on_error": true,
-  "brokerPort": 23410,
+  "brokerPort": 23900,
   "endpoints": [
     {
       "name": "Controller/ep",

@@ -1,3 +1,26 @@
-Not currently working under v3.0.0-alpha.2 Broker log has the following error:
+Working under v3.0.0-alpha.2 
 
-`libc++abi.dylib: terminating with uncaught exception of type std::__1::bad_function_call: std::exception`
+It turns out the multi-broker configuration file has two very specific key words (somewhat unexpectedly): "master" and "comms"
+
+```json
+{
+  "master":{
+    "coreType": "test"
+  },
+  "comms": [
+    {
+      "coreType": "zmq",
+      "port": 23500
+    },
+    {
+      "coreType": "tcp",
+      "port": 23700
+    },
+    {
+      "coreType": "udp",
+      "port": 23900
+    }
+  ]
+}
+```
+The `master` coreType was tested on both `zmq` and `test` and both work.

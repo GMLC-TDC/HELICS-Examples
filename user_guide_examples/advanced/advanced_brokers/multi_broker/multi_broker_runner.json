@@ -2,7 +2,7 @@
   "federates": [    
     {
       "directory": ".",
-      "exec": "helics_broker --coreType=multi --config=multi_broker_config.json --name=root_broker",
+      "exec": "helics_broker -f 3 --coreType=multi --config=multi_broker_config.json --name=root_broker",
       "host": "localhost",
       "name": "broker"
     },
