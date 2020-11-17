@@ -1,1 +1,1 @@
-This is a multi-input example and it is entirely working.
+This is a multi-input example and it is entirely working under v3.0.0-alpha.2
