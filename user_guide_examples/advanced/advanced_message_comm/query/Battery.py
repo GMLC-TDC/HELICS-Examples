@@ -176,6 +176,7 @@ if __name__ == "__main__":
     sleep_time = 5
     logger.debug(f'Sleeping for {sleep_time} seconds')
     time.sleep(sleep_time)
+    logger.debug('Pre-configure data-flow graph query.')
     graph, federates_lut, handle_lut = eval_data_flow_graph(fed)
 
     #logger.debug(pp.pformat(graph))
@@ -195,45 +196,10 @@ if __name__ == "__main__":
     # This is a convenient point at which to run queries on the structure
     #  of the federation as execution of the co-simulation has not begun.
 
-    # query = h.helicsCreateQuery("broker", "address")
-    # broker_address = h.helicsQueryExecute(query, fed)
-    # logger.debug(f'Broker address: {broker_address}')
-
-    # h.helicsQuerySetQueryString(query, "federate_map")
-    # federate_map = h.helicsQueryExecute(query, fed)
-    # logger.debug(f'Federate map: {federate_map}')
-
-    # h.helicsQuerySetQueryString(query, "current_state")
-    # current_state = h.helicsQueryExecute(query, fed)
-    # logger.debug(f'Init current state: {current_state}')
-
-    # query = h.helicsCreateQuery("broker", "dependents")
-    # dependents = h.helicsQueryExecute(query, fed)
-    # logger.debug(f'Dependents: {dependents}')
-
-    # query = h.helicsCreateQuery("broker", "federates")
-    # fed_str = h.helicsQueryExecute(query, fed)
-    # Cleaning up the string from the query and turning it into a list
-    # Removing leading and trailing braces
-    # fed_str = fed_str[1:-1]
-    # federates = fed_str.split(';')
-    # logger.debug(f'Federates: {federates}')
-    #
-    # query_f0 = h.helicsCreateQuery(federates[0], "exists")
-    # exists = h.helicsQueryExecute(query_f0, fed)
-    # logger.debug(f'Federate {federates[0]} exists: {exists}')
-
-    # h.helicsQuerySetQueryString(query_f0, "publications")
-    # pubs = h.helicsQueryExecute(query_f0, fed)
-    # logger.debug(f'Federate {federates[1]} publications: {pubs}')
-
-    # h.helicsQuerySetQueryString(query_f0, "state")
-    # state = h.helicsQueryExecute(query_f0, fed)
-    # logger.debug(f'Federate {federates[1]} state: {state}')
-
     # The data flow graph can be a time-intensive query for large
     #   federations
     # Verifying dynamic configuration worked.
+    logger.debug('Post-configure data-flow graph query.')
     graph, federates_lut, handle_lut = eval_data_flow_graph(fed)
     # logger.debug(pp.pformat(graph))
     sub_count = h.helicsFederateGetInputCount(fed)
@@ -245,7 +211,6 @@ if __name__ == "__main__":
         sub_name[i] = h.helicsSubscriptionGetKey(subid[i])
         logger.debug(f'\tRegistered subscription---> {sub_name[i]}')
 
-    graph, federates_lut, handle_lut = eval_data_flow_graph(fed)
 
 
 

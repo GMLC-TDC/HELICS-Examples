@@ -9,7 +9,7 @@
     },
     {
       "directory": ".",
-      "exec": "python -u Battery.py 1",
+      "exec": "python -u Battery.py",
       "host": "localhost",
       "name": "Battery",
       "loglevel": 1

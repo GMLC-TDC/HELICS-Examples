@@ -1,11 +1,11 @@
 {
   "name": "Charger",
   "loglevel": 1,
-  "coreType": "zmq",
+  "coreType": "tcp",
   "period": 60,
   "uninterruptible": false,
   "terminate_on_error": true,
-  "brokerPort": 23410,
+  "brokerPort": 23700,
   "endpoints": [
     {
       "name": "Charger/EV1.soc",

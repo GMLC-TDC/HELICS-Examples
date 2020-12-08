@@ -1,12 +1,19 @@
 {
+  "master":{
+    "coreType": "test"
+  },
   "comms": [
     {
-      "type": "zmq",
-      "interfaceport": 23410
+      "coreType": "zmq",
+      "port": 23500
     },
     {
-      "type": "zmq",
-      "interfaceport": 23700
+      "coreType": "tcp",
+      "port": 23700
+    },
+    {
+      "coreType": "udp",
+      "port": 23900
     }
   ]
 }
