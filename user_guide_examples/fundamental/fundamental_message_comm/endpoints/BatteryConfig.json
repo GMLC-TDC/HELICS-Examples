@@ -3,6 +3,7 @@
   "loglevel": 7,
   "coreType": "zmq",
   "period": 60,
+  "offset": 10,
   "uninterruptible": false,
   "terminate_on_error": true,
   "endpoints":[

@@ -18,17 +18,17 @@
     },
     {
       "key":"Charger/EV3_voltage",
-      "destination":"Battery/EV2_current",
+      "destination":"Battery/EV3_current",
       "global": true
     },
     {
       "key":"Charger/EV4_voltage",
-      "destination":"Battery/EV2_current",
+      "destination":"Battery/EV4_current",
       "global": true
     },
     {
       "key":"Charger/EV5_voltage",
-      "destination":"Battery/EV2_current",
+      "destination":"Battery/EV5_current",
       "global": true
     }
   ]

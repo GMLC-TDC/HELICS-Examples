@@ -152,11 +152,11 @@ if __name__ == "__main__":
 
     # Apply initial charging voltage
     for j in range(0, end_count):
-        destination = str(h.helicsEndpointGetDefaultDestination(endid[j]))
+        #destination = str(h.helicsEndpointGetDefaultDestination(endid[j]))
         message = str(charging_voltage[j])
         h.helicsEndpointSendBytesTo(endid[j], "", message.encode()) #
         logger.debug(f'\tSending charging voltage of {message} '
-                     f' to {destination}'
+                     #f' to {destination}'
                      f' from {endid[j]}'
                      f' at time {grantedtime}')
 
@@ -230,4 +230,6 @@ if __name__ == "__main__":
     plt.grid(True)
     plt.xlabel('time (hr)')
     plt.title('Instantaneous Power Draw from 5 EVs')
+    plt.savefig('fundamental_default_charger_power.png', format='png')
+
     plt.show()

@@ -118,6 +118,9 @@ if __name__ == "__main__":
     update_interval = int(h.helicsFederateGetTimeProperty(
                                 fed,
                                 h.helics_property_time_period))
+    update_offset = int(h.helicsFederateGetTimeProperty(
+                                fed,
+                                h.helics_property_time_offset))
     grantedtime = 0
 
     # Data collection lists
@@ -129,7 +132,7 @@ if __name__ == "__main__":
     while grantedtime < total_interval:
 
         # Time request for the next physical interval to be simulated
-        requested_time = (grantedtime+update_interval)
+        requested_time = (grantedtime+update_interval+update_offset)
         logger.debug(f'Requesting time {requested_time}')
         grantedtime = h.helicsFederateRequestTime (fed, requested_time)
         logger.debug(f'Granted time {grantedtime}')
@@ -225,4 +228,6 @@ if __name__ == "__main__":
     plt.xlabel('time (hr)')
     #for ax in axs():
 #        ax.label_outer()
+    plt.savefig('fundamental_default_battery_SOCs.png', format='png')
+
     plt.show()
