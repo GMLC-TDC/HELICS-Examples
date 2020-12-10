@@ -97,7 +97,7 @@ if __name__ == "__main__":
     for i in range(0, sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
         sub_name = h.helicsSubscriptionGetKey(subid[i])
-        logger.debug(f'\tRegistered subscription---> {sub_name[i]}')
+        logger.debug(f'\tRegistered subscription---> {sub_name}')
 
     pubid = {}
     for i in range(0, pub_count):
@@ -144,13 +144,14 @@ if __name__ == "__main__":
 
         # Iterating over publications in this case since this example
         #  uses only one charging voltage for all five batteries
+
         for j in range(0,pub_count):
             logger.debug(f'Battery {j+1} time {grantedtime}')
 
             # Get the applied charging voltage from the EV
-            charging_voltage = h.helicsInputGetDouble((subid[0]))
+            charging_voltage = h.helicsInputGetDouble((subid[j]))
             logger.debug(f'\tReceived voltage {charging_voltage:.2f} from input'
-                         f' {h.helicsSubscriptionGetKey(subid[0])}')
+                         f' {h.helicsSubscriptionGetKey(subid[j])}')
 
             # Calculate charging current and update SOC
             R =  np.interp(current_soc[j], socs, effective_R)
@@ -218,4 +219,6 @@ if __name__ == "__main__":
     plt.xlabel('time (hr)')
     #for ax in axs():
 #        ax.label_outer()
+    plt.savefig('fundamental_default_battery_SOCs.png', format='png')
+
     plt.show()

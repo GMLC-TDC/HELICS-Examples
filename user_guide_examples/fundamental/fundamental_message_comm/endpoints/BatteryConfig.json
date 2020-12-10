@@ -2,8 +2,8 @@
   "name": "Battery",
   "loglevel": 7,
   "coreType": "zmq",
-  "period": 60,
-  "offset": 10,
+  "period": 60.0,
+  "offset": 10.0,
   "uninterruptible": false,
   "terminate_on_error": true,
   "endpoints":[

@@ -99,7 +99,7 @@ if __name__ == "__main__":
     np.random.seed(1490)
 
     ##############  Registering  federate from json  ##########################
-    fed = h.helicsCreateCombinationFederateFromConfig("ChargerConfig.json")
+    fed = h.helicsCreateValueFederateFromConfig("ChargerConfig.json")
     federate_name = h.helicsFederateGetName(fed)
     logger.info(f'Created federate {federate_name}')
     print(f'Created federate {federate_name}')
@@ -218,4 +218,6 @@ if __name__ == "__main__":
     plt.grid(True)
     plt.xlabel('time (hr)')
     plt.title('Instantaneous Power Draw from 5 EVs')
+    plt.savefig('fundamental_default_charger_power.png', format='png')
+
     plt.show()

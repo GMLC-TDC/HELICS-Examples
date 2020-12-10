@@ -122,7 +122,7 @@ if __name__ == "__main__":
                                 fed,
                                 h.helics_property_time_offset))
     grantedtime = 0
-
+    logger.debug(f'offset: {update_offset}')
     # Data collection lists
     time_sim = []
     total_current = []

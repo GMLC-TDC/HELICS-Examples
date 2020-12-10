@@ -171,7 +171,6 @@ if __name__ == "__main__":
         grantedtime = h.helicsFederateRequestTime (fed, requested_time)
         logger.debug(f'Granted time {grantedtime}')
 
-
         for j in range(0,end_count):
             logger.debug(f'EV {j + 1} time {grantedtime}')
             # Model the physics of the battery charging. This happens
