@@ -2,7 +2,7 @@
 import helics as h
 import time
 
-initstring = "-f 2 --name=mainbroker"
+initstring = "-f 2"
 
 print("Creating Broker")
 broker = h.helicsCreateBroker("zmq", "", initstring)
