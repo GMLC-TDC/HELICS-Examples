@@ -3,25 +3,12 @@ import time
 import helics as h
 from math import pi
 
-initstring = "-f 2 --name=mainbroker"
 fedinitstring = "--broker=mainbroker --federates=1"
 deltat = 0.01
 
 helicsversion = h.helicsGetVersion()
 
 print("PI SENDER: Helics version = {}".format(helicsversion))
-
-# Create broker #
-print("Creating Broker")
-broker = h.helicsCreateBroker("zmq", "", initstring)
-print("Created Broker")
-
-print("Checking if Broker is connected")
-isconnected = h.helicsBrokerIsConnected(broker)
-print("Checked if Broker is connected")
-
-if isconnected == 1:
-    print("Broker created and connected")
 
 # Create Federate Info object that describes the federate properties #
 fedinfo = h.helicsCreateFederateInfo()
@@ -65,21 +52,11 @@ for t in range(5, 10):
     currenttime = h.helicsFederateRequestTime(vfed, t)
 
     h.helicsPublicationPublishDouble(pub, val)
-    print(
-        "PI SENDER: Sending value pi = {} at time {} to PI RECEIVER".format(
-            val, currenttime
-        )
-    )
+    print("PI SENDER: Sending value pi = {} at time {} to PI RECEIVER".format(val, currenttime))
 
     time.sleep(1)
 
 h.helicsFederateFinalize(vfed)
 print("PI SENDER: Federate finalized")
 
-while h.helicsBrokerIsConnected(broker):
-    time.sleep(1)
-
 h.helicsFederateFree(vfed)
-h.helicsCloseLibrary()
-
-print("PI SENDER: Broker disconnected")
