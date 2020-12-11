@@ -57,7 +57,7 @@ def get_new_battery(numBattery):
 
     '''
 
-    # Probabilities of a new EV having a battery at a given capacity. 
+    # Probabilities of a new EV having a battery at a given capacity.
     #   The three random values (25,62, 100) are the kWh of the randomly
     #   selected battery.
     size_1 = 0.2
@@ -227,6 +227,3 @@ if __name__ == "__main__":
     plt.savefig('advanced_default_battery_SOCs.png', format='png')
 
     plt.show()
-    
-
-    

@@ -81,29 +81,21 @@ if __name__ == "__main__":
     np.random.seed(2622)
 
     ##########  Registering  federate and configuring from JSON################
-    fed = h.helicsCreateValueFederateFromConfig("BatteryConfig.json")
+    fed = h.helicsCreateMessageFederateFromConfig("BatteryConfig.json")
     federate_name = h.helicsFederateGetName(fed)
     logger.info(f'Created federate {federate_name}')
     print(f'Created federate {federate_name}')
 
-    sub_count = h.helicsFederateGetInputCount(fed)
-    logger.debug(f'\tNumber of subscriptions: {sub_count}')
-    pub_count = h.helicsFederateGetPublicationCount(fed)
-    logger.debug(f'\tNumber of publications: {pub_count}')
+    end_count = h.helicsFederateGetEndpointCount(fed)
+    logging.debug(f'\tNumber of endpoints: {end_count}')
 
     # Diagnostics to confirm JSON config correctly added the required
-    #   publications and subscriptions
-    subid = {}
-    for i in range(0, sub_count):
-        subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name = h.helicsSubscriptionGetKey(subid[i])
-        logger.debug(f'\tRegistered subscription---> {sub_name}')
-
-    pubid = {}
-    for i in range(0, pub_count):
-        pubid[i] = h.helicsFederateGetPublicationByIndex(fed, i)
-        pub_name = h.helicsPublicationGetKey(pubid[i])
-        logger.debug(f'\tRegistered publication---> {pub_name}')
+    #   endpoints
+    endid = {}
+    for i in range(0, end_count):
+        endid[i] = h.helicsFederateGetEndpointByIndex(fed, i)
+        end_name = h.helicsEndpointGetName(endid[i])
+        logger.debug(f'\tRegistered Endpoint ---> {end_name}')
 
     ##############  Entering Execution Mode  ##################################
     h.helicsFederateEnterExecutingMode(fed)
@@ -115,10 +107,10 @@ if __name__ == "__main__":
     #
     effective_R = np.array([8, 150])
 
-    batt_list = get_new_battery(pub_count)
+    batt_list = get_new_battery(end_count)
 
     current_soc = {}
-    for i in range (0, pub_count):
+    for i in range (0, end_count):
         current_soc[i] = (np.random.randint(0,60))/100
 
     hours = 24 * 7
@@ -126,8 +118,11 @@ if __name__ == "__main__":
     update_interval = int(h.helicsFederateGetTimeProperty(
                                 fed,
                                 h.helics_property_time_period))
+    update_offset = int(h.helicsFederateGetTimeProperty(
+                                fed,
+                                h.helics_property_time_offset))
     grantedtime = 0
-
+    logger.debug(f'offset: {update_offset}')
     # Data collection lists
     time_sim = []
     total_current = []
@@ -137,48 +132,62 @@ if __name__ == "__main__":
     while grantedtime < total_interval:
 
         # Time request for the next physical interval to be simulated
-        requested_time = (grantedtime+update_interval)
+        requested_time = (grantedtime+update_interval+update_offset)
         logger.debug(f'Requesting time {requested_time}')
         grantedtime = h.helicsFederateRequestTime (fed, requested_time)
         logger.debug(f'Granted time {grantedtime}')
 
         # Iterating over publications in this case since this example
         #  uses only one charging voltage for all five batteries
-
-        for j in range(0,pub_count):
+        for j in range(0,end_count):
             logger.debug(f'Battery {j+1} time {grantedtime}')
 
             # Get the applied charging voltage from the EV
-            charging_voltage = h.helicsInputGetDouble((subid[j]))
-            logger.debug(f'\tReceived voltage {charging_voltage:.2f} from input'
-                         f' {h.helicsSubscriptionGetKey(subid[j])}')
+            # Check for messages from Charger
+            endpoint_name = h.helicsEndpointGetName(endid[j])
+            if h.helicsEndpointHasMessage(endid[j]):
+                msg = h.helicsEndpointGetMessage(endid[j])
+                charging_voltage = float(h.helicsMessageGetString(msg))
+                source = h.helicsMessageGetOriginalSource(msg)
+                logger.debug(f'Received message voltage {charging_voltage:.2f}'
+                             f' at endpoint {endpoint_name}'
+                             f' from {source}'
+                             f' at time {grantedtime}')
+                # Calculate charging current and update SOC
+                R =  np.interp(current_soc[j], socs, effective_R)
+                logger.debug(f'\tEffective R (ohms): {R:.2f}')
+                # If battery is full assume its stops charging on its own
+                #  and the charging current goes to zero.
+                if current_soc[j] >= 1:
+                    charging_current = 0;
+                else:
+                    charging_current = charging_voltage / R
+                logger.debug(f'\tCharging current (A): {charging_current:.2f}')
 
-            # Calculate charging current and update SOC
-            R =  np.interp(current_soc[j], socs, effective_R)
-            logger.debug(f'\tEffective R (ohms): {R:.2f}')
-            # If battery is full assume its stops charging on its own
-            #  and the charging current goes to zero.
-            if current_soc[j] >= 1:
-                charging_current = 0;
+                added_energy = (charging_current * charging_voltage * \
+                                update_interval/3600) / 1000
+                logger.debug(f'\tAdded energy (kWh): {added_energy:.4f}')
+                current_soc[j] = current_soc[j] + added_energy / batt_list[j]
+                logger.debug(f'\tSOC: {current_soc[j]:.4f}')
             else:
-                charging_current = charging_voltage / R
-            logger.debug(f'\tCharging current (A): {charging_current:.2f}')
+                logger.debug(f'\tNo messages at endpoint {endpoint_name} '
+                             f'recieved at '
+                             f'time {grantedtime}')
 
-            added_energy = (charging_current * charging_voltage * \
-                           update_interval/3600) / 1000
-            logger.debug(f'\tAdded energy (kWh): {added_energy:.4f}')
-            current_soc[j] = current_soc[j] + added_energy / batt_list[j]
-            logger.debug(f'\tSOC: {current_soc[j]:.4f}')
 
-            # Publish out charging current
-            h.helicsPublicationPublishDouble(pubid[j], charging_current)
-            logger.debug(f'\tPublished {pub_name[j]} with value '
-                         f'{charging_current:.2f}')
+            # send charging current
+            destination_name = str(
+                h.helicsEndpointGetDefaultDestination(endid[j]))
+            h.helicsEndpointSendBytesTo(endid[j], "",
+                                           str(charging_current))  #
+            logger.debug(f'Sent message {charging_current:.2f}'
+                         f'from endpoint {endpoint_name}'
+                         f' at time {grantedtime}')
 
             # Store SOC for later analysis/graphing
-            if pubid[j] not in soc:
-                soc[pubid[j]] = []
-            soc[pubid[j]].append(float(current_soc[j]))
+            if endid[j] not in soc:
+                soc[endid[j]] = []
+            soc[endid[j]].append(float(current_soc[j]))
 
         # Data collection vectors
         time_sim.append(grantedtime)

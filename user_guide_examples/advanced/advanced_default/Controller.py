@@ -172,6 +172,3 @@ if __name__ == "__main__":
     # Saving graph to file
     plt.savefig('advanced_default_estimated_SOCs.png', format='png')
     plt.show()
-
-
-

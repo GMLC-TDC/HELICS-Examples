@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 """
-Created on 9/29/2020
+Created on 12/08/2020
 
-This is a simple EV charging federate that models the parallel charging
-of a number of EVs via a single charging point at constant voltage. Unlike
-other similar examples in this suite of examples, the batteries self-
-terminate their charging when they reach full SOC. This charger has no
-intelligence and simply applies a constant charging voltage.
+This is a simple EV charge controller federate that manages the charging at
+a set of charging terminals in a hypothetical EV garage. It receives periodic
+SOC messages from each EV (associated with a particular charging terminal)
+and sends back a message indicating whether the EV should continue charging
+or not (based on whether it is full).
 
-@author: Trevor Hardy
-trevor.hardy@pnnl.gov
+@author: Allison M. Campbell
+allison.m.campbell@pnnl.gov
 """
 
 import helics as h
@@ -99,29 +99,21 @@ if __name__ == "__main__":
     np.random.seed(1490)
 
     ##############  Registering  federate from json  ##########################
-    fed = h.helicsCreateValueFederateFromConfig("ChargerConfig.json")
+    fed = h.helicsCreateMessageFederateFromConfig("ChargerConfig.json")
     federate_name = h.helicsFederateGetName(fed)
     logger.info(f'Created federate {federate_name}')
     print(f'Created federate {federate_name}')
-
-    sub_count = h.helicsFederateGetInputCount(fed)
-    logger.debug(f'\tNumber of subscriptions: {sub_count}')
-    pub_count = h.helicsFederateGetPublicationCount(fed)
-    logger.debug(f'\tNumber of publications: {pub_count}')
+    end_count = h.helicsFederateGetEndpointCount(fed)
+    logging.debug(f'\tNumber of endpoints: {end_count}')
 
     # Diagnostics to confirm JSON config correctly added the required
-    #   publications, and subscriptions.
-    subid = {}
-    for i in range(0, sub_count):
-        subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name = h.helicsSubscriptionGetKey(subid[i])
-        logger.debug(f'\tRegistered subscription---> {sub_name}')
+    #   endpoints
+    endid = {}
+    for i in range(0, end_count):
+        endid[i] = h.helicsFederateGetEndpointByIndex(fed, i)
+        end_name = h.helicsEndpointGetName(endid[i])
+        logger.debug(f'\tRegistered Endpoint ---> {end_name}')
 
-    pubid = {}
-    for i in range(0, pub_count):
-        pubid[i] = h.helicsFederateGetPublicationByIndex(fed, i)
-        pub_name = h.helicsPublicationGetKey(pubid[i])
-        logger.debug(f'\tRegistered publication---> {pub_name}')
 
 
     ##############  Entering Execution Mode  ##################################
@@ -134,7 +126,7 @@ if __name__ == "__main__":
     # Generate an initial fleet of EVs, one for each previously defined
     #   handle. This gives each EV a unique link to the EV controller
     #   federate.
-    numLvl1,numLvl2,numLvl3,EVlist = get_new_EV(pub_count)
+    numLvl1,numLvl2,numLvl3,EVlist = get_new_EV(end_count)
     charging_voltage = calc_charging_voltage(EVlist)
     currentsoc = {}
 
@@ -159,9 +151,13 @@ if __name__ == "__main__":
 
 
     # Apply initial charging voltage
-    for j in range(0, pub_count):
-        h.helicsPublicationPublishDouble(pubid[j], charging_voltage[j])
-        logger.debug(f'\tPublishing charging voltage of {charging_voltage[j]} '
+    for j in range(0, end_count):
+        #destination = str(h.helicsEndpointGetDefaultDestination(endid[j]))
+        message = str(charging_voltage[j])
+        h.helicsEndpointSendBytesTo(endid[j], "", message.encode()) #
+        logger.debug(f'\tSending charging voltage of {message} '
+                     #f' to {destination}'
+                     f' from {endid[j]}'
                      f' at time {grantedtime}')
 
 
@@ -175,26 +171,41 @@ if __name__ == "__main__":
         grantedtime = h.helicsFederateRequestTime (fed, requested_time)
         logger.debug(f'Granted time {grantedtime}')
 
-        for j in range(0, pub_count):
+        for j in range(0,end_count):
             logger.debug(f'EV {j + 1} time {grantedtime}')
             # Model the physics of the battery charging. This happens
             #   every time step whether a message comes in or not and always
             #   uses the latest value provided by the battery model.
-            charging_current[j] = h.helicsInputGetDouble((subid[j]))
-            logger.debug(f'\tCharging current: {charging_current[j]:.2f} from '
-                         f'input {h.helicsSubscriptionGetKey(subid[j])}')
+            # Check for messages from Battery
+            endpoint_name = h.helicsEndpointGetName(endid[j])
+            if h.helicsEndpointHasMessage(endid[j]):
+                msg = h.helicsEndpointGetMessage(endid[j])
+                charging_current[j] = float(h.helicsMessageGetString(msg))
+                logger.debug(f'\tCharging current: {charging_current[j]:.2f} from '
+                             f' endpoint {endpoint_name}'
+                             f' at time {grantedtime}')
+            # Send message of voltage to Battery federate
+                destination_name = str(
+                    h.helicsEndpointGetDefaultDestination(endid[j]))
+                h.helicsEndpointSendBytesTo(endid[j], "",
+                                           f'{charging_voltage[j]:4f}'.encode())  #
+                logger.debug(f'Sent message from endpoint {endpoint_name}'
+                         f' at time {grantedtime}'
+                         f' with voltage {charging_voltage[j]:4f}')
 
-            # Publish updated charging voltage
-            h.helicsPublicationPublishDouble(pubid[j], charging_voltage[j])
-            logger.debug(
-                f'\tPublishing charging voltage of {charging_voltage[j]} '
-                f' at time {grantedtime}')
+            else:
+                logger.debug(f'\tNo messages at endpoint {endpoint_name} '
+                             f'recieved at '
+                             f'time {grantedtime}')
+
+
+
 
         # Calculate the total power required by all chargers. This is the
         #   primary metric of interest, to understand the power profile
         #   and capacity requirements required for this charging garage.
         total_power = 0
-        for j in range(0, pub_count):
+        for j in range(0, end_count):
             if charging_current[j] > 0: # EV is still charging
                 total_power += charge_rate[(EVlist[j] - 1)]
 
