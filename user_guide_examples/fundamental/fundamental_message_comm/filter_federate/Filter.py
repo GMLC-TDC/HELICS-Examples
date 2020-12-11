@@ -296,8 +296,10 @@ def run_cosim(fed, endid):
                 #   run again when its time to deliver the next message in the
                 #   queue
                 requested_time = eq[0]['time']
-            else:  # actually unreachable, but the code doesn't like it if it isn't defined.
-                # If no events in queue, schedule run for end of simulation.
+            else:  
+                # Reachable if interference has removed all the messages
+                #   from the event queue.
+                # No events in queue, schedule run for end of simulation.
                 #   Filter federate will be granted an earlier time if a
                 #   message is rerouted to the filter federate.
                 # requested_time = fake_max_time
