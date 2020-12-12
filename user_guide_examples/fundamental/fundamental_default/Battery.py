@@ -8,15 +8,7 @@ representing the voltage applied to the charging terminals of the battery
 and based on its internally modeled SOC, calculates the current draw of
 the battery and sends it back to the EV federate. Note that this SOC should
 be considered the true SOC of the battery which may be different than the
-SOC modeled by the charger
-
-This model is slightly different than others in this example suite as it
-assumes all batteries are being charged from a single connection point
-and thus at a uniform voltage. Because of this parallel charging, rather
-than having the charge controller terminate the charging for the batteries
-individually, each battery ceases charging when its SOC reaches 100%.
-This modification is made to allow for the easy demonstration of a multi-
-source input, defined in ChargerController.json.
+SOC modeled by the charger. Each battery ceases charging when its SOC reaches 100%.
 
 @author: Trevor Hardy
 trevor.hardy@pnnl.gov
@@ -111,8 +103,8 @@ if __name__ == "__main__":
 
     # Define battery physics as empirical values
     socs = np.array([0, 1])
+
     # 8 ohms to 150 ohms
-    #
     effective_R = np.array([8, 150])
 
     batt_list = get_new_battery(pub_count)
