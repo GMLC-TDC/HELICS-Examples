@@ -27,7 +27,7 @@ if isconnected == 1:
 fedinfo = h.helicsCreateFederateInfo()
 
 # Set Federate name #
-h.helicsFederateInfoSetCoreName(fedinfo, "pisender")
+h.helicsFederateInfoSetCoreName(fedinfo, "pisender_core")
 
 # Set core type from string #
 h.helicsFederateInfoSetCoreTypeFromString(fedinfo, "zmq")
@@ -44,7 +44,7 @@ h.helicsFederateInfoSetCoreInitString(fedinfo, fedinitstring)
 h.helicsFederateInfoSetTimeProperty(fedinfo, h.helics_property_time_delta, deltat)
 
 # Create value federate #
-vfed = h.helicsCreateCombinationFederate("pisender", fedinfo)
+vfed = h.helicsCreateCombinationFederate("pisender_core", fedinfo)
 print("PI SENDER: Combo federate created")
 
 epid = h.helicsFederateRegisterGlobalEndpoint(vfed, "pisender_ep", "")

@@ -14,7 +14,7 @@ fedinfo = h.helicsCreateFederateInfo()
 
 # Set Federate name
 print("PI RECEIVER: Setting Federate Info Name")
-h.helicsFederateInfoSetCoreName(fedinfo, "pireceiver")
+h.helicsFederateInfoSetCoreName(fedinfo, "pireceiver_core")
 
 # Set core type from string
 print("PI RECEIVER: Setting Federate Info Core Type")
@@ -34,7 +34,7 @@ print("PI RECEIVER: Setting Federate Info Time Delta")
 h.helicsFederateInfoSetTimeProperty(fedinfo, h.helics_property_time_delta, deltat)
 
 # Create value federate
-vfed = h.helicsCreateCombinationFederate("pireceiver", fedinfo)
+vfed = h.helicsCreateCombinationFederate("pireceiver_fed", fedinfo)
 print("PI RECEIVER: Combo federate created")
 
 epid = h.helicsFederateRegisterGlobalEndpoint(vfed, "pireceiver_ep", "")

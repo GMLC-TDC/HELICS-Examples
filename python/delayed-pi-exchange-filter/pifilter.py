@@ -15,7 +15,7 @@ print("PI FILTER: Helics version = {}".format(helicsversion))
 fedinfo = h.helicsCreateFederateInfo()
 
 # Set Federate name #
-h.helicsFederateInfoSetCoreName(fedinfo, "pifilter")
+h.helicsFederateInfoSetCoreName(fedinfo, "pifilter_core")
 
 # Set core type from string #
 h.helicsFederateInfoSetCoreTypeFromString(fedinfo, "zmq")
@@ -32,7 +32,7 @@ h.helicsFederateInfoSetCoreInitString(fedinfo, fedinitstring)
 h.helicsFederateInfoSetTimeProperty(fedinfo, h.helics_property_time_delta, deltat)
 
 # Create value federate #
-vfed = h.helicsCreateCombinationFederate("pifilter", fedinfo)
+vfed = h.helicsCreateCombinationFederate("pifilter_fed", fedinfo)
 print("PI FILTER: Combo federate created")
 
 epid = h.helicsFederateRegisterGlobalEndpoint(vfed, "pifilter_ep", "")

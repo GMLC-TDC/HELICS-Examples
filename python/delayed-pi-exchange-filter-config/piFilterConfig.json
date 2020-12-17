@@ -1,5 +1,5 @@
 {
-  "name": "pifilter",
+  "name": "pifilter_fed",
   "loglevel": 1,
   "coreType": "zmq",
   "period": 1,
