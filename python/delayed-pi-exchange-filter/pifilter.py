@@ -52,11 +52,21 @@ for t in range(5, 10):
     currenttime = h.helicsFederateRequestTime(vfed, t)
 
     if h.helicsEndpointHasMessage(epid):
-        print("PI FILTER: intercepted message and sending it on")
-        h.helicsEndpointSendEventRaw(epid, "endpoint2", str(val), t)
-        
-
-    
+        print("PI FILTER: intercepted rerouted message")
+        msg = h.helicsEndpointGetMessage(epid)
+        msg_str = h.helicsMessageGetString(msg)
+        source = h.helicsMessageGetOriginalSource(msg)
+        dest = h.helicsMessageGetOriginalDestination(msg)
+        send_time =  h.helicsMessageGetTime(msg)
+        print(f'PI FILTER: Received message from endpoint "{source}""'
+                     f' to endpoint "{dest}"'
+                     f' at time {send_time}'
+                     f' with message {msg_str}')
+        h.helicsEndpointSendEventRaw(epid, dest, msg_str, t)
+        print(f'PI FILTER: Sent message'
+                     f' to endpoint "{dest}"'
+                     f' at time {t}'
+                     f' with message {msg_str}')
     time.sleep(1)
 
 h.helicsFederateFinalize(vfed)
