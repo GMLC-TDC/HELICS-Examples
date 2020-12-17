@@ -21,7 +21,7 @@ def eval_data_flow_graph(fed):
 
 
 def eval_dependency_graph(fed):
-    query = h.helicsCreateQuery("broker", "dependencies")
+    query = h.helicsCreateQuery("broker", "dependency_graph")
     graph = h.helicsQueryExecute(query, fed)
     print(f'PI SENDER: Dependency graph: \n {pp.pformat(graph)}')
 
