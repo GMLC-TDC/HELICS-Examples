@@ -27,7 +27,7 @@ if isconnected == 1:
 fedinfo = h.helicsCreateFederateInfo()
 
 # Set Federate name #
-h.helicsFederateInfoSetCoreName(fedinfo, "TestA Federate")
+h.helicsFederateInfoSetCoreName(fedinfo, "pisender")
 
 # Set core type from string #
 h.helicsFederateInfoSetCoreTypeFromString(fedinfo, "zmq")
@@ -44,17 +44,17 @@ h.helicsFederateInfoSetCoreInitString(fedinfo, fedinitstring)
 h.helicsFederateInfoSetTimeProperty(fedinfo, h.helics_property_time_delta, deltat)
 
 # Create value federate #
-vfed = h.helicsCreateCombinationFederate("TestA Federate", fedinfo)
+vfed = h.helicsCreateCombinationFederate("pisender", fedinfo)
 print("PI SENDER: Combo federate created")
 
-epid = h.helicsFederateRegisterGlobalEndpoint(vfed, "endpoint1", "")
+epid = h.helicsFederateRegisterGlobalEndpoint(vfed, "pisender_ep", "")
 print("PI SENDER: Endpoint registered")
 
 # fid = h.helicsFederateRegisterFilter(vfed, h.helics_filter_type_delay, "filter1")
 fid = h.helicsFederateRegisterFilter(vfed, h.helics_filter_type_reroute, "filter1")
-h.helicsFilterAddSourceTarget(fid, "endpoint1")
+h.helicsFilterAddSourceTarget(fid, "pisender_ep")
 
-h.helicsFilterSetString(fid, "newdestination", "filter_ep")
+h.helicsFilterSetString(fid, "newdestination", "pifilter_ep")
 
 # Enter execution mode #
 h.helicsFederateEnterExecutingMode(vfed)
@@ -71,12 +71,12 @@ for t in range(5, 10):
 
     #h.helicsPublicationPublishDouble(pub, val)
     print(
-        "PI SENDER: Sending value pi = {} at time {} to endpoint2".format(
+        "PI SENDER: Sending value pi = {} at time {} to pireceiver_ep".format(
             val, currenttime
         )
     )
 
-    h.helicsEndpointSendEventRaw(epid, "endpoint2", str(val), t)
+    h.helicsEndpointSendEventRaw(epid, "pireceiver_ep", str(val), t)
     time.sleep(1)
 
 h.helicsFederateFinalize(vfed)

@@ -15,7 +15,7 @@ print("PI FILTER: Helics version = {}".format(helicsversion))
 fedinfo = h.helicsCreateFederateInfo()
 
 # Set Federate name #
-h.helicsFederateInfoSetCoreName(fedinfo, "TestC Federate")
+h.helicsFederateInfoSetCoreName(fedinfo, "pifilter")
 
 # Set core type from string #
 h.helicsFederateInfoSetCoreTypeFromString(fedinfo, "zmq")
@@ -32,17 +32,17 @@ h.helicsFederateInfoSetCoreInitString(fedinfo, fedinitstring)
 h.helicsFederateInfoSetTimeProperty(fedinfo, h.helics_property_time_delta, deltat)
 
 # Create value federate #
-vfed = h.helicsCreateCombinationFederate("TestC Federate", fedinfo)
+vfed = h.helicsCreateCombinationFederate("pifilter", fedinfo)
 print("PI FILTER: Combo federate created")
 
-epid = h.helicsFederateRegisterGlobalEndpoint(vfed, "filter_ep", "")
+epid = h.helicsFederateRegisterGlobalEndpoint(vfed, "pifilter_ep", "")
 print("PI FILTER: Endpoint registered")
 
 # fid = h.helicsFederateRegisterFilter(vfed, h.helics_filter_type_delay, "filter1")
 fid = h.helicsFederateRegisterFilter(vfed, h.helics_filter_type_reroute, "filter1")
-h.helicsFilterAddSourceTarget(fid, "endpoint1")
+h.helicsFilterAddSourceTarget(fid, "pisender_ep")
 
-h.helicsFilterSetString(fid, "newdestination", "filter_ep")
+h.helicsFilterSetString(fid, "newdestination", "pifilter_ep")
 
 
 # Enter execution mode #
@@ -56,8 +56,8 @@ value = pi
 for t in range(5, 10):
     val = value
 
-    t_request = t
-    #t_request = 10000
+    #t_request = t
+    t_request = 10000
     currenttime = h.helicsFederateRequestTime(vfed, t_request)
     print(f"PI FILTER: Granted time {currenttime}")
 

@@ -8,18 +8,18 @@
   "deltat": 0.01,
   "endpoints": [
     {
-      "name": "filter_ep",
+      "name": "pifilter_ep",
       "global": true
     }
   ],
   "filters": [
     {
       "name": "from_pisender",
-      "sourcetargets": "endpoint1",
+      "sourcetargets": "pisender_ep",
       "operation": "reroute",
       "properties": {
         "name": "newdestination",
-        "value": "filter_ep"
+        "value": "pifilter_ep"
       }
     }
   ]
