@@ -1,0 +1,26 @@
+{
+  "name": "pifilter",
+  "loglevel": 1,
+  "coreType": "zmq",
+  "period": 1,
+  "terminate_on_error": false,
+  "force_logging_flush": true,
+  "deltat": 0.01,
+  "endpoints": [
+    {
+      "name": "filter_ep",
+      "global": true
+    }
+  ],
+  "filters": [
+    {
+      "name": "from_pisender",
+      "sourcetargets": "endpoint1",
+      "operation": "reroute",
+      "properties": {
+        "name": "newdestination",
+        "value": "filter_ep"
+      }
+    }
+  ]
+}
