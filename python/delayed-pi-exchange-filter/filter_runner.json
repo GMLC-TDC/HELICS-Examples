@@ -1,0 +1,23 @@
+{
+  "federates": [    
+    {
+      "directory": ".",
+      "exec": "python -u pisender.py",
+      "host": "localhost",
+      "name": "pisender"
+    },
+    {
+      "directory": ".",
+      "exec": "python -u pireceiver.py",
+      "host": "localhost",
+      "name": "pireceiver"
+    },
+    {
+      "directory": ".",
+      "exec": "python -u pifilter.py",
+      "host": "localhost",
+      "name": "pifilter"
+    }
+  ],
+  "name": "pisender_filter_example"
+}
