@@ -2,10 +2,31 @@
 import time
 import helics as h
 from math import pi
+import pprint
 
 initstring = "-f 3 --name=mainbroker"
 fedinitstring = "--broker=mainbroker --federates=1"
 deltat = 0.01
+# Setting up pretty printing, mostly for debugging.
+pp = pprint.PrettyPrinter(indent=2)
+
+
+
+def eval_data_flow_graph(fed):
+    query = h.helicsCreateQuery("broker", "data_flow_graph")
+    graph = h.helicsQueryExecute(query, fed)
+    print(f'PI SENDER: Data flow graph:\n {pp.pformat(graph)}')
+    return graph
+
+
+
+def eval_dependency_graph(fed):
+    query = h.helicsCreateQuery("broker", "dependencies")
+    graph = h.helicsQueryExecute(query, fed)
+    print(f'PI SENDER: Dependency graph: \n {pp.pformat(graph)}')
+
+
+
 
 helicsversion = h.helicsGetVersion()
 
@@ -49,6 +70,12 @@ print("PI SENDER: Combo federate created")
 
 epid = h.helicsFederateRegisterGlobalEndpoint(vfed, "pisender_ep", "")
 print("PI SENDER: Endpoint registered")
+
+# Evaluating data-flow and dependency graphs 
+# Manually pausing to ensure all other federates have configured as well
+time.sleep(5)
+eval_data_flow_graph(vfed)
+eval_dependency_graph(vfed)
 
 # Enter execution mode #
 h.helicsFederateEnterExecutingMode(vfed)
