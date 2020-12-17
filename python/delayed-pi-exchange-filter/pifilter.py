@@ -38,6 +38,13 @@ print("PI FILTER: Combo federate created")
 epid = h.helicsFederateRegisterGlobalEndpoint(vfed, "filter_ep", "")
 print("PI FILTER: Endpoint registered")
 
+# fid = h.helicsFederateRegisterFilter(vfed, h.helics_filter_type_delay, "filter1")
+fid = h.helicsFederateRegisterFilter(vfed, h.helics_filter_type_reroute, "filter1")
+h.helicsFilterAddSourceTarget(fid, "endpoint1")
+
+h.helicsFilterSetString(fid, "newdestination", "filter_ep")
+
+
 # Enter execution mode #
 h.helicsFederateEnterExecutingMode(vfed)
 print("PI FILTER: Entering execution mode")
@@ -49,10 +56,13 @@ value = pi
 for t in range(5, 10):
     val = value
 
-    currenttime = h.helicsFederateRequestTime(vfed, t)
+    t_request = t
+    #t_request = 10000
+    currenttime = h.helicsFederateRequestTime(vfed, t_request)
+    print(f"PI FILTER: Granted time {currenttime}")
 
     if h.helicsEndpointHasMessage(epid):
-        print("PI FILTER: intercepted rerouted message")
+        print("PI FILTER: Intercepted rerouted message")
         msg = h.helicsEndpointGetMessage(epid)
         msg_str = h.helicsMessageGetString(msg)
         source = h.helicsMessageGetOriginalSource(msg)

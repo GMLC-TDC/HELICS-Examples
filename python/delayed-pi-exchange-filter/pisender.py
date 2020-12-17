@@ -50,12 +50,6 @@ print("PI SENDER: Combo federate created")
 epid = h.helicsFederateRegisterGlobalEndpoint(vfed, "endpoint1", "")
 print("PI SENDER: Endpoint registered")
 
-# fid = h.helicsFederateRegisterFilter(vfed, h.helics_filter_type_delay, "filter1")
-fid = h.helicsFederateRegisterFilter(vfed, h.helics_filter_type_reroute, "filter1")
-h.helicsFilterAddSourceTarget(fid, "endpoint1")
-
-h.helicsFilterSetString(fid, "newdestination", "filter_ep")
-
 # Enter execution mode #
 h.helicsFederateEnterExecutingMode(vfed)
 print("PI SENDER: Entering execution mode")
