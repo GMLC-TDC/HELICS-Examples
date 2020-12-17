@@ -71,7 +71,7 @@ for t in range(5, 10):
 
     #h.helicsPublicationPublishDouble(pub, val)
     print(
-        "PI SENDER: Sending value pi = {} at time {} to PI RECEIVER".format(
+        "PI SENDER: Sending value pi = {} at time {} to endpoint2".format(
             val, currenttime
         )
     )

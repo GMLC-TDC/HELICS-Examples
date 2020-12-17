@@ -59,7 +59,7 @@ for t in range(5, 10):
         source = h.helicsMessageGetOriginalSource(msg)
         dest = h.helicsMessageGetOriginalDestination(msg)
         send_time =  h.helicsMessageGetTime(msg)
-        print(f'PI FILTER: Received message from endpoint "{source}""'
+        print(f'PI FILTER: Received message from endpoint "{source}"'
                      f' to endpoint "{dest}"'
                      f' at time {send_time}'
                      f' with message {msg_str}')
