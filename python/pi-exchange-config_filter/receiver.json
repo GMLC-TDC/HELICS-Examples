@@ -1,0 +1,21 @@
+{
+  "coreType": "zmq",
+  "name": "receiver",
+  "timeDelta": 0.001,
+  "uninterruptible": true,
+  "subscriptions": [
+    {
+      "required": true,
+      "key": "data_receiver",
+      "type": "string"
+    }
+  ],
+   "endpoints": [
+        {
+            "global": true,
+            "info": "cleared_price_RT",
+            "name": "data_receiver-sender",
+            "type": "genmessage"
+        }
+   ]
+}

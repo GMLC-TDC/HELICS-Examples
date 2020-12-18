@@ -1,0 +1,21 @@
+{
+  "coreType": "zmq",
+  "name": "sender",
+  "timeDelta": 0.001,
+  "uninterruptible": true,
+  "publications": [
+    {
+      "global": true,
+      "key": "data_receiver",
+      "type": "string"
+    }
+  ],
+ "endpoints": [
+        {
+            "global": true,
+            "info": "cleared_price_RT",
+            "name": "data_sender-receiver",
+            "type": "genmessage"
+        }
+   ]
+}
