@@ -133,7 +133,7 @@ if __name__ == "__main__":
 
     hours = 24 * 7
     total_interval = int(60 * 60 * hours)
-    update_interval = int(h.helicsFederateGetTimeProperty(
+    update_interval = 60*int(h.helicsFederateGetTimeProperty(
                             fed,
                             h.helics_property_time_period))
     grantedtime = 0
@@ -181,7 +181,7 @@ if __name__ == "__main__":
                              f' endpoint {endpoint_name}'
                              f' at time {grantedtime}')
                 # Send message of voltage to Battery federate
-                h.helicsEndpointSendBytesTo(endid[j], "",f'{charging_voltage[j]:4f}'.encode())  #
+                h.helicsEndpointSendBytesTo(endid[j],"",f'{charging_voltage[j]:4f}'.encode())  #
                 logger.debug(f'Sent message from endpoint {endpoint_name}'
                          f' at time {grantedtime}'
                          f' with voltage {charging_voltage[j]:4f}')

@@ -107,7 +107,7 @@ if __name__ == "__main__":
 
     hours = 24 * 7
     total_interval = int(60 * 60 * hours)
-    update_interval = int(h.helicsFederateGetTimeProperty(
+    update_interval = 60*int(h.helicsFederateGetTimeProperty(
                                 fed,
                                 h.helics_property_time_period))
     update_offset = int(h.helicsFederateGetTimeProperty(
@@ -165,14 +165,32 @@ if __name__ == "__main__":
             else:
                 logger.debug(f'\tNo messages at endpoint {endpoint_name} '
                              f'recieved at '
-                             f'time {grantedtime}')
+                             f'time {grantedtime} '
+                             f'reverting to trickle charge ')
+                charging_voltage = 1.0
+                # Calculate charging current and update SOC
+                R =  np.interp(current_soc[j], socs, effective_R)
+                logger.debug(f'\tEffective R (ohms): {R:.2f}')
+                # If battery is full assume its stops charging on its own
+                #  and the charging current goes to zero.
+                if current_soc[j] >= 1:
+                    charging_current = 0;
+                else:
+                    charging_current = charging_voltage / R
+                logger.debug(f'\tCharging current (A): {charging_current:.2f}')
 
+                added_energy = (charging_current * charging_voltage * \
+                                update_interval/3600) / 1000
+                logger.debug(f'\tAdded energy (kWh): {added_energy:.4f}')
+                current_soc[j] = current_soc[j] + added_energy / batt_list[j]
+                logger.debug(f'\tSOC: {current_soc[j]:.4f}')
 
             # send charging current message
             # to this endpoint's default destination, ""
             h.helicsEndpointSendBytesTo(endid[j], "",str(charging_current))  #
             logger.debug(f'Sent message {charging_current:.2f}'
-                         f'from endpoint {endpoint_name}'
+                         f' from endpoint {endpoint_name}'
+                         f' to endpoint Charger/EV1_voltage'
                          f' at time {grantedtime}')
 
             # Store SOC for later analysis/graphing
