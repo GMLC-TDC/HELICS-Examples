@@ -59,7 +59,7 @@ def create_value_federate(fedinitstring,name,period):
     h.helicsFederateInfoSetCoreTypeFromString(fedinfo, "zmq")
     h.helicsFederateInfoSetCoreInitString(fedinfo, fedinitstring)
     # "loglevel": 1,
-    h.helicsFederateInfoSetIntegerProperty(fedinfo, h.helics_property_int_log_level, 1)
+    h.helicsFederateInfoSetIntegerProperty(fedinfo, h.helics_property_int_log_level, 7)
     # "period": 60,
     h.helicsFederateInfoSetTimeProperty(fedinfo, h.helics_property_time_period, period)
     # "uninterruptible": false,

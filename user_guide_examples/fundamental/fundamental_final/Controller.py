@@ -46,7 +46,7 @@ def create_message_federate(fedinitstring,name,timedelta):
     h.helicsFederateInfoSetCoreTypeFromString(fedinfo, "zmq")
     h.helicsFederateInfoSetCoreInitString(fedinfo, fedinitstring)
     # "loglevel": 1,
-    h.helicsFederateInfoSetIntegerProperty(fedinfo, h.helics_property_int_log_level, 7)
+    h.helicsFederateInfoSetIntegerProperty(fedinfo, h.helics_property_int_log_level, 11)
     # "timedelta": 1,
     h.helicsFederateInfoSetTimeProperty(fedinfo, h.helics_property_time_delta, timedelta)
     # "uninterruptible": false,
@@ -71,12 +71,9 @@ if __name__ == "__main__":
     #### Register endpoint #####
     # Only one endpoint for the controller
     end_count = 1
-    endid = {}
-    for i in range(0,end_count):
-        # "name":"Controller/ep",
-        end_name = f'"Controller/ep"'
-        endid[i] = h.helicsFederateRegisterEndpoint(fed, end_name, 'double')
-        logger.debug(f'\tRegistered endpoint---> {end_name}')
+    end_name = f"Controller/ep"
+    endid = h.helicsFederateRegisterGlobalEndpoint(fed, end_name, 'double')
+    logger.debug(f'\tRegistered endpoint---> {end_name}')
 
     logger.info("Registered Endpoint ---> {}".format(end_name))
 

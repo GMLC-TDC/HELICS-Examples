@@ -21,6 +21,7 @@ import helics as h
 import logging
 import numpy as np
 import matplotlib.pyplot as plt
+import time
 
 
 logger = logging.getLogger(__name__)
@@ -50,7 +51,7 @@ def create_combo_federate(fedinitstring,name,period):
     h.helicsFederateInfoSetCoreTypeFromString(fedinfo, "zmq")
     h.helicsFederateInfoSetCoreInitString(fedinfo, fedinitstring)
     # "loglevel": 1,
-    h.helicsFederateInfoSetIntegerProperty(fedinfo, h.helics_property_int_log_level, 7)
+    h.helicsFederateInfoSetIntegerProperty(fedinfo, h.helics_property_int_log_level, 11)
     # "period": 60,
     h.helicsFederateInfoSetTimeProperty(fedinfo, h.helics_property_time_period, period)
     # "uninterruptible": false,
@@ -151,6 +152,7 @@ def estimate_SOC(charging_V, charging_A):
 if __name__ == "__main__":
     np.random.seed(1490)
 
+    time.sleep(5)
     ##############  Registering  federate with API  ##########################
     fedinitstring = " --federates=1"
     name = "Charger"
@@ -164,7 +166,7 @@ if __name__ == "__main__":
     for i in range(0,end_count):
         # "name":"Charger/EV1.so",
         end_name = f'Charger/EV{i+1}.so'
-        endid[i] = h.helicsFederateRegisterEndpoint(fed, end_name, 'double')
+        endid[i] = h.helicsFederateRegisterGlobalEndpoint(fed, end_name, 'double')
         dest_name = f'Controller/ep'
         h.helicsEndpointSetDefaultDestination(endid[i], dest_name)
 
