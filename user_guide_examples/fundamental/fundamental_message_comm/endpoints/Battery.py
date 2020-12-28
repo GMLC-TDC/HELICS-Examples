@@ -129,7 +129,7 @@ if __name__ == "__main__":
         grantedtime = h.helicsFederateRequestTime (fed, requested_time)
         logger.debug(f'Granted time {grantedtime}')
 
-        # Iterating over publications in this case since this example
+        # Iterating over endpoints in this case since this example
         #  uses only one charging voltage for all five batteries
         for j in range(0,end_count):
             logger.debug(f'Battery {j+1} time {grantedtime}')
