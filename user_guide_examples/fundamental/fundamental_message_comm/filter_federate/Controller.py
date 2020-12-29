@@ -83,7 +83,7 @@ if __name__ == "__main__":
     logger.debug(f'Granted time {grantedtime}')
 
 
-    time_sim = []
+    time_sim = {}
     soc = {}
 
     while grantedtime < total_interval:
@@ -121,8 +121,10 @@ if __name__ == "__main__":
             if source not in soc:
                 soc[source] = []
             soc[source].append(float(currentsoc))
-
-        time_sim.append(grantedtime)
+            
+            if source not in time_sim:
+                time_sim[source] = []
+            time_sim[source].append(grantedtime)
 
         # Since we've dealt with all the messages that are queued, there's
         #   nothing else for the federate to do until/unless another
@@ -136,34 +138,46 @@ if __name__ == "__main__":
     destroy_federate(fed)
 
     # Printing out final results graphs for comparison/diagnostic purposes.
-    xaxis = np.array(time_sim)/3600
+    xaxis = []
+    for key in time_sim:
+        xaxis.append(np.array(time_sim[key])/3600)
+    
     y = []
     for key in soc:
         y.append(np.array(soc[key]))
+    
+    # Data logging diagnostics/debugging
+    #logger.debug(f'Number of time steps with collected data: {len(time_sim)}')
+    #logger.debug(f'Number of data points for EV 1 with collected data: {len(soc["Charger/EV1.soc"])}')
+    #logger.debug(f'Number of data points for EV 2 with collected data: {len(soc["Charger/EV2.soc"])}')
+    #logger.debug(f'Number of data points for EV 3 with collected data: {len(soc["Charger/EV3.soc"])}')
+    #logger.debug(f'Number of data points for EV 4 with collected data: {len(soc["Charger/EV4.soc"])}')
+    #logger.debug(f'Number of data points for EV 5 with collected data: {len(soc["Charger/EV5.soc"])}')
+
 
     plt.figure()
 
     fig, axs = plt.subplots(5, sharex=True, sharey=True)
     fig.suptitle('SOC at each charging port')
 
-    axs[0].plot(xaxis, y[0], color='tab:blue', linestyle='-')
+    axs[0].plot(xaxis[0], y[0], color='tab:blue', linestyle='-')
     axs[0].set_yticks(np.arange(0,1.25,0.5))
     axs[0].set(ylabel='EV1')
     axs[0].grid(True)
 
-    axs[1].plot(xaxis, y[1], color='tab:blue', linestyle='-')
+    axs[1].plot(xaxis[1], y[1], color='tab:blue', linestyle='-')
     axs[1].set(ylabel='EV2')
     axs[1].grid(True)
 
-    axs[2].plot(xaxis, y[2], color='tab:blue', linestyle='-')
+    axs[2].plot(xaxis[2], y[2], color='tab:blue', linestyle='-')
     axs[2].set(ylabel='EV3')
     axs[2].grid(True)
 
-    axs[3].plot(xaxis, y[3], color='tab:blue', linestyle='-')
+    axs[3].plot(xaxis[3], y[3], color='tab:blue', linestyle='-')
     axs[3].set(ylabel='EV4')
     axs[3].grid(True)
 
-    axs[4].plot(xaxis, y[4], color='tab:blue', linestyle='-')
+    axs[4].plot(xaxis[4], y[4], color='tab:blue', linestyle='-')
     axs[4].set(ylabel='EV5')
     axs[4].grid(True)
     plt.xlabel('time (hr)')
