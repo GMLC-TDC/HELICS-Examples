@@ -25,8 +25,6 @@ logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.DEBUG)
 
 
-
-
 def destroy_federate(fed):
     '''
     As part of ending a HELICS co-simulation it is good housekeeping to
@@ -57,20 +55,22 @@ def get_new_battery(numBattery):
 
     '''
 
-    # Probabilities of a new EV having a battery at a given capacity.
-    #   The three random values (25,62, 100) are the kWh of the randomly
-    #   selected battery.
-    size_1 = 0.2
-    size_2 = 0.2
-    size_3 = 0.6
-    listOfBatts = np.random.choice([25,62,100],numBattery,p=[size_1,size_2,
-                                                       size_3]).tolist()
+    # Probabilities of a new EV battery having small capacity (sm),
+    # medium capacity (med), and large capacity (lg).
+    sm = 0.2
+    med = 0.2
+    lg = 0.6
+
+    # Batteries have different sizes:
+    # [25,62,100]
+    listOfBatts = np.random.choice([25,62,100],numBattery,p=[sm,med,
+                                                       lg]).tolist()
 
     return listOfBatts
 
 
 if __name__ == "__main__":
-    np.random.seed(2608)
+    np.random.seed(2622)
 
     ##########  Registering  federate and configuring from JSON################
     fed = h.helicsCreateValueFederateFromConfig("BatteryConfig.json")
@@ -86,37 +86,25 @@ if __name__ == "__main__":
     # Diagnostics to confirm JSON config correctly added the required
     #   publications and subscriptions
     subid = {}
-    sub_name = {}
     for i in range(0, sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name[i] = h.helicsSubscriptionGetKey(subid[i])
-        logger.debug(f'\tRegistered subscription---> {sub_name[i]}')
+        sub_name = h.helicsSubscriptionGetKey(subid[i])
+        logger.debug(f'\tRegistered subscription---> {sub_name}')
 
     pubid = {}
-    pub_name = {}
     for i in range(0, pub_count):
         pubid[i] = h.helicsFederateGetPublicationByIndex(fed, i)
-        pub_name[i] = h.helicsPublicationGetKey(pubid[i])
-        logger.debug(f'\tRegistered publication---> {pub_name[i]}')
-
-
-
-
+        pub_name = h.helicsPublicationGetKey(pubid[i])
+        logger.debug(f'\tRegistered publication---> {pub_name}')
 
     ##############  Entering Execution Mode  ##################################
     h.helicsFederateEnterExecutingMode(fed)
     logger.info('Entered HELICS execution mode')
 
-
-    hours = 24*7 # one week
-    total_interval = int(60 * 60 * hours)
-    update_interval = int(h.helicsFederateGetTimeProperty(
-                                fed,
-                                h.HELICS_PROPERTY_TIME_PERIOD))
-    grantedtime = 0
-
     # Define battery physics as empirical values
     socs = np.array([0, 1])
+
+    # 8 ohms to 150 ohms
     effective_R = np.array([8, 150])
 
     batt_list = get_new_battery(pub_count)
@@ -125,7 +113,12 @@ if __name__ == "__main__":
     for i in range (0, pub_count):
         current_soc[i] = (np.random.randint(0,60))/100
 
-
+    hours = 24*7 # one week
+    total_interval = int(60 * 60 * hours)
+    update_interval = int(h.helicsFederateGetTimeProperty(
+                                fed,
+                                h.HELICS_PROPERTY_TIME_PERIOD))
+    grantedtime = 0
 
     # Data collection lists
     time_sim = []

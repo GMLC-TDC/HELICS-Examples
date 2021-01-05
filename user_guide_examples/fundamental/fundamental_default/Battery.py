@@ -117,7 +117,7 @@ if __name__ == "__main__":
     total_interval = int(60 * 60 * hours)
     update_interval = int(h.helicsFederateGetTimeProperty(
                                 fed,
-                                h.helics_property_time_period))
+                                h.HELICS_PROPERTY_TIME_PERIOD))
     grantedtime = 0
 
     # Data collection lists

@@ -138,12 +138,11 @@ if __name__ == "__main__":
     charging_voltage = calc_charging_voltage(EVlist)
     currentsoc = {}
 
-
     hours = 24 * 7
     total_interval = int(60 * 60 * hours)
     update_interval = int(h.helicsFederateGetTimeProperty(
                             fed,
-                            h.helics_property_time_period))
+                            h.HELICS_PROPERTY_TIME_PERIOD))
     grantedtime = 0
 
     # Data collection lists

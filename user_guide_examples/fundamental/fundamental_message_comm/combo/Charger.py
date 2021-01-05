@@ -44,6 +44,32 @@ def destroy_federate(fed):
     h.helicsCloseLibrary()
     logger.info('Federate finalized')
 
+def calc_charging_voltage(EV_list):
+    '''
+    This function uses the pre-defined charging powers and maps them to
+    standard (more or less) charging voltages. This allows the charger
+    to apply an appropriately modeled voltage to the EV based on the
+    charging power level
+
+    :param EV_list: Value of "1", "2", or "3" to indicate charging level
+    :return: charging_voltage: List of charging voltages corresponding
+            to the charging power.
+    '''
+
+    charging_voltage = []
+    # Ignoring the difference between AC and DC voltages for this application
+    charge_voltages = [120, 240, 630]
+    for EV in EV_list:
+        if EV == 1:
+            charging_voltage.append(charge_voltages[0])
+        elif EV==2:
+            charging_voltage.append(charge_voltages[1])
+        elif EV==3:
+            charging_voltage.append(charge_voltages[2])
+        else:
+            charging_voltage.append(0)
+
+    return charging_voltage
 
 def get_new_EV(numEVs):
     '''
@@ -72,42 +98,12 @@ def get_new_EV(numEVs):
     return numLvl1,numLvl2,numLvl3,listOfEVs
 
 
-
-
-def calc_charging_voltage(EV_list):
-    '''
-    This function uses the pre-defined charging powers and maps them to
-    standard (more or less) charging voltages. This allows the charger
-    to apply an appropriately modeled voltage to the EV based on the
-    charging power level
-
-    :param EV_list: Value of "1", "2", or "3" to indicate charging level
-    :return: charging_voltage: List of charging voltages corresponding
-            to the charging power.
-    '''
-
-    charging_voltage = []
-    # Ignoring the difference between AC and DC voltages for this application
-    charge_voltages = [120, 240, 630]
-    for EV in EV_list:
-        if EV == 1:
-            charging_voltage.append(charge_voltages[0])
-        elif EV==2:
-            charging_voltage.append(charge_voltages[1])
-        elif EV==3:
-            charging_voltage.append(charge_voltages[2])
-        else:
-            charging_voltage.append(0)
-
-    return charging_voltage
-
-
 def estimate_SOC(charging_V, charging_A):
     '''
     The charger has no direct knowledge of the SOC of the EV battery it
     is charging but instead must estimate it based on the effective resistance
     of the battery which is calculated from the applied charging voltage and
-    measured charging current. The effective resistance model is used here is
+    measured charging current. The effective resistance model used here is
     identical to that of the actual battery; if both the charging voltage
     and current were measured perfectly the SOC estimate here would exactly
     match the true SOC modeled by the battery. For fun, though, a small
@@ -156,6 +152,7 @@ if __name__ == "__main__":
         endid[i] = h.helicsFederateGetEndpointByIndex(fed, i)
         end_name = h.helicsEndpointGetName(endid[i])
         logger.debug(f'\tRegistered Endpoint ---> {end_name}')
+
     subid = {}
     for i in range(0, sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
@@ -176,7 +173,12 @@ if __name__ == "__main__":
     # Definition of charging power level (in kW) for level 1, 2, 3 chargers
     charge_rate = [1.8,7.2,50]
 
-
+    # Generate an initial fleet of EVs, one for each previously defined
+    #   endpoint. This gives each EV a unique link to the EV controller
+    #   federate.
+    numLvl1,numLvl2,numLvl3,EVlist = get_new_EV(end_count)
+    charging_voltage = calc_charging_voltage(EVlist)
+    currentsoc = {}
 
     hours = 24*7 # one week
     total_interval = int(60 * 60 * hours)
@@ -184,13 +186,6 @@ if __name__ == "__main__":
                             fed,
                             h.HELICS_PROPERTY_TIME_PERIOD))
     grantedtime = 0
-
-    # Generate an initial fleet of EVs, one for each previously defined
-    #   endpoint. This gives each EV a unique link to the EV controller
-    #   federate.
-    numLvl1,numLvl2,numLvl3,EVlist = get_new_EV(end_count)
-    charging_voltage = calc_charging_voltage(EVlist)
-    currentsoc = {}
 
     # Data collection lists
     time_sim = []
@@ -221,7 +216,6 @@ if __name__ == "__main__":
         logger.debug(f'Granted time {grantedtime}')
 
         for j in range(0,end_count):
-
             logger.debug(f'EV {j+1} time {grantedtime}')
             # Model the physics of the battery charging. This happens
             #   every time step whether a message comes in or not and always
