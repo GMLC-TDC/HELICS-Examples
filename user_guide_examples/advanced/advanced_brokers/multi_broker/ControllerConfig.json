@@ -1,12 +1,12 @@
 
 {
   "name": "Controller",
-  "loglevel": 1,
-  "coreType": "udp",
-  "timedelta": 1,
+  "log_level": 1,
+  "core_type": "udp",
+  "time_delta": 1,
   "uninterruptible": false,
   "terminate_on_error": true,
-  "brokerPort": 23900,
+  "broker_port": 23900,
   "endpoints": [
     {
       "name": "Controller/ep",

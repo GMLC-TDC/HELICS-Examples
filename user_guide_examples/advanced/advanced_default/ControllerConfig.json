@@ -1,8 +1,8 @@
 {
   "name": "Controller",
-  "loglevel": 7,
-  "coreType": "zmq",
-  "timedelta": 1,
+  "log_level": 7,
+  "core_type": "zmq",
+  "time_delta": 1,
   "uninterruptible": false,
   "terminate_on_error": true,
   "endpoints": [

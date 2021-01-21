@@ -1,7 +1,7 @@
 {
   "name": "Battery",
-  "loglevel": 7,
-  "coreType": "zmq",
+  "log_level": 7,
+  "core_type": "zmq",
   "period": 60.0,
   "offset": 10.0,
   "uninterruptible": false,

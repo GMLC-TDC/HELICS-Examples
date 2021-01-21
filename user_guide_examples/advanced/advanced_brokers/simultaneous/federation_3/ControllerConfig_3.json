@@ -1,10 +1,10 @@
 
 {
   "name": "Controller",
-  "loglevel": 1,
-  "coreType": "zmq",
-  "brokerPort": "20300",
-  "timedelta": 1,
+  "log_level": 1,
+  "core_type": "zmq",
+  "broker_port": "20300",
+  "time_delta": 1,
   "uninterruptible": false,
   "terminate_on_error": true,
   "endpoints": [

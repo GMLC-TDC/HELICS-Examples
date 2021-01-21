@@ -1,11 +1,11 @@
 {
   "name": "Charger",
-  "loglevel": 1,
-  "coreType": "tcp",
+  "log_level": 1,
+  "core_type": "tcp",
   "period": 60,
   "uninterruptible": false,
   "terminate_on_error": true,
-  "brokerPort": 23700,
+  "broker_port": 23700,
   "endpoints": [
     {
       "name": "Charger/EV1.soc",

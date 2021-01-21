@@ -259,7 +259,7 @@ if __name__ == "__main__":
                 # The default state is charging (1) so we only need to
                 #   do something if the controller says to stop
                 if int(instructions) == 0:
-                    # Stop charing this EV
+                    # Stop charging this EV
                     charging_voltage[j] = 0
                     logger.info(f'\tEV full; removing charging voltage')
             else:

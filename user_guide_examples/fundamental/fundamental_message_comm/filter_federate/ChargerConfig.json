@@ -1,7 +1,7 @@
 {
   "name": "Charger",
-  "loglevel": 1,
-  "coreType": "zmq",
+  "log_level": 1,
+  "core_type": "zmq",
   "period": 60,
   "uninterruptible": false,
   "terminate_on_error": true,

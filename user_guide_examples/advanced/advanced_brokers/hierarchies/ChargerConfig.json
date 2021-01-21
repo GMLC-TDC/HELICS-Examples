@@ -1,8 +1,8 @@
 {
   "name": "Charger",
-  "loglevel": 1,
-  "coreType": "zmq",
-  "brokerAddress": "tcp://127.0.0.1:25400",
+  "log_level": 1,
+  "core_type": "zmq",
+  "broker_address": "tcp://127.0.0.1:25400",
   "period": 60,
   "uninterruptible": false,
   "terminate_on_error": true,
