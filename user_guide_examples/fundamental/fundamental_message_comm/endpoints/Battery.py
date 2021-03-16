@@ -126,9 +126,10 @@ if __name__ == "__main__":
         # Time request for the next interval to be simulated
         requested_time = (grantedtime+update_interval+update_offset)
         logger.debug(f'Requesting time {requested_time}')
-        grantedtime = h.helicsFederateRequestTime (fed, requested_time)
+        grantedtime = h.helicsFederateRequestTime(fed, requested_time)
         logger.debug(f'Granted time {grantedtime}')
 
+        charging_current = 0;
         # Iterating over endpoints in this case since this example
         #  uses only one charging voltage for all five batteries
         for j in range(0,end_count):
@@ -170,7 +171,7 @@ if __name__ == "__main__":
 
             # send charging current message
             # to this endpoint's default destination, ""
-            h.helicsEndpointSendBytesTo(endid[j], "",str(charging_current))  #
+            h.helicsEndpointSendBytesTo(endid[j], str(charging_current), "")  #
             logger.debug(f'Sent message {charging_current:.2f}'
                          f'from endpoint {endpoint_name}'
                          f' at time {grantedtime}')

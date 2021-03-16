@@ -153,7 +153,7 @@ if __name__ == "__main__":
     # Apply initial charging voltage
     for j in range(0, end_count):
         message = str(charging_voltage[j])
-        h.helicsEndpointSendBytesTo(endid[j], "", message.encode()) #
+        h.helicsEndpointSendBytesTo(endid[j], message, "") #
         logger.debug(f'\tSending charging voltage of {message} '
                      f' from {endid[j]}'
                      f' at time {grantedtime}')
@@ -181,7 +181,7 @@ if __name__ == "__main__":
                              f' endpoint {endpoint_name}'
                              f' at time {grantedtime}')
                 # Send message of voltage to Battery federate
-                h.helicsEndpointSendBytesTo(endid[j], "",f'{charging_voltage[j]:4f}'.encode())  #
+                h.helicsEndpointSendBytesTo(endid[j], f'{charging_voltage[j]:4f}'.encode(), "")  #
                 logger.debug(f'Sent message from endpoint {endpoint_name}'
                          f' at time {grantedtime}'
                          f' with voltage {charging_voltage[j]:4f}')
