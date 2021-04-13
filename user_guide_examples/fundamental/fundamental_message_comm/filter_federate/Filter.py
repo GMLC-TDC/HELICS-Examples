@@ -108,41 +108,57 @@ def configure_federate():
     endid = h.helicsFederateGetEndpointByIndex(fed, 0)
     end_name = h.helicsEndpointGetName(endid)
     logger.debug("Registered Endpoint ---> {}".format(end_name))
-    return fed, endid
+    return fed, endid, end_name
 
 
-def filter_delay(eq, event):
-    delay = 850 + (600 * random.random())
-    logger.debug(f'\tRandom delay time: {delay}')
-    event['time'] = event['time'] + delay
-    eq.append(event)
-    logger.debug(f'\tMessage from endpoint {event["source"]}'
-                 f' to endpoint {event["dest"]}'
-                 f' delayed {delay} seconds'
-                 f' with message {event["payload"]}')
+def filter_drop_delay(eq, msg_dict):
+    drop_rate = 0.1
+    if random.random() > 0.1:
+        logger.debug(f'\tMessage not randomly dropped')
+        # Only need to delay messages that are not dropped
+        # Messages are normally sent every 900 seconds
+        # Larger range of random int results in greater disturbance to control mechanism
+        delay = random.randint(-1801, 1801)
+        if delay < 0:
+            delay = 0
+        logger.debug(f'\tRandom delay time: {delay}')
+        transmit_time = msg_dict['time'] + delay
+        h.helicsMessageSetTime(msg_dict['msg_obj'], transmit_time)
+        msg_dict['time'] = transmit_time
+        eq.append(msg_dict)
+        logger.debug(f'\tMessage from endpoint {msg_dict["source"]}'
+                     f' to endpoint {msg_dict["dest"]}'
+                     f' delayed to time {msg_dict["time"]} seconds'
+                     f' with payload \"{msg_dict["payload"]}\"')
+    else:
+        # Because the message is dropped, it doesn't get added to the event queue
+        logger.debug(f'\tMessage randomly dropped')
     return eq
+    
 
 
-def filter_hack(eq, event):
+
+def filter_hack(eq, msg_dict):
     if random.random() > 0.5:
         logger.debug(f'\tMessage hacked')
-        if event['payload'] == '0':
-            event['payload'] = '1'
+        if msg_dict['payload'] == '0':
+            msg_dict['payload'] = '1'
         else:
-            event['payload'] = '0'
-        eq.append(event)
-        logger.debug(f'\tMessage from endpoint {event["source"]}'
-                     f' to endpoint {event["dest"]}'
-                     f' had payload altered to {event["payload"]}')
+            msg_dict['payload'] = '0'
+        h.helicsMessageSetString(msg_dict['msg_obj'], msg_dict['payload'])
+        eq.append(msg_dict)
+        logger.debug(f'\tMessage from endpoint {msg_dict["source"]}'
+                     f' to endpoint {msg_dict["dest"]}'
+                     f' had payload altered to {msg_dict["payload"]}')
     else:
         logger.debug(f'\tMessage not hacked')
     return eq
 
 
-def filter_interfere(eq, event):
-    # event must be the first element in the eq
+def filter_interfere(eq, msg_dict):
+    # msg_dict must be the first element in the eq
     threshold = 300
-    event_time = event['time']
+    event_time = msg_dict['time']
     delete_idx = []
 
     # Interference can only happen if there is more than one message
@@ -169,10 +185,10 @@ def filter_interfere(eq, event):
                     #   with each other.
                     if not delete_idx:
                         delete_idx.append(0)
-                        logger.debug(f'\tScheduling event for deletion: '
+                        logger.debug(f'\tScheduling message for deletion: '
                                      f'eq[0]')
                     delete_idx.append(idx)
-                    logger.debug(f'\tScheduling event for deletion: '
+                    logger.debug(f'\tScheduling message for deletion: '
                                  f'eq[{idx}]')
                 else:
                     break
@@ -183,7 +199,7 @@ def filter_interfere(eq, event):
         #   from eq
         delete_idx.sort(reverse=True)
         for i in delete_idx:
-            logger.debug(f'Deleting event from queue:'
+            logger.debug(f'Deleting message from queue:'
                          f'\tsource: {eq[i]["source"]}'
                          f'\tdestination: {eq[i]["dest"]}'
                          f'\tpayload: {eq[i]["payload"]}'
@@ -192,23 +208,23 @@ def filter_interfere(eq, event):
     return eq
 
 
-def filter_message(eq, event, cmd):
-    if cmd == 'delay':
-        logger.debug(f'Performing filter operation delay')
-        eq = filter_delay(eq, event)
+def filter_message(eq, msg_dict, cmd):
+    if cmd == 'drop_delay':
+        logger.debug(f'Performing filter operation drop and delay')
+        eq = filter_drop_delay(eq, msg_dict)
     elif cmd == 'hack':
         logger.debug(f'Performing filter operation hack')
-        eq = filter_hack(eq, event)
+        eq = filter_hack(eq, msg_dict)
     elif cmd == 'interfere':
         logger.debug(f'Performing filter operation interfere')
-        eq = filter_interfere(eq, event)
+        eq = filter_interfere(eq, msg_dict)
     else:
         logger.warning(f'Unrecognized command: {cmd}'
                        f'\n\t event queue unmodified')
     return eq
 
 
-def run_cosim(fed, endid):
+def run_cosim(fed, endid, end_name):
     # The event queue ("eq") is the master list of events that the filter
     #   federates works on. In this simple filter federate, each event
     #   will be a dictionary with a few parameters:
@@ -235,9 +251,9 @@ def run_cosim(fed, endid):
 
     # Blocking call for a time request at max simulation time
     # fake_max_time = int(h.HELICS_TIME_MAXTIME / 1000)
-    # fake_max_time = floor(h.HELICS_TIME_MAXTIME)
-    # starttime = fake_max_time
-    starttime = 0
+    fake_max_time = 100000000
+    starttime = fake_max_time
+    #starttime = 0
     logger.debug(f'Requesting initial time {starttime}')
     grantedtime = h.helicsFederateRequestTime(fed, starttime)
     logger.debug(f'Granted time {grantedtime}')
@@ -259,15 +275,16 @@ def run_cosim(fed, endid):
             time = h.helicsMessageGetTime(msg)
             logger.debug(f'Received message from endpoint {source}'
                          f' to endpoint {dest}'
-                         f' at time {grantedtime}'
-                         f' with message {msg_str}')
-            event = {"payload": msg_str,
-                     "source": source,
-                     "dest": dest,
-                     "time": time}
-            eq = filter_message(eq, event, 'delay')
+                         f' for delivery at time {time}'
+                         f' with payload \"{msg_str}\"')
+            msg_dict = {'msg_obj':msg,
+                        'payload':msg_str,
+                        'source':source,
+                        'dest':dest,
+                        'time':time}            
+            eq = filter_message(eq, msg_dict, 'drop_delay')
             if source == 'Controller/ep':
-                eq = filter_message(eq, event, 'hack')
+                eq = filter_message(eq, msg_dict, 'hack')
 
         # Sort event queue to get it back in order
         eq = sorted(eq, key=itemgetter('time'))
@@ -278,17 +295,24 @@ def run_cosim(fed, endid):
         #   after interference runs
         if len(eq) > 0:
             event = eq[0]
-            # eq = filter_message(eq, event, 'interfere')
+            # eq = filter_message(eq, msg_dict, 'interfere')
 
             # After filtering, send all messages whose time has come (or past;
             #   in which case something has gone wrong)
             while eq and eq[0]['time'] <= grantedtime:
-                h.helicsEndpointSendMessageRaw(endid, eq[0]['dest'],
-                                               eq[0]['payload'].encode())
-                logger.debug(f'Sent message from endpoint {endid}'
+                # Change destination to original destination before sending
+                #   If you don't do this is sends the message back to the rerouted
+                #   destination which, in this case, is the filter endpoint.
+                h.helicsMessageSetDestination(eq[0]['msg_obj'], eq[0]["dest"])
+                h.helicsEndpointSendMessage(endid, eq[0]['msg_obj'])
+#                 h.helicsEndpointSendMessageRaw(endid, eq[0]['dest'],
+#                                                eq[0]['payload'].encode())
+#                logger.debug(eq[0]['msg_obj'])
+                logger.debug(f'Sent message from endpoint {end_name}'
+                             f' appearing to come from {eq[0]["source"]}'
                              f' to endpoint {eq[0]["dest"]}'
                              f' at time {grantedtime}'
-                             f' with message {eq[0]["payload"]}')
+                             f' with payload \"{eq[0]["payload"]}\"')
                 del eq[0]
 
             if eq:
@@ -302,12 +326,12 @@ def run_cosim(fed, endid):
                 # No events in queue, schedule run for end of simulation.
                 #   Filter federate will be granted an earlier time if a
                 #   message is rerouted to the filter federate.
-                # requested_time = fake_max_time
-                requested_time = grantedtime + 5
+                requested_time = fake_max_time
+                #requested_time = grantedtime + 5
 
         else:
-            # requested_time = fake_max_time
-            requested_time = grantedtime + 5
+            requested_time = fake_max_time
+            #requested_time = grantedtime + 5
         logger.debug(f'Requesting time {requested_time}')
         grantedtime = h.helicsFederateRequestTime(fed, requested_time)
         logger.debug(f'Granted time {grantedtime}')
@@ -331,8 +355,8 @@ def _auto_run(args):
     """
     random.seed(args.random_seed)
     logger.debug(f'Intializing RNG with seed {args.random_seed}')
-    fed, endid = configure_federate()
-    run_cosim(fed, endid)
+    fed, endid, end_name = configure_federate()
+    run_cosim(fed, endid, end_name)
     destroy_federate(fed)
 
 

@@ -26,7 +26,7 @@
     },
     {
       "directory": ".",
-      "exec": "python -u min_filter.py",
+      "exec": "python -u Filter.py",
       "host": "localhost",
       "name": "Filter"
     }
