@@ -1,11 +1,13 @@
 {
-  "federates": [    
-    {
-      "directory": ".",
-      "exec": "helics_broker -f 3 --loglevel=1",
+  "broker": {
+    "federates": 3,
+    "observer": {
+      "directory": "./",
       "host": "localhost",
-      "name": "mybroker"
-    },
+      "name": "observer"
+    }
+  },
+  "federates": [    
     {
       "directory": ".",
       "exec": "python -u Charger.py",

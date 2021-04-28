@@ -112,7 +112,7 @@ if __name__ == "__main__":
             else:
                 instructions = 0
             message = str(instructions)
-            h.helicsEndpointSendBytesTo(endid, source, message.encode())
+            h.helicsEndpointSendBytesTo(endid, message.encode(), source)
             logger.debug(f'Sent message to endpoint {source}'
                          f' at time {grantedtime}'
                          f' with payload {instructions}')

@@ -249,12 +249,14 @@ if __name__ == "__main__":
 
 
 
-            # Check for messages from EV Controller
+        # Check for messages from EV Controller
             endpoint_name = h.helicsEndpointGetName(endid[j])
             if h.helicsEndpointHasMessage(endid[j]):
                 msg = h.helicsEndpointGetMessage(endid[j])
                 instructions = h.helicsMessageGetString(msg)
+                source = h.helicsMessageGetOriginalSource(msg)
                 logger.debug(f'\tReceived message at endpoint {endpoint_name}'
+                             f' from source {source}'
                              f' at time {grantedtime}'
                              f' with command {instructions}')
 
@@ -282,10 +284,10 @@ if __name__ == "__main__":
             if grantedtime % 900 == 0:
                 destination_name = str(
                     h.helicsEndpointGetDefaultDestination(endid[j]))
-                h.helicsEndpointSendBytesTo(endid[j], "",
-                                               f'{currentsoc[j]:4f}'.encode(
-                                               ))  #
+                message = f'{currentsoc[j]:4f}'
+                h.helicsEndpointSendBytesTo(endid[j], message.encode(), '')  #
                 logger.debug(f'Sent message from endpoint {endpoint_name}'
+                             f' to destination {destination_name}'
                              f' at time {grantedtime}'
                              f' with payload SOC {currentsoc[j]:4f}')
 

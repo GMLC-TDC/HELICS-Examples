@@ -1,5 +1,6 @@
 {
   "name": "Controller",
+  "core_name": "controller_core",
   "log_level": 7,
   "core_type": "zmq",
   "time_delta": 1,
