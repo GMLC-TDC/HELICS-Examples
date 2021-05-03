@@ -1,5 +1,6 @@
 {
   "name": "Battery",
+  "core_name": "battery_core",
   "log_level": 1,
   "core_type": "zmq",
   "period": 60,

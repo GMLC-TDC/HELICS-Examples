@@ -1,5 +1,6 @@
 {
   "name": "Filter",
+  "core_name": "filter_core",
   "log_level": 1,
   "core_type": "zmq",
   "uninterruptible": false,

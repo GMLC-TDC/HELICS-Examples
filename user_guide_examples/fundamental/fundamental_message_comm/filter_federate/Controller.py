@@ -96,7 +96,7 @@ if __name__ == "__main__":
             "Charger/EV2.soc":[0], 
             "Charger/EV3.soc":[0], 
             "Charger/EV4.soc":[0], 
-            "Charger/EV5.soc":[0],}
+            "Charger/EV5.soc":[0]}
 
     while grantedtime < total_interval:
 
@@ -136,23 +136,23 @@ if __name__ == "__main__":
         
         
         # If an SOC entry is missing it was caught by the filter. We manually
-        #   add in the most recent SCO value to make sure the time and SOC data
+        #   add in the most recent SOC value to make sure the time and SOC data
         #   vectors are the same length when graphing.
-        data_count = len(time_sim)
+        time_length = len(time_sim)
         for idx, (key, data) in enumerate(soc.items()):
-            if len(data) < data_count:
+            data_length = len(data)    
+            if data_length < time_length:
                 last_soc = data[-1]
-                data.append(last_soc)
-                logger.debug(f'Missing data for {key} due to filtering.'
-                            f'Copying last SOC ({last_soc}) for time period ' 
-                            f'{grantedtime}.')            
-            
+                soc[key].append(last_soc)
+                logger.debug(f'\tMissing data for {key} due to filtering.'
+                            f' Copying last SOC for time period ' 
+                            f'{grantedtime}.')
 
         # Since we've dealt with all the messages that are queued, there's
         #   nothing else for the federate to do until/unless another
         #   message comes in. Request a time very far into the future
         #   and take a break until/unless a new message arrives.
-        logger.debug(f'Requesting time {fake_max_time}')
+        logger.debug(f'Requesting time {fake_max_time}\n')
         request_time = fake_max_time
         #request_time = grantedtime + 10
         grantedtime = h.helicsFederateRequestTime(fed, request_time)

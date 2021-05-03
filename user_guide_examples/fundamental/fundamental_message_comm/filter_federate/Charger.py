@@ -155,7 +155,7 @@ if __name__ == "__main__":
     subid = {}
     for i in range(0, sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name = h.helicsSubscriptionGetKey(subid[i])
+        sub_name = h.helicsSubscriptionGetTarget(subid[i])
         logger.debug(f'\tRegistered subscription---> {sub_name}')
 
     pubid = {}
@@ -219,7 +219,7 @@ if __name__ == "__main__":
 
         # Time request for the next physical interval to be simulated
         requested_time = (grantedtime + update_interval)
-        logger.debug(f'Requesting time {requested_time}')
+        logger.debug(f'Requesting time {requested_time}\n')
         grantedtime = h.helicsFederateRequestTime (fed, requested_time)
         logger.debug(f'Granted time {grantedtime}')
 
@@ -231,7 +231,7 @@ if __name__ == "__main__":
             #   uses the latest value provided by the battery model.
             charging_current = h.helicsInputGetDouble((subid[j]))
             logger.debug(f'\tCharging current: {charging_current:.2f} from '
-                         f'input {h.helicsSubscriptionGetKey(subid[j])}')
+                         f'input {h.helicsSubscriptionGetTarget(subid[j])}')
 
             # New EV is in place after removing charge from old EV,
             # as indicated by the zero current draw.

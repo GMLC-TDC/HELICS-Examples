@@ -27,8 +27,7 @@ import logging
 import pprint
 import os
 import sys
-import json
-from math import floor
+
 
 import helics as h
 import random
@@ -111,14 +110,16 @@ def configure_federate():
     return fed, endid, end_name
 
 
-def filter_drop_delay(eq, msg_dict):
-    drop_rate = 0.1
+def filter_drop_delay(eq, drop_rate, delay_time):
     if random.random() > 0.1:
         logger.debug(f'\tMessage not randomly dropped')
+        # Pulling incoming message from its parking spot at the end of eq
+        msg_dict = eq[-1]
+        del eq[-1]
         # Only need to delay messages that are not dropped
         # Messages are normally sent every 900 seconds
         # Larger range of random int results in greater disturbance to control mechanism
-        delay = random.randint(-1801, 1801)
+        delay = random.randint(-delay_time, delay_time)
         if delay < 0:
             delay = 0
         logger.debug(f'\tRandom delay time: {delay}')
@@ -131,16 +132,20 @@ def filter_drop_delay(eq, msg_dict):
                      f' delayed to time {msg_dict["time"]} seconds'
                      f' with payload \"{msg_dict["payload"]}\"')
     else:
-        # Because the message is dropped, it doesn't get added to the event queue
+        # Because the message is dropped, we remove it from the end of th eq
+        del eq[-1]
         logger.debug(f'\tMessage randomly dropped')
     return eq
     
 
 
 
-def filter_hack(eq, msg_dict):
-    if random.random() > 0.5:
+def filter_hack(eq, hack_success_rate):
+    if random.random() < hack_success_rate:
         logger.debug(f'\tMessage hacked')
+        # Pulling incoming message from its parking spot at the end of eq
+        msg_dict = eq[-1]
+        del eq[-1]
         if msg_dict['payload'] == '0':
             msg_dict['payload'] = '1'
         else:
@@ -155,17 +160,16 @@ def filter_hack(eq, msg_dict):
     return eq
 
 
-def filter_interfere(eq, msg_dict):
-    # msg_dict must be the first element in the eq
-    threshold = 300
-    event_time = msg_dict['time']
+def filter_interfere(eq, interference_threshold_time):
+    threshold = interference_threshold_time
+    event_time = eq[0]['time']
     delete_idx = []
 
     # Interference can only happen if there is more than one message
     #   in the event queue
     if len(eq) > 1:
         for idx, e in enumerate(eq):
-            logger.debug(f'Comparing primary message to eq[{eq}]')
+            logger.debug(f'Comparing primary message to message from {e["source"]} going to {e["dest"]}')
             # Don't check for interference between the primary message
             #   (`event` = eq[0]) and itself.
             if idx > 0:
@@ -205,26 +209,29 @@ def filter_interfere(eq, msg_dict):
                          f'\tpayload: {eq[i]["payload"]}'
                          f'\tdelivery time: {eq[i]["time"]}')
             del eq[i]
+            logger.debug(f'eq length: {len(eq)}')
     return eq
 
 
-def filter_message(eq, msg_dict, cmd):
+def filter_message(eq, cmd, args):
     if cmd == 'drop_delay':
         logger.debug(f'Performing filter operation drop and delay')
-        eq = filter_drop_delay(eq, msg_dict)
+        eq = filter_drop_delay(eq, args.drop_rate, args.delay_time)
     elif cmd == 'hack':
         logger.debug(f'Performing filter operation hack')
-        eq = filter_hack(eq, msg_dict)
+        eq = filter_hack(eq, args.hack_success_rate)
+        pass
     elif cmd == 'interfere':
         logger.debug(f'Performing filter operation interfere')
-        eq = filter_interfere(eq, msg_dict)
+        eq = filter_interfere(eq, args.interference_threshold_time)
+        #pass
     else:
         logger.warning(f'Unrecognized command: {cmd}'
                        f'\n\t event queue unmodified')
     return eq
 
 
-def run_cosim(fed, endid, end_name):
+def run_cosim(fed, endid, end_name, args):
     # The event queue ("eq") is the master list of events that the filter
     #   federates works on. In this simple filter federate, each event
     #   will be a dictionary with a few parameters:
@@ -281,10 +288,13 @@ def run_cosim(fed, endid, end_name):
                         'payload':msg_str,
                         'source':source,
                         'dest':dest,
-                        'time':time}            
-            eq = filter_message(eq, msg_dict, 'drop_delay')
+                        'time':time}
+            # Adding messagge to end of eq as a reserved place for all
+            # filters to act on.
+            eq.append(msg_dict)
+            eq = filter_message(eq, 'drop_delay', args)
             if source == 'Controller/ep':
-                eq = filter_message(eq, msg_dict, 'hack')
+                eq = filter_message(eq, 'hack', args)
 
         # Sort event queue to get it back in order
         eq = sorted(eq, key=itemgetter('time'))
@@ -292,10 +302,10 @@ def run_cosim(fed, endid, end_name):
         # Acting on any events that need to be dequeued
         # Running interference filter. This filter has the ability to
         #   remove events from eq. We may not have any messages to send
-        #   after interference runs
+        #   after interference runs. eq must be freshly sorted for this
+        #   filter to work.
         if len(eq) > 0:
-            event = eq[0]
-            # eq = filter_message(eq, msg_dict, 'interfere')
+            eq = filter_message(eq, 'interfere', args)
 
             # After filtering, send all messages whose time has come (or past;
             #   in which case something has gone wrong)
@@ -332,7 +342,7 @@ def run_cosim(fed, endid, end_name):
         else:
             requested_time = fake_max_time
             #requested_time = grantedtime + 5
-        logger.debug(f'Requesting time {requested_time}')
+        logger.debug(f'Requesting time {requested_time}\n')
         grantedtime = h.helicsFederateRequestTime(fed, requested_time)
         logger.debug(f'Granted time {grantedtime}')
 
@@ -356,7 +366,7 @@ def _auto_run(args):
     random.seed(args.random_seed)
     logger.debug(f'Intializing RNG with seed {args.random_seed}')
     fed, endid, end_name = configure_federate()
-    run_cosim(fed, endid, end_name)
+    run_cosim(fed, endid, end_name, args)
     destroy_federate(fed)
 
 
@@ -387,5 +397,21 @@ if __name__ == '__main__':
                         '--random_seed',
                         nargs='?',
                         default=2609)
+    parser.add_argument('-d',
+                        '--drop_rate',
+                        nargs='?',
+                        default=0.1)
+    parser.add_argument('-t',
+                        '--delay_time',
+                        nargs='?',
+                        default=1800)
+    parser.add_argument('-k',
+                        '--hack_success_rate',
+                        nargs='?',
+                        default=0.02)
+    parser.add_argument('-i',
+                        '--interference_threshold_time',
+                        nargs='?',
+                        default=200)
     args = parser.parse_args()
     _auto_run(args)
