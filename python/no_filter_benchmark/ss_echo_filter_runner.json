@@ -1,0 +1,29 @@
+{
+  "federates": [    
+    {
+      "directory": ".",
+      "exec": "helics_broker -f 3 --loglevel=7",
+      "host": "localhost",
+      "name": "broker"
+    },
+    {
+      "directory": ".",
+      "exec": "python -u source_sink.py",
+      "host": "localhost",
+      "name": "ss"
+    },
+    {
+      "directory": ".",
+      "exec": "python -u echo.py",
+      "host": "localhost",
+      "name": "echo"
+    },
+    {
+      "directory": ".",
+      "exec": "python -u no_filter.py",
+      "host": "localhost",
+      "name": "filter"
+    }
+  ],
+  "name": "filter_test"
+}
