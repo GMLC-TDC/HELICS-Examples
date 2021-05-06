@@ -31,7 +31,7 @@ test_case = 0
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
-logger.setLevel(logging.IDEBUG)
+logger.setLevel(logging.DEBUG)
 
 def destroy_federate(fed):
     '''
