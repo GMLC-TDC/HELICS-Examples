@@ -15,7 +15,7 @@ import time
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 def destroy_federate(fed):
     '''

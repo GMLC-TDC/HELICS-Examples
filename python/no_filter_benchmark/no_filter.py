@@ -25,7 +25,7 @@ from operator import itemgetter
 
 # Setting up logging
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 # Adding custom logging level "DATA" to use for putting
 #  all the simulation data on. "DATA" is between "DEBUG"
