@@ -3,7 +3,11 @@
 """
 Created on Monday May 3 2021
 
-Filter that doesn't do anything.
+Filter that doesn't filter messages at all. I sends on all messages that are
+routed to it without modification. It uses the original destination of the
+message to determine where the message should be sent on to; the reroute filter 
+changes the simple `destination` field when it reroutes the message to the 
+filter federate.
 
 @author: hard312 (Trevor Hardy)
 """
@@ -21,6 +25,7 @@ from operator import itemgetter
 
 # Setting up logging
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 # Adding custom logging level "DATA" to use for putting
 #  all the simulation data on. "DATA" is between "DEBUG"
@@ -132,6 +137,7 @@ def run_cosim(fed, endid, end_name, args):
                              f' to endpoint {dest}'
                              f' at time {grantedtime}'
                              f' with payload \"{msg_str}\"')
+        logger.debug(f'Requesting time {fake_max_time}')
         grantedtime = h.helicsFederateRequestTime(fed, fake_max_time)
 
 

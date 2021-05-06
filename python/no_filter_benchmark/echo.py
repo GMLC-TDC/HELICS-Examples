@@ -2,7 +2,8 @@
 """
 Created on 5/3/2021
 
-Test federate for evaluating performance of HELICS filter timing.
+Test federate for evaluating performance of HELICS filter timing. Takes
+incoming messages and sends them back to their sender with an unaltered payload.
 
 @author: Trevor Hardy
 trevor.hardy@pnnl.gov
@@ -14,7 +15,7 @@ import time
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 def destroy_federate(fed):
     '''
@@ -49,7 +50,7 @@ if __name__ == "__main__":
     h.helicsFederateEnterExecutingMode(fed)
     logger.info('Entered HELICS execution mode')
 
-    hours = 24
+    hours = 1
     total_interval = int(60 * 60 * hours)
     update_interval = int(h.helicsFederateGetTimeProperty(
                             fed,
@@ -72,25 +73,43 @@ if __name__ == "__main__":
     while grantedtime < total_interval:
 
         # Time request for the next physical interval to be simulated
-        #logger.debug(f'Requesting time {requested_time}\n')
+        logger.debug(f'Requesting time {total_interval}\n')
         grantedtime = h.helicsFederateRequestTime (fed, total_interval )
-        #logger.debug(f'Granted time {grantedtime}')
+        logger.debug(f'Granted time {grantedtime}')
 
         if h.helicsEndpointHasMessage(endid):
-        # for the reroute filter to work properly, it is necessary to change the
-        # original destination and source. Just changing the destination and 
-        # source as in the commented out API calls doesn't work. The reroute 
-        # filter appears to operate on the "original" fields.
             msg = h.helicsEndpointGetMessage(endid)
-            # h.helicsMessageSetDestination(msg, default_dest)
+            # This is where things can get tricky. The combination of the reroute 
+            # filter and the echo federate make Setting the parameters of this 
+            # message complex. The simplest solution for the echo federate is to 
+            # make a copy of the payload from the original message and create a 
+            # new message with that same payload.
+            # payload = h.helicsMessageGetString(msg)
+            # h.helicsEndpointSendBytesTo(endid, payload.encode(), "")
+        
+            # Alternatively, working with the same message object, changing the 
+            # original source to this echo favorites and point in the original 
+            # destination to the default destination for this federate's endpoint 
+            # will also work.
             h.helicsMessageSetOriginalDestination(msg, default_dest)
-            # h.helicsMessageSetSource(msg, endid_name)
             h.helicsMessageSetOriginalSource(msg, endid_name)
+            
+            
+            # In the case of this Federation, changing just the destination and 
+            # source does not work as expected. If you look at no_filter.py, 
+            # you can see that D filter determines the correct destination of 
+            # the message based on its original destination. Using the API calls
+            # below, that parameter is not changed and thus when this message 
+            # is intercepted by the filter federate, it will send it to its 
+            # original destination, which is the echo federates endpoint. This 
+            # results in the message looping continuously through the echo 
+            # federate and the filter federate.
+            # h.helicsMessageSetDestination(msg, default_dest)
+            # h.helicsMessageSetSource(msg, endid_name)
             h.helicsEndpointSendMessage(endid, msg)
             logger.debug(f'Echoing message at time {grantedtime}')
             
-#             payload = h.helicsMessageGetString(msg)
-#             h.helicsEndpointSendBytesTo(endid, payload.encode(), "")
+
 
 
 

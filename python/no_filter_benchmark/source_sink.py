@@ -4,6 +4,14 @@ Created on 5/3/2021
 
 Test federate for evaluating performance of HELICS filter timing.
 
+This code includes data collection and graphing functionality that displays the 
+histogram of the transit times of HELICS messages to and from the echo federate 
+and can include processing by the filter federate if included in the federation. 
+Data is saved between test case runs as iPhone Pickel files and read back in if 
+both files are present to allow comparison of the with and without filter 
+federate runs. The user must manually set the test case variable to define
+whether the filter federate is a part of the federation or not.
+
 @author: Trevor Hardy
 trevor.hardy@pnnl.gov
 """
@@ -17,12 +25,13 @@ import matplotlib.pyplot as plt
 import pickle
 import os.path
 
-test_case = 'without_filter'
-#test_case = 'with_filter'
+# 0 = without filter
+# 1 = with filter
+test_case = 0
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 def destroy_federate(fed):
     '''
@@ -104,7 +113,7 @@ if __name__ == "__main__":
     h.helicsFederateEnterExecutingMode(fed)
     logger.info('Entered HELICS execution mode')
 
-    hours = 24
+    hours = 1
     total_interval = int(60 * 60 * hours)
     update_interval = int(h.helicsFederateGetTimeProperty(
                             fed,
@@ -131,13 +140,13 @@ if __name__ == "__main__":
 
         # Time request for the next physical interval to be simulated
         requested_time = (grantedtime + update_interval)
-        #logger.debug(f'Requesting time {requested_time}\n')
+        logger.debug(f'Requesting time {requested_time}\n')
         grantedtime = h.helicsFederateRequestTime (fed, requested_time)
-        #logger.debug(f'Granted time {grantedtime}')
+        logger.debug(f'Granted time {grantedtime}')
         
         if grantedtime % 10 == 0:
             send_message(endid, default_dest)
-            #logger.debug(f'Sending message at time {grantedtime}')
+            logger.debug(f'Sending message at time {grantedtime}')
 
         if h.helicsEndpointHasMessage(endid):
             msg = h.helicsEndpointGetMessage(endid)
@@ -150,9 +159,10 @@ if __name__ == "__main__":
 
     # Cleaning up HELICS stuff once we've finished the co-simulation.
     destroy_federate(fed)
-    # 0 = without filter
-    # 1 = with filter
-    ts_data = save_and_load(ts_data, 0)
+    
+    
+    # Post-processing data
+    ts_data = save_and_load(ts_data, test_case)
     
     logger.debug(f'ts_data_length: {len(ts_data)}')
     if len(ts_data) == 2:
