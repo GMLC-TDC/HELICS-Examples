@@ -1,5 +1,6 @@
 {
   "name": "Charger",
+  "core_name": "Charger",
   "log_level": 1,
   "core_type": "zmq",
   "period": 60,

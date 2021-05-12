@@ -76,7 +76,6 @@ if __name__ == "__main__":
     fed = h.helicsCreateValueFederateFromConfig("BatteryConfig.json")
     federate_name = h.helicsFederateGetName(fed)
     logger.info(f'Created federate {federate_name}')
-    print(f'Created federate {federate_name}')
 
     sub_count = h.helicsFederateGetInputCount(fed)
     logger.debug(f'\tNumber of subscriptions: {sub_count}')
@@ -88,13 +87,13 @@ if __name__ == "__main__":
     subid = {}
     for i in range(0, sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name = h.helicsSubscriptionGetKey(subid[i])
+        sub_name = h.helicsSubscriptionGetTarget(subid[i])
         logger.debug(f'\tRegistered subscription---> {sub_name}')
 
     pubid = {}
     for i in range(0, pub_count):
         pubid[i] = h.helicsFederateGetPublicationByIndex(fed, i)
-        pub_name = h.helicsPublicationGetKey(pubid[i])
+        pub_name = h.helicsPublicationGetName(pubid[i])
         logger.debug(f'\tRegistered publication---> {pub_name}')
 
     ##############  Entering Execution Mode  ##################################
