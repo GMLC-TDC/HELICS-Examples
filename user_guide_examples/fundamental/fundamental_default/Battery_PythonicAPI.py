@@ -68,30 +68,6 @@ def get_new_battery(numBattery):
     return listOfBatts
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 if __name__ == "__main__":
     np.random.seed(2622)
 
@@ -109,28 +85,6 @@ if __name__ == "__main__":
 
     for k, v in fed.publications.items():
         logger.debug(f"\tRegistered publication---> {k}")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     ##############  Entering Execution Mode  ##################################
     fed.enter_executing_mode()

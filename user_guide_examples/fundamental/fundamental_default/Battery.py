@@ -68,30 +68,6 @@ def get_new_battery(numBattery):
     return listOfBatts
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 if __name__ == "__main__":
     np.random.seed(2622)
 
@@ -118,27 +94,6 @@ if __name__ == "__main__":
         pubid[i] = h.helicsFederateGetPublicationByIndex(fed, i)
         pub_name = h.helicsPublicationGetName(pubid[i])
         logger.debug(f"\tRegistered publication---> {pub_name}")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     ##############  Entering Execution Mode  ##################################
     h.helicsFederateEnterExecutingMode(fed)
