@@ -2,6 +2,7 @@
   "name": "Charger",
   "log_level": 7,
   "core_type": "zmq",
+  "core_name": "charger_core",
   "period": 60,
   "uninterruptible": false,
   "terminate_on_error": true,

@@ -187,7 +187,7 @@ if __name__ == "__main__":
 
             # send charging current message
             # to this endpoint's default destination, ""
-            h.helicsEndpointSendBytesTo(endid[j], "",str(charging_current))  #
+            h.helicsEndpointSendBytesTo(endid[j], str(charging_current), "")  #
             logger.debug(f'Sent message {charging_current:.2f}'
                          f' from endpoint {endpoint_name}'
                          f' to endpoint Charger/EV1_voltage'
