@@ -76,7 +76,6 @@ if __name__ == "__main__":
     fed = h.helicsCreateMessageFederateFromConfig("BatteryConfig.json")
     federate_name = h.helicsFederateGetName(fed)
     logger.info(f'Created federate {federate_name}')
-    print(f'Created federate {federate_name}')
 
     end_count = h.helicsFederateGetEndpointCount(fed)
     logging.debug(f'\tNumber of endpoints: {end_count}')
@@ -173,7 +172,7 @@ if __name__ == "__main__":
             # to this endpoint's default destination, ""
             h.helicsEndpointSendBytesTo(endid[j], str(charging_current), "")  #
             logger.debug(f'Sent message {charging_current:.2f}'
-                         f'from endpoint {endpoint_name}'
+                         f' from endpoint {endpoint_name}'
                          f' at time {grantedtime}')
 
             # Store SOC for later analysis/graphing

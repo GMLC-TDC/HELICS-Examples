@@ -102,7 +102,6 @@ if __name__ == "__main__":
     fed = h.helicsCreateMessageFederateFromConfig("ChargerConfig.json")
     federate_name = h.helicsFederateGetName(fed)
     logger.info(f'Created federate {federate_name}')
-    print(f'Created federate {federate_name}')
     end_count = h.helicsFederateGetEndpointCount(fed)
     logging.debug(f'\tNumber of endpoints: {end_count}')
 
@@ -153,9 +152,10 @@ if __name__ == "__main__":
     # Apply initial charging voltage
     for j in range(0, end_count):
         message = str(charging_voltage[j])
-        h.helicsEndpointSendBytesTo(endid[j], message, "") #
-        logger.debug(f'\tSending charging voltage of {message} '
-                     f' from {endid[j]}'
+        h.helicsEndpointSendBytesTo(endid[j], message, "")
+        logger.debug(f'\tSending charging voltage of {message}'
+                     f' from {h.helicsEndpointGetName(endid[j])}'
+                     f' to {h.helicsEndpointGetDefaultDestination(endid[j])}'
                      f' at time {grantedtime}')
 
 

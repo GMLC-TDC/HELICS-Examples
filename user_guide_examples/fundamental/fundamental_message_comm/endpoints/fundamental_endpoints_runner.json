@@ -2,7 +2,7 @@
   "federates": [
     {
       "directory": ".",
-      "exec": "helics_broker -f 2 --loglevel=7",
+      "exec": "helics_broker -f 2 --loglevel=warning",
       "host": "localhost",
       "name": "broker"
     },
