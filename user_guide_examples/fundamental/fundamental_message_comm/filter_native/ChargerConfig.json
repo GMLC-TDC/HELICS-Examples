@@ -1,9 +1,8 @@
 {
   "name": "Charger",
-  "log_level": 1,
+  "log_level": 7,
   "core_type": "zmq",
-  "core_name": "charger_core",
-  "period": 1,
+  "period": 60,
   "uninterruptible": false,
   "terminate_on_error": true,
   "endpoints":[
@@ -43,7 +42,7 @@
       "properties":
       {
         "name":"delay",
-        "value":5
+        "value":900
       }
     },
     {
@@ -54,7 +53,7 @@
       "properties":
       {
         "name":"delay",
-        "value":5
+        "value":900
       }
     },
     {
@@ -65,7 +64,7 @@
       "properties":
       {
         "name":"delay",
-        "value":5
+        "value":900
       }
     },
     {
@@ -76,7 +75,7 @@
       "properties":
       {
         "name":"delay",
-        "value":5
+        "value":900
       }
     },
     {
@@ -87,7 +86,7 @@
       "properties":
       {
         "name":"delay",
-        "value":5
+        "value":900
       }
     }
   ]

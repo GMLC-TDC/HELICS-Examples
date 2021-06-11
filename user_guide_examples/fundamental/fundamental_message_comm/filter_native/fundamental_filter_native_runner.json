@@ -2,19 +2,19 @@
   "federates": [
     {
       "directory": ".",
-      "exec": "helics_broker -f 2 --loglevel=7",
+      "exec": "helics_broker -f 2 --loglevel=warning",
       "host": "localhost",
       "name": "broker"
     },
     {
       "directory": ".",
-      "exec": "python -u Charger.py 1",
+      "exec": "python -u Charger.py",
       "host": "localhost",
       "name": "Charger"
     },
     {
       "directory": ".",
-      "exec": "python -u Battery.py 1",
+      "exec": "python -u Battery.py",
       "host": "localhost",
       "name": "Battery"
     }
