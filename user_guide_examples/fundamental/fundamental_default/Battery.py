@@ -138,7 +138,8 @@ if __name__ == "__main__":
 
             # Get the applied charging voltage from the EV
             charging_voltage = h.helicsInputGetDouble((subid[j]))
-            logger.debug(f"\tReceived voltage {charging_voltage:.2f} from input" f" {h.helicsSubscriptionGetKey(subid[j])}")
+            logger.debug(f"\tReceived voltage {charging_voltage:.2f}" 
+                        "from input f {h.helicsSubscriptionGetKey(subid[j])}")
 
             # Calculate charging current and update SOC
             R = np.interp(current_soc[j], socs, effective_R)
