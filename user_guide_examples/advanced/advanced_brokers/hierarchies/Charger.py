@@ -39,6 +39,11 @@ def destroy_federate(fed):
     :param fed: Federate to be destroyed
     :return: (none)
     '''
+    
+    # Adding extra time request to clear out any pending messages to avoid
+    #   annoying errors in the broker log. Any message are tacitly disregarded.
+    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    status = h.helicsFederateFinalize(fed)
     status = h.helicsFederateFinalize(fed)
     h.helicsFederateFree(fed)
     h.helicsCloseLibrary()
@@ -249,12 +254,14 @@ if __name__ == "__main__":
 
 
 
-            # Check for messages from EV Controller
+        # Check for messages from EV Controller
             endpoint_name = h.helicsEndpointGetName(endid[j])
             if h.helicsEndpointHasMessage(endid[j]):
                 msg = h.helicsEndpointGetMessage(endid[j])
                 instructions = h.helicsMessageGetString(msg)
+                source = h.helicsMessageGetOriginalSource(msg)
                 logger.debug(f'\tReceived message at endpoint {endpoint_name}'
+                             f' from source {source}'
                              f' at time {grantedtime}'
                              f' with command {instructions}')
 
@@ -282,12 +289,12 @@ if __name__ == "__main__":
             if grantedtime % 900 == 0:
                 destination_name = str(
                     h.helicsEndpointGetDefaultDestination(endid[j]))
-                h.helicsEndpointSendBytesTo(endid[j], "",
-                                               f'{currentsoc[j]:4f}'.encode(
-                                               ))  #
+                message = f'{currentsoc[j]:4f}'
+                h.helicsEndpointSendBytesTo(endid[j], message.encode(), '')  #
                 logger.debug(f'Sent message from endpoint {endpoint_name}'
+                             f' to destination {destination_name}'
                              f' at time {grantedtime}'
-                             f' with payload SOC {currentsoc[j]:4f}')
+                             f' with payload SOC {message}')
 
         # Calculate the total power required by all chargers. This is the
         #   primary metric of interest, to understand the power profile
@@ -320,5 +327,5 @@ if __name__ == "__main__":
     plt.xlabel('time (hr)')
     plt.title('Instantaneous Power Draw from 5 EVs')
     # Saving graph to file
-    #plt.savefig('advanced_hierarchy_charging_power.png', format='png')
+    plt.savefig('advanced_default_charging_power.png', format='png')
     plt.show()

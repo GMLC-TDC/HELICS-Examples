@@ -17,7 +17,6 @@ import numpy as np
 import sys
 import time
 import matplotlib.pyplot as plt
-import pandas as pd
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
@@ -36,6 +35,11 @@ def destroy_federate(fed):
     :param fed: Federate to be destroyed
     :return: (none)
     '''
+    
+    # Adding extra time request to clear out any pending messages to avoid
+    #   annoying errors in the broker log. Any message are tacitly disregarded.
+    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    status = h.helicsFederateFinalize(fed)
     status = h.helicsFederateFinalize(fed)
     h.helicsFederateFree(fed)
     h.helicsCloseLibrary()
@@ -76,8 +80,7 @@ if __name__ == "__main__":
     #   (helics_time_maxtime is the largest time that HELICS can internally
     #   represent and is an approximation for a point in time very far in
     #   in the future).
-    fake_max_time = int(h.HELICS_TIME_MAXTIME)
-    starttime = fake_max_time
+    starttime = h.HELICS_TIME_MAXTIME
     logger.debug(f'Requesting initial time {starttime}')
     grantedtime = h.helicsFederateRequestTime (fed, starttime)
     logger.debug(f'Granted time {grantedtime}')
@@ -112,7 +115,7 @@ if __name__ == "__main__":
             else:
                 instructions = 0
             message = str(instructions)
-            h.helicsEndpointSendBytesTo(endid, source, message.encode())
+            h.helicsEndpointSendBytesTo(endid, message.encode(), source)
             logger.debug(f'Sent message to endpoint {source}'
                          f' at time {grantedtime}'
                          f' with payload {instructions}')
@@ -128,8 +131,8 @@ if __name__ == "__main__":
         #   nothing else for the federate to do until/unless another
         #   message comes in. Request a time very far into the future
         #   and take a break until/unless a new message arrives.
-        logger.debug(f'Requesting time {fake_max_time}')
-        grantedtime = h.helicsFederateRequestTime (fed, fake_max_time)
+        logger.debug(f'Requesting time {h.HELICS_TIME_MAXTIME}')
+        grantedtime = h.helicsFederateRequestTime (fed, h.HELICS_TIME_MAXTIME)
         logger.info(f'Granted time: {grantedtime}')
 
     # Close out co-simulation execution cleanly now that we're done.
@@ -170,8 +173,5 @@ if __name__ == "__main__":
     #for ax in axs():
 #        ax.label_outer()
     # Saving graph to file
-    #plt.savefig('advanced_hierarchy_estimated_SOCs.png', format='png')
+    plt.savefig('fundamental_combo_estimated_SOCs.png', format='png')
     plt.show()
-
-
-
