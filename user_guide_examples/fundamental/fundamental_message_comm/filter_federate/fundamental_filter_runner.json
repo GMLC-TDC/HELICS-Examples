@@ -1,8 +1,9 @@
 {
+  "name": "fundamental_filter",
   "federates": [    
     {
       "directory": ".",
-      "exec": "helics_broker -f 4 --loglevel=7",
+      "exec": "helics_broker -f 4 --loglevel=warning",
       "host": "localhost",
       "name": "broker"
     },
@@ -30,6 +31,5 @@
       "host": "localhost",
       "name": "Filter"
     }
-  ],
-  "name": "fundamental_filter"
+  ]
 }
