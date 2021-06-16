@@ -37,6 +37,11 @@ def destroy_federate(fed):
     :param fed: Federate to be destroyed
     :return: (none)
     '''
+    
+    # Adding extra time request to clear out any pending messages to avoid
+    #   annoying errors in the broker log. Any message are tacitly disregarded.
+    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    status = h.helicsFederateFinalize(fed)
     status = h.helicsFederateFinalize(fed)
     h.helicsFederateFree(fed)
     h.helicsCloseLibrary()
@@ -48,7 +53,7 @@ def create_value_federate(fedinitstring,name,period):
     h.helicsFederateInfoSetCoreTypeFromString(fedinfo, "zmq")
     h.helicsFederateInfoSetCoreInitString(fedinfo, fedinitstring)
     # "loglevel": 1,
-    h.helicsFederateInfoSetIntegerProperty(fedinfo, h.helics_property_int_log_level, 7)
+    h.helicsFederateInfoSetIntegerProperty(fedinfo, h.helics_property_int_log_level, 3)
     # "period": 60,
     h.helicsFederateInfoSetTimeProperty(fedinfo, h.helics_property_time_period, period)
     # "uninterruptible": false,
@@ -208,7 +213,7 @@ if __name__ == "__main__":
             #   uses the latest value provided by the battery model.
             charging_current[j] = h.helicsInputGetDouble((subid[j]))
             logger.debug(f'\tCharging current: {charging_current[j]:.2f} from '
-                         f'input {h.helicsSubscriptionGetKey(subid[j])}')
+                         f'input {h.helicsSubscriptionGetTarget(subid[j])}')
 
             # Publish updated charging voltage
             h.helicsPublicationPublishDouble(pubid[j], charging_voltage[j])
