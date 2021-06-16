@@ -1,8 +1,9 @@
 {
+  "name": "fundamental_final",
   "federates": [
     {
       "directory": ".",
-      "exec": "helics_broker -f 3 --loglevel=1",
+      "exec": "helics_broker -f 3 --loglevel=warning",
       "host": "localhost",
       "name": "broker"
     },
@@ -24,6 +25,5 @@
       "host": "localhost",
       "name": "Battery"
     }
-  ],
-  "name": "fundamental_final"
+  ]
 }

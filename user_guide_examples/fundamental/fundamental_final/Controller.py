@@ -120,7 +120,7 @@ if __name__ == "__main__":
             msg = h.helicsEndpointGetMessage(endid)
             currentsoc = h.helicsMessageGetString(msg)
             source = h.helicsMessageGetOriginalSource(msg)
-            logger.debug(f'Received message from endpoint {source}'
+            logger.debug(f'\tReceived message from endpoint {source}'
                          f' at time {grantedtime}'
                          f' with SOC {currentsoc}')
 
@@ -134,8 +134,8 @@ if __name__ == "__main__":
             else:
                 instructions = 0
             message = str(instructions)
-            h.helicsEndpointSendBytesTo(endid, source, message.encode())
-            logger.debug(f'Sent message to endpoint {source}'
+            h.helicsEndpointSendBytesTo(endid, message.encode(), source)
+            logger.debug(f'\tSent message to endpoint {source}'
                          f' at time {grantedtime}'
                          f' with payload {instructions}')
 

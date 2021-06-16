@@ -261,7 +261,7 @@ if __name__ == "__main__":
             #   uses the latest value provided by the battery model.
             charging_current = h.helicsInputGetDouble((subid[j]))
             logger.debug(f'\tCharging current: {charging_current:.2f} from '
-                         f'input {h.helicsSubscriptionGetKey(subid[j])}')
+                         f'input {h.helicsSubscriptionGetTarget(subid[j])}')
 
             # New EV is in place after removing charge from old EV,
             # as indicated by the zero current draw.
@@ -313,12 +313,14 @@ if __name__ == "__main__":
 
             # Send message to Controller with SOC every 15 minutes
             if grantedtime % 900 == 0:
-                h.helicsEndpointSendBytesTo(endid[j], "",
-                                               f'{currentsoc[j]:4f}'.encode(
-                                               ))  #
+                destination_name = str(
+                    h.helicsEndpointGetDefaultDestination(endid[j]))
+                message = f'{currentsoc[j]:4f}'
+                h.helicsEndpointSendBytesTo(endid[j], message.encode(), '') 
                 logger.debug(f'Sent message from endpoint {endpoint_name}'
+                             f' to destination {destination_name}'
                              f' at time {grantedtime}'
-                             f' with payload SOC {currentsoc[j]:4f}')
+                             f' with payload SOC {message}')
 
         # Calculate the total power required by all chargers. This is the
         #   primary metric of interest, to understand the power profile
