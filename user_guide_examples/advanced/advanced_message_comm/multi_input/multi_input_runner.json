@@ -1,8 +1,9 @@
 {
+  "name": "multi_input",
   "federates": [    
     {
       "directory": ".",
-      "exec": "helics_broker -f 2 --loglevel=1",
+      "exec": "helics_broker -f 2 --loglevel=warning",
       "host": "localhost",
       "name": "broker"
     },
@@ -18,6 +19,5 @@
       "host": "localhost",
       "name": "Battery"
     }
-  ],
-  "name": "multi_input"
+  ]
 }
