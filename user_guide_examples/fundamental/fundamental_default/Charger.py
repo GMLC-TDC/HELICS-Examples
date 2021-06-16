@@ -35,6 +35,9 @@ def destroy_federate(fed):
     :param fed: Federate to be destroyed
     :return: (none)
     """
+    # Adding extra time request to clear out any pending messages to avoid
+    #   annoying errors in the broker log. Any message are tacitly disregarded.
+    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
     status = h.helicsFederateFinalize(fed)
     h.helicsFederateFree(fed)
     h.helicsCloseLibrary()
@@ -155,7 +158,8 @@ if __name__ == "__main__":
     # Apply initial charging voltage
     for j in range(0, pub_count):
         h.helicsPublicationPublishDouble(pubid[j], charging_voltage[j])
-        logger.debug(f"\tPublishing charging voltage of {charging_voltage[j]} " f" at time {grantedtime}")
+        logger.debug(f"\tPublishing charging voltage of {charging_voltage[j]}"
+                    f" at time {grantedtime}")
 
     ########## Main co-simulation loop ########################################
     # As long as granted time is in the time range to be simulated...
@@ -173,11 +177,13 @@ if __name__ == "__main__":
             #   every time step whether a message comes in or not and always
             #   uses the latest value provided by the battery model.
             charging_current[j] = h.helicsInputGetDouble((subid[j]))
-            logger.debug(f"\tCharging current: {charging_current[j]:.2f} from " f"input {h.helicsSubscriptionGetKey(subid[j])}")
+            logger.debug(f"\tCharging current: {charging_current[j]:.2f} from"
+                        f" input {h.helicsSubscriptionGetTarget(subid[j])}")
 
             # Publish updated charging voltage
             h.helicsPublicationPublishDouble(pubid[j], charging_voltage[j])
-            logger.debug(f"\tPublishing charging voltage of {charging_voltage[j]} " f" at time {grantedtime}")
+            logger.debug(f"\tPublishing charging voltage of {charging_voltage[j]}"
+                         f" at time {grantedtime}")
 
         # Calculate the total power required by all chargers. This is the
         #   primary metric of interest, to understand the power profile
