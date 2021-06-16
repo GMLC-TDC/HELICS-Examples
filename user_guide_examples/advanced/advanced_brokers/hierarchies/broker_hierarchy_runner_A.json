@@ -3,7 +3,7 @@
   "federates": [    
     {
       "directory": ".",
-      "exec": "helics_broker --loglevel=warning --timeout='30s' --port=25200",
+      "exec": "helics_broker -f 2 --loglevel=warning --timeout='30s' --port=25200",
       "host": "localhost",
       "name": "brokerA"
     }

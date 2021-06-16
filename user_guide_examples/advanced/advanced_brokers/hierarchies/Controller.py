@@ -17,6 +17,7 @@ import numpy as np
 import sys
 import time
 import matplotlib.pyplot as plt
+import pandas as pd
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
@@ -35,11 +36,9 @@ def destroy_federate(fed):
     :param fed: Federate to be destroyed
     :return: (none)
     '''
-    
     # Adding extra time request to clear out any pending messages to avoid
     #   annoying errors in the broker log. Any message are tacitly disregarded.
     grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
-    status = h.helicsFederateFinalize(fed)
     status = h.helicsFederateFinalize(fed)
     h.helicsFederateFree(fed)
     h.helicsCloseLibrary()
@@ -75,11 +74,8 @@ if __name__ == "__main__":
     #   that, recalculate the control output and request a very late time
     #   again.
 
-    # There appears to be a bug related to maxtime in HELICS 2.4 that can
-    #   can be avoided by using a slightly smaller version of maxtime
-    #   (helics_time_maxtime is the largest time that HELICS can internally
-    #   represent and is an approximation for a point in time very far in
-    #   in the future).
+
+ 
     starttime = h.HELICS_TIME_MAXTIME
     logger.debug(f'Requesting initial time {starttime}')
     grantedtime = h.helicsFederateRequestTime (fed, starttime)
@@ -101,7 +97,7 @@ if __name__ == "__main__":
             msg = h.helicsEndpointGetMessage(endid)
             currentsoc = h.helicsMessageGetString(msg)
             source = h.helicsMessageGetOriginalSource(msg)
-            logger.debug(f'Received message from endpoint {source}'
+            logger.debug(f'\tReceived message from endpoint {source}'
                          f' at time {grantedtime}'
                          f' with SOC {currentsoc}')
 
@@ -116,7 +112,7 @@ if __name__ == "__main__":
                 instructions = 0
             message = str(instructions)
             h.helicsEndpointSendBytesTo(endid, message.encode(), source)
-            logger.debug(f'Sent message to endpoint {source}'
+            logger.debug(f'\tSent message to endpoint {source}'
                          f' at time {grantedtime}'
                          f' with payload {instructions}')
 
@@ -173,5 +169,5 @@ if __name__ == "__main__":
     #for ax in axs():
 #        ax.label_outer()
     # Saving graph to file
-    plt.savefig('fundamental_combo_estimated_SOCs.png', format='png')
+    plt.savefig('advanced_default_estimated_SOCs.png', format='png')
     plt.show()
