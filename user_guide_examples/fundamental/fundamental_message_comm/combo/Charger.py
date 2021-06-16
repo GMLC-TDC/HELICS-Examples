@@ -39,6 +39,11 @@ def destroy_federate(fed):
     :param fed: Federate to be destroyed
     :return: (none)
     '''
+    
+    # Adding extra time request to clear out any pending messages to avoid
+    #   annoying errors in the broker log. Any message are tacitly disregarded.
+    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    status = h.helicsFederateFinalize(fed)
     status = h.helicsFederateFinalize(fed)
     h.helicsFederateFree(fed)
     h.helicsCloseLibrary()
@@ -156,13 +161,13 @@ if __name__ == "__main__":
     subid = {}
     for i in range(0, sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name = h.helicsSubscriptionGetKey(subid[i])
+        sub_name = h.helicsSubscriptionGetTarget(subid[i])
         logger.debug(f'\tRegistered subscription---> {sub_name}')
 
     pubid = {}
     for i in range(0, pub_count):
         pubid[i] = h.helicsFederateGetPublicationByIndex(fed, i)
-        pub_name = h.helicsPublicationGetKey(pubid[i])
+        pub_name = h.helicsPublicationGetName(pubid[i])
         logger.debug(f'\tRegistered publication---> {pub_name}')
 
 
@@ -222,7 +227,7 @@ if __name__ == "__main__":
             #   uses the latest value provided by the battery model.
             charging_current = h.helicsInputGetDouble((subid[j]))
             logger.debug(f'\tCharging current: {charging_current:.2f} from '
-                         f'input {h.helicsSubscriptionGetKey(subid[j])}')
+                         f'input {h.helicsSubscriptionGetTarget(subid[j])}')
 
             # New EV is in place after removing charge from old EV,
             # as indicated by the zero current draw.
@@ -274,12 +279,14 @@ if __name__ == "__main__":
 
             # Send message to Controller with SOC every 15 minutes
             if grantedtime % 900 == 0:
-                h.helicsEndpointSendBytesTo(endid[j], "",
-                                               f'{currentsoc[j]:4f}'.encode(
-                                               ))  #
+                destination_name = str(
+                    h.helicsEndpointGetDefaultDestination(endid[j]))
+                message = f'{currentsoc[j]:4f}'
+                h.helicsEndpointSendBytesTo(endid[j], message.encode(), '') 
                 logger.debug(f'Sent message from endpoint {endpoint_name}'
+                             f' to destination {destination_name}'
                              f' at time {grantedtime}'
-                             f' with payload SOC {currentsoc[j]:4f}')
+                             f' with payload SOC {message}')
 
         # Calculate the total power required by all chargers. This is the
         #   primary metric of interest, to understand the power profile

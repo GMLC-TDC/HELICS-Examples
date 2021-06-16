@@ -37,6 +37,11 @@ def destroy_federate(fed):
     :param fed: Federate to be destroyed
     :return: (none)
     '''
+    
+    # Adding extra time request to clear out any pending messages to avoid
+    #   annoying errors in the broker log. Any message are tacitly disregarded.
+    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    status = h.helicsFederateFinalize(fed)
     status = h.helicsFederateFinalize(fed)
     h.helicsFederateFree(fed)
     h.helicsCloseLibrary()
@@ -88,13 +93,13 @@ if __name__ == "__main__":
     subid = {}
     for i in range(0, sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name = h.helicsSubscriptionGetKey(subid[i])
+        sub_name = h.helicsSubscriptionGetTarget(subid[i])
         logger.debug(f'\tRegistered subscription---> {sub_name}')
 
     pubid = {}
     for i in range(0, pub_count):
         pubid[i] = h.helicsFederateGetPublicationByIndex(fed, i)
-        pub_name = h.helicsPublicationGetKey(pubid[i])
+        pub_name = h.helicsPublicationGetName(pubid[i])
         logger.debug(f'\tRegistered publication---> {pub_name}')
 
     ##############  Entering Execution Mode  ##################################
@@ -140,7 +145,7 @@ if __name__ == "__main__":
             # Get the applied charging voltage from the EV
             charging_voltage = h.helicsInputGetDouble((subid[j]))
             logger.debug(f'\tReceived voltage {charging_voltage:.2f} from input'
-                         f' {h.helicsSubscriptionGetKey(subid[j])}')
+                         f' {h.helicsSubscriptionGetTarget(subid[j])}')
 
             # EV is fully charged and a new EV is moving in
             # This is indicated by the charging removing voltage when it
