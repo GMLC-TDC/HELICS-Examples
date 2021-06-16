@@ -1,10 +1,11 @@
 {
+  "name": "advanced_default",
   "federates": [    
     {
       "directory": ".",
-      "exec": "helics_broker -f 3 --loglevel=1",
+      "exec": "helics_broker -f 3 --loglevel=warning",
       "host": "localhost",
-      "name": "mybroker"
+      "name": "broker"
     },
     {
       "directory": ".",
@@ -24,6 +25,5 @@
       "host": "localhost",
       "name": "Battery"
     }
-  ],
-  "name": "advanced_default"
+  ]
 }

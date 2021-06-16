@@ -1,7 +1,7 @@
 {
   "name": "Charger",
   "core_name": "charger_core",
-  "log_level": 7,
+  "log_level": "warning",
   "core_type": "zmq",
   "period": 60,
   "uninterruptible": false,
