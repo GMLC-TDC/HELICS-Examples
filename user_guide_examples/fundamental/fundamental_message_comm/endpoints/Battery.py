@@ -37,6 +37,11 @@ def destroy_federate(fed):
     :param fed: Federate to be destroyed
     :return: (none)
     '''
+    
+    # Adding extra time request to clear out any pending messages to avoid
+    #   annoying errors in the broker log. Any message are tacitly disregarded.
+    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    status = h.helicsFederateFinalize(fed)
     status = h.helicsFederateFinalize(fed)
     h.helicsFederateFree(fed)
     h.helicsCloseLibrary()
@@ -78,7 +83,7 @@ if __name__ == "__main__":
     logger.info(f'Created federate {federate_name}')
 
     end_count = h.helicsFederateGetEndpointCount(fed)
-    logging.debug(f'\tNumber of endpoints: {end_count}')
+    logger.debug(f'\tNumber of endpoints: {end_count}')
 
     # Diagnostics to confirm JSON config correctly added the required
     #   endpoints
