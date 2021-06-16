@@ -1,6 +1,6 @@
 {
   "name": "Charger",
-  "log_level": 1,
+  "log_level": "warning",
   "core_type": "tcp",
   "period": 60,
   "uninterruptible": false,
