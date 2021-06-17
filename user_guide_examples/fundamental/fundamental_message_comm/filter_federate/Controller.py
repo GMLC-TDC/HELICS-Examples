@@ -152,9 +152,7 @@ if __name__ == "__main__":
         #   message comes in. Request a time very far into the future
         #   and take a break until/unless a new message arrives.
         logger.debug(f'Requesting time {h.HELICS_TIME_MAXTIME}\n')
-        request_time = h.HELICS_TIME_MAXTIME
-        #request_time = grantedtime + 10
-        grantedtime = h.helicsFederateRequestTime(fed, request_time)
+        grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
         logger.info(f'Granted time: {request_time}')
 
     # Close out co-simulation execution cleanly now that we're done.
