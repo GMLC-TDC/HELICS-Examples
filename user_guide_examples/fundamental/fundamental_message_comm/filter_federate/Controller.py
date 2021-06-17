@@ -76,14 +76,8 @@ if __name__ == "__main__":
     #   that, recalculate the control output and request a very late time
     #   again.
 
-    # There appears to be a bug related to maxtime in HELICS 2.4 that can
-    #   can be avoided by using a slightly smaller version of maxtime
-    #   (helics_time_maxtime is the largest time that HELICS can internally
-    #   represent and is an approximation for a point in time very far in
-    #   in the future).
-    fake_max_time = 1000000000
-    starttime = fake_max_time
-    #starttime = 0
+
+    starttime = h.HELICS_TIME_MAXTIME
     logger.debug(f'Requesting initial time {starttime}')
     grantedtime = h.helicsFederateRequestTime (fed, starttime)
     logger.debug(f'Granted time {grantedtime}')
@@ -157,8 +151,8 @@ if __name__ == "__main__":
         #   nothing else for the federate to do until/unless another
         #   message comes in. Request a time very far into the future
         #   and take a break until/unless a new message arrives.
-        logger.debug(f'Requesting time {fake_max_time}\n')
-        request_time = fake_max_time
+        logger.debug(f'Requesting time {h.HELICS_TIME_MAXTIME}\n')
+        request_time = h.HELICS_TIME_MAXTIME
         #request_time = grantedtime + 10
         grantedtime = h.helicsFederateRequestTime(fed, request_time)
         logger.info(f'Granted time: {request_time}')
