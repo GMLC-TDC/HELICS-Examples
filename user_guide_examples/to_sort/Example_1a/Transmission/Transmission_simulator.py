@@ -55,7 +55,7 @@ def create_federate(deltat=1.0, fedinitstring="--federates=1"):
 
 
 def destroy_federate(fed):
-    h.helicsFederateFinalize(fed)
+    h.helicsFederateDisconnect(fed)
 
     #    status, state = h.helicsFederateGetState(fed)
     #    assert state == 3

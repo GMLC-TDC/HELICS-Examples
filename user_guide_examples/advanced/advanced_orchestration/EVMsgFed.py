@@ -23,7 +23,7 @@ logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.DEBUG)
 
 def destroy_federate(fed):
-    status = h.helicsFederateFinalize(fed)
+    status = h.helicsFederateDisconnect(fed)
     #while h.helicsBrokerIsConnected(broker):
     #    print('broker is still connected')
     #    time.sleep(1)

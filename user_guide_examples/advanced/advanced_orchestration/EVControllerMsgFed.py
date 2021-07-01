@@ -20,7 +20,7 @@ logger.setLevel(logging.DEBUG)
 #
 
 def destroy_federate(fed):
-    status = h.helicsFederateFinalize(fed)
+    status = h.helicsFederateDisconnect(fed)
     h.helicsFederateFree(fed)
     h.helicsCloseLibrary()
     print("EVController: Federate finalized")

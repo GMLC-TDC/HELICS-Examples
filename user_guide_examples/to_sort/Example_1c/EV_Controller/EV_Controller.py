@@ -27,7 +27,7 @@ def create_broker():
 
 
 def destroy_federate(fed):
-    h.helicsFederateFinalize(fed)
+    h.helicsFederateDisconnect(fed)
     h.helicsFederateFree(fed)
     h.helicsCloseLibrary()
 
