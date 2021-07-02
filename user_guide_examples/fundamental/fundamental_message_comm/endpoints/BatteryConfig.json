@@ -6,6 +6,7 @@
   "offset": 10,
   "uninterruptible": false,
   "terminate_on_error": true,
+  "wait_for_current_time_update": true,
   "endpoints":[
     {
       "key":"Battery/EV1_current",
