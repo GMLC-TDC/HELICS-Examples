@@ -1,7 +1,7 @@
 {
   "name": "Battery",
   "core_type": "zmq",
-  "log_level": 1,
+  "log_level": "warning",
   "period": 60,
   "uninterruptible": false,
   "terminate_on_error": true,
