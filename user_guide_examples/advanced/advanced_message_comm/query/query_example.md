@@ -1,1 +1,0 @@
-This example is functional and include a dynamic configuration element. It is working.
