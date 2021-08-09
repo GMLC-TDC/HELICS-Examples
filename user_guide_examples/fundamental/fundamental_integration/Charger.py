@@ -62,8 +62,8 @@ def create_combo_federate(fedinitstring,name,period):
     # "name": "Charger",
     fed = h.helicsCreateCombinationFederate(name, fedinfo)
     return fed
-    
-    
+
+
 def add_filters(fed, endid):
     end_name = h.helicsEndpointGetName(endid)
     filter_name = f'delay_filter_{end_name[-4]}' #assumes single-digit number of endpoints
@@ -182,10 +182,10 @@ if __name__ == "__main__":
 
         logger.debug(f'\tRegistered endpoint---> {end_name}'
                      f' to destination---------> {dest_name}')
-                     
-        fed, filter_obj = add_filters(fed, endid[i])
-        filter_name = h.helicsFilterGetName(filter_obj)
-        logger.debug(f'\tCreated delay filter {filter_name} on federate {name}')
+
+#        fed, filter_obj = add_filters(fed, endid[i])
+#        filter_name = h.helicsFilterGetName(filter_obj)
+#        logger.debug(f'\tCreated delay filter {filter_name} on federate {name}')
 
 
     pub_count = num_EVs
@@ -225,7 +225,7 @@ if __name__ == "__main__":
 
 
 
-    hours = 24*7 # one week
+    hours = 24*1 # one week
     total_interval = int(60 * 60 * hours)
     update_interval = int(h.helicsFederateGetTimeProperty(
                             fed,
@@ -330,7 +330,7 @@ if __name__ == "__main__":
                 destination_name = str(
                     h.helicsEndpointGetDefaultDestination(endid[j]))
                 message = f'{currentsoc[j]:4f}'
-                h.helicsEndpointSendBytesTo(endid[j], message.encode(), '') 
+                h.helicsEndpointSendBytesTo(endid[j], message.encode(), '')
                 logger.debug(f'Sent message from endpoint {endpoint_name}'
                              f' to destination {destination_name}'
                              f' at time {grantedtime}'

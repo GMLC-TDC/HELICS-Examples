@@ -39,7 +39,7 @@ def destroy_federate(fed):
     :param fed: Federate to be destroyed
     :return: (none)
     '''
-    
+
     # Adding extra time request to clear out any pending messages to avoid
     #   annoying errors in the broker log. Any message are tacitly disregarded.
     grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
@@ -184,7 +184,7 @@ if __name__ == "__main__":
     charging_voltage = calc_charging_voltage(EVlist)
     currentsoc = {}
 
-    hours = 24*7 # one week
+    hours = 24*1 # one week
     total_interval = int(60 * 60 * hours)
     update_interval = int(h.helicsFederateGetTimeProperty(
                             fed,
@@ -281,7 +281,7 @@ if __name__ == "__main__":
                 destination_name = str(
                     h.helicsEndpointGetDefaultDestination(endid[j]))
                 message = f'{currentsoc[j]:4f}'
-                h.helicsEndpointSendBytesTo(endid[j], message.encode(), '') 
+                h.helicsEndpointSendBytesTo(endid[j], message.encode(), '')
                 logger.debug(f'Sent message from endpoint {endpoint_name}'
                              f' to destination {destination_name}'
                              f' at time {grantedtime}'

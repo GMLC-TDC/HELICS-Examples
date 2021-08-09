@@ -20,10 +20,24 @@ logger.setLevel(logging.DEBUG)
 #
 
 def destroy_federate(fed):
+    '''
+    As part of ending a HELICS co-simulation it is good housekeeping to
+    formally destroy a federate. Doing so informs the rest of the
+    federation that it is no longer a part of the co-simulation and they
+    should proceed without it (if applicable). Generally this is done
+    when the co-simulation is complete and all federates end execution
+    at more or less the same wall-clock time.
+    :param fed: Federate to be destroyed
+    :return: (none)
+    '''
+
+    # Adding extra time request to clear out any pending messages to avoid
+    #   annoying errors in the broker log. Any message are tacitly disregarded.
+    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
     status = h.helicsFederateDisconnect(fed)
     h.helicsFederateFree(fed)
     h.helicsCloseLibrary()
-    print("EVController: Federate finalized")
+    logger.info('Federate finalized')
 
 def create_message_federate(fedinitstring,name,period):
     # Create Federate Info object that describes the federate properties
@@ -62,6 +76,7 @@ def create_message_federate(fedinitstring,name,period):
     return fed
 
 if __name__ == "__main__":
+    print()
     helicsversion = h.helicsGetVersion()
     print("EV_toy: Helics version = {}".format(helicsversion))
 
@@ -142,7 +157,7 @@ if __name__ == "__main__":
             # 1. Receive SOC
             #print('endpt name: ',h.helicsEndpointGetName(end_EVsoc[j]))
             if h.helicsEndpointHasMessage(end_EVsoc[j]):
-                msg = h.helicsEndpointGetMessageObject(end_EVsoc[j])
+                msg = h.helicsEndpointGetMessage(end_EVsoc[j])
                 currentsoc = h.helicsMessageGetString(msg)
                 #print('currentsoc: ',currentsoc)
                 # 2. Send instructions
@@ -153,7 +168,7 @@ if __name__ == "__main__":
                 else:
                     instructions = 0
                 message = str(instructions)
-                h.helicsEndpointSendMessageRaw(end_EVsoc[j], "", message) #
+                h.helicsEndpointSendBytesTo(end_EVsoc[j], message, "") #
                 #print('Sent instructions: {}'.format(instructions))
             else:
                 print('NO MESSAGE RECEIVED AT TIME ',t/3600)

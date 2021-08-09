@@ -23,14 +23,24 @@ logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.DEBUG)
 
 def destroy_federate(fed):
-    status = h.helicsFederateDisconnect(fed)
-    #while h.helicsBrokerIsConnected(broker):
-    #    print('broker is still connected')
-    #    time.sleep(1)
+    '''
+    As part of ending a HELICS co-simulation it is good housekeeping to
+    formally destroy a federate. Doing so informs the rest of the
+    federation that it is no longer a part of the co-simulation and they
+    should proceed without it (if applicable). Generally this is done
+    when the co-simulation is complete and all federates end execution
+    at more or less the same wall-clock time.
+    :param fed: Federate to be destroyed
+    :return: (none)
+    '''
 
+    # Adding extra time request to clear out any pending messages to avoid
+    #   annoying errors in the broker log. Any message are tacitly disregarded.
+    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    status = h.helicsFederateDisconnect(fed)
     h.helicsFederateFree(fed)
     h.helicsCloseLibrary()
-    #print("EVController: Federate finalized")
+    logger.info('Federate finalized')
 
 def create_message_federate(fedinitstring,name,period):
     fedinfo = h.helicsCreateFederateInfo()
@@ -42,7 +52,7 @@ def create_message_federate(fedinitstring,name,period):
     h.helicsFederateInfoSetFlagOption(fedinfo, h.helics_flag_uninterruptible, True)
     h.helicsFederateInfoSetIntegerProperty(fedinfo, h.helics_property_int_log_level, 1)
     fed = h.helicsCreateMessageFederate(name, fedinfo)
-    #print("Message federate created")
+    print("Message federate created")
     return fed
 
 
@@ -65,13 +75,16 @@ def get_new_EV(numEVs):
 
 
 if __name__ == "__main__":
+    print("one")
     parser = argparse.ArgumentParser(description='EV simulator')
+    print('two')
     parser.add_argument('--seed', type=int, default=867530,
                     help='The seed that will be used for our random distribution')
+    print('three')
     parser.add_argument('--port', type=int, default=-1,
                     help='port of the HELICS broker')
 
-
+    print("hello")
     args = parser.parse_args()
     np.random.seed(args.seed)
 
@@ -80,7 +93,7 @@ if __name__ == "__main__":
     else:
         fedinitstring=""
 
-    print("Federate Init String = {}".format(fedinitstring)) 
+    print("Federate Init String = {}".format(fedinitstring))
     print("Random seed = {}".format(args.seed))
 
 
@@ -111,13 +124,13 @@ if __name__ == "__main__":
                 end_EVsoc[EV-1], dest_name
             )
         )
-        #print(f"end point {end_name} registered to {dest_name}")
+        print(f"end point {end_name} registered to {dest_name}")
 
     end_count = h.helicsFederateGetEndpointCount(fed)
     #print(end_count)
 
     fed_name = h.helicsFederateGetName(fed)
-    #print(" Federate {} has been registered".format(fed_name))
+    print(" Federate {} has been registered".format(fed_name))
 
 #
 ######################   Entering Execution Mode  ##########################################################
@@ -175,7 +188,7 @@ if __name__ == "__main__":
     for j in range(0,len(enddest_EVsoc)):
         end_name = str(h.helicsEndpointGetName(end_EVsoc[j]))
         destination_name = str(h.helicsEndpointGetDefaultDestination(end_EVsoc[j]))
-        h.helicsEndpointSendMessageRaw(end_EVsoc[j], "", str(currentsoc[j])) #
+        h.helicsEndpointSendBytesTo(end_EVsoc[j], str(currentsoc[j]), "") #
         #print('destination: ',destination_name)
         #print('message sent: ',str(currentsoc[j]))
         #print('at time: ',t/3600)
@@ -195,7 +208,7 @@ if __name__ == "__main__":
         for j in range(0,len(enddest_EVsoc)):
             # 1. Receive instructions
             if h.helicsEndpointHasMessage(end_EVsoc[j]):
-                msg = h.helicsEndpointGetMessageObject(end_EVsoc[j])
+                msg = h.helicsEndpointGetMessage(end_EVsoc[j])
                 instructions = h.helicsMessageGetString(msg)
             # 2. Change SOC based on instructions
                 if int(instructions) == 1:
@@ -211,7 +224,7 @@ if __name__ == "__main__":
                 # 3. Send SOC
                 #end_name = str(h.helicsEndpointGetName(end_EVsoc[j]))
                 destination_name = str(h.helicsEndpointGetDefaultDestination(end_EVsoc[j]))
-                h.helicsEndpointSendMessageRaw(end_EVsoc[j], "", str(currentsoc[j])) #
+                h.helicsEndpointSendBytesTo(end_EVsoc[j], str(currentsoc[j]), "") #
                 #print(t/3600,currentsoc[j])
             else:
                 #currentsoc[j] = np.random.rand(end_count)

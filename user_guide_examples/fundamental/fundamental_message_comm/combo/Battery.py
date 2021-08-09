@@ -37,7 +37,7 @@ def destroy_federate(fed):
     :param fed: Federate to be destroyed
     :return: (none)
     '''
-    
+
     # Adding extra time request to clear out any pending messages to avoid
     #   annoying errors in the broker log. Any message are tacitly disregarded.
     grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
@@ -117,7 +117,7 @@ if __name__ == "__main__":
     for i in range (0, pub_count):
         current_soc[i] = (np.random.randint(0,60))/100
 
-    hours = 24*7 # one week
+    hours = 24*1 # one week
     total_interval = int(60 * 60 * hours)
     update_interval = int(h.helicsFederateGetTimeProperty(
                                 fed,
