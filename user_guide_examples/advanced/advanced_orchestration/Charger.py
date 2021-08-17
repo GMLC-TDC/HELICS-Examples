@@ -3,8 +3,7 @@ Created on 5/27/2020
 
 @author: bearcub
 """
-# export DYLD_LIBRARY_PATH="/Users/camp426/helics_install/lib"
-# or put in bashrc file
+
 import helics as h
 import logging
 import numpy as np
@@ -12,6 +11,7 @@ import sys
 import time
 #import graph
 import argparse
+import matplotlib.pyplot as plt
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
@@ -53,7 +53,7 @@ def create_message_federate(fedinitstring,name,period):
     h.helicsFederateInfoSetTimeProperty(fedinfo, h.helics_property_time_period, period)
     #assert status == 0
     # set wait for current time update to true
-    h.helicsFederateInfoSetFlagOption(fedinfo, h.helics_flag_uninterruptible, True)
+    h.helicsFederateInfoSetFlagOption(fedinfo, h.helics_flag_uninterruptible, False)
     # h.helics_flag_uninterruptible should have integer value of 1
     #assert status == 0
     # see 'helics_federate_flags' in
@@ -65,7 +65,9 @@ def create_message_federate(fedinitstring,name,period):
     # scroll to section on 'helics_log_levels'
     #print('status is',status)
     # make sure these links aren't dead
-    #assert status == 0
+    # "terminate_on_error": true,
+    h.helicsFederateInfoSetFlagOption(fedinfo, 72, True)
+
     # Create combo federate and give it a name
     fed = h.helicsCreateMessageFederate(name, fedinfo)
 
@@ -76,15 +78,19 @@ def create_message_federate(fedinitstring,name,period):
     return fed
 
 if __name__ == "__main__":
-    print()
     helicsversion = h.helicsGetVersion()
-    print("EV_toy: Helics version = {}".format(helicsversion))
+    print("EV Orchestration Example: Helics version = {}".format(helicsversion))
 
 
     parser = argparse.ArgumentParser(description='EV simulator')
     parser.add_argument('--port', type=int, default=-1,
                     help='port of the HELICS broker')
 
+    parser.add_argument('--numEVs', type=int, default=1,
+                    help='number of EVs in the federation')
+
+    parser.add_argument('--hours', type=int, default=1,
+                    help='duration of co-sim in hours')
 
     args = parser.parse_args()
 
@@ -96,16 +102,16 @@ if __name__ == "__main__":
     print("Federate Init String = {}".format(fedinitstring))
 
 
-    name = 'EVController_federate'
-    # assume the EV Controller needs 1 minute to determine whether or not to charge
+    name = 'Charger'
+    # assume the EV Charger needs 1 minute to determine whether or not to charge
     # the vehicles
-    period = 15*60 # 15 min
+    period = 60
     fed = create_message_federate(fedinitstring,name,period)
 
     #### Register interfaces #####
 # Register the endpoints and their destinations
-# the EVController will subscribe to each EV
-    num_EVs = 100
+# the EVCharger will subscribe to each EV
+    num_EVs = args.numEVs
     end_EVsoc = []
     enddest_EVsoc = []
     EVs = range(1,num_EVs+1)
@@ -117,7 +123,7 @@ if __name__ == "__main__":
             )
 
         )
-        dest_name = f'EV_federate/EV{EV}.soc'
+        dest_name = f'Battery/EV{EV}.soc'
         enddest_EVsoc.append(
             h.helicsEndpointSetDefaultDestination(
                 end_EVsoc[EV-1], dest_name
@@ -125,7 +131,7 @@ if __name__ == "__main__":
         )
         print(f"end point {end_name} registered to {dest_name}")
 
-    #end_count = h.helicsFederateGetEndpointCount(fed)
+    end_count = h.helicsFederateGetEndpointCount(fed)
     #print(end_count)
     fed_name = h.helicsFederateGetName(fed)
     print(" Federate {} has been registered".format(fed_name))
@@ -134,50 +140,54 @@ if __name__ == "__main__":
 ######################   Entering Execution Mode  ##########################################################
 
     h.helicsFederateEnterExecutingMode(fed)
+    print('hello!!! entering execution mode')
 
-
-    hours = 24*7 # one week
+    hours = args.hours # one week
     total_interval = int(60 * 60 * hours)
-    update_interval = 30*60 # updates every 10 minutes
-    grantedtime = -1
+    update_interval = int(h.helicsFederateGetTimeProperty(
+                            fed,
+                            h.helics_property_time_period))
+    grantedtime = 0
 #
 ## Step through each time period starting from t = 0
-    time_sim = [];  instructions = []
+    time_sim = []
+    instructions = []
     #for t in range(0, total_interval, update_interval): #
 
-    # the EV sent its first message at 15min
-    # start the controller at 15min + 7.5min
-    grantedtime = h.helicsFederateRequestTime (fed, 22.5*60)
-    #print('EV time: ',grantedtime/3600)
+    while grantedtime < total_interval:
 
-    t = grantedtime
-    while t < total_interval:
+        # Time request for the next physical interval to be simulated
+        requested_time = (grantedtime + update_interval)
+        logger.debug(f'Requesting time {requested_time}')
+        grantedtime = h.helicsFederateRequestTime (fed, requested_time)
+        logger.debug(f'Granted time {grantedtime}')
 
-        for j in range(0,len(enddest_EVsoc)):
+        for j in range(0,end_count):
+            logger.debug(f'EV {j + 1} time {grantedtime}')
             # 1. Receive SOC
-            #print('endpt name: ',h.helicsEndpointGetName(end_EVsoc[j]))
+            # Check for messages from Battery
+            endpoint_name = h.helicsEndpointGetName(end_EVsoc[j])
             if h.helicsEndpointHasMessage(end_EVsoc[j]):
                 msg = h.helicsEndpointGetMessage(end_EVsoc[j])
                 currentsoc = h.helicsMessageGetString(msg)
-                #print('currentsoc: ',currentsoc)
                 # 2. Send instructions
                 #destination_name = str(h.helicsEndpointGetDefaultDestination(end_EVsoc[j]))
-                print(t/3600,currentsoc)
+                print(grantedtime/3600,currentsoc)
                 if float(currentsoc) <= 0.9:
                     instructions = 1
                 else:
                     instructions = 0
                 message = str(instructions)
-                h.helicsEndpointSendBytesTo(end_EVsoc[j], message, "") #
+                logger.debug(f'\t instructions: {instructions} from '
+                             f' endpoint {endpoint_name}'
+                             f' at time {grantedtime}')
+                h.helicsEndpointSendBytesTo(end_EVsoc[j], message, "")  #
+                logger.debug(f'Sent message')
                 #print('Sent instructions: {}'.format(instructions))
             else:
-                print('NO MESSAGE RECEIVED AT TIME ',t/3600)
-
-
-        grantedtime = h.helicsFederateRequestTime (fed, (t+update_interval))
-        #print('EV time: ',grantedtime/3600)
-
-        t = grantedtime
+                logger.debug(f'\tNo messages at endpoint {endpoint_name} '
+                             f'recieved at '
+                             f'time {grantedtime}')
 
 
     #logger.info("Destroying federate")
