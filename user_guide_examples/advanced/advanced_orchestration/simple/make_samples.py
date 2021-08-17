@@ -3,16 +3,17 @@ import sys
 
 def main():
     samples = 1
+    output_path = '.'
     if len(sys.argv) > 1:
         samples = sys.argv[1]
         output_path = sys.argv[2]
-    print ("Generating " + samples + " samples")
+    print (f"Generating {samples} samples")
 
     h_cli_sc = []
 
     broker = open(output_path+"/broker.json", "w")
     broker_json = json.dumps(
-        { "federates": [{"directory": ".", 
+        { "federates": [{"directory": ".",
                          "exec": "helics_app broker --federates " + str(int(samples) *2),
                          "host": "localhost",
                          "name": "broker_of_"+str(int(samples)*2)}],
@@ -32,7 +33,7 @@ def main():
 
         send_name = "pisender"+str(i)
         s_json = json.dumps(
-            { "federates": [{"directory": ".", 
+            { "federates": [{"directory": ".",
                              "exec": "python3 -u pisender.py " + str(i),
                              "host": "localhost",
                              "name": send_name}],
@@ -41,7 +42,7 @@ def main():
 
         recv_name = "pireceiver"+str(i)
         r_json = json.dumps(
-            { "federates": [{"directory": ".", 
+            { "federates": [{"directory": ".",
                              "exec": "python3 -u pireceiver.py " + str(i),
                              "host": "localhost",
                              "name": recv_name}],
@@ -52,7 +53,7 @@ def main():
         recv.write(r_json)
         sender.close()
         recv.close()
-        
+
 
     with open("samples.csv", "w") as f:
         f.write("\n".join(h_cli_sc))
