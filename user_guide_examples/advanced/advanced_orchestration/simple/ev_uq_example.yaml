@@ -20,12 +20,11 @@ merlin:
 
 
 study:
-    - name: start_parallel_sims  # name is a step
-                                  # loop over steps
+    - name: start_parallel_sims
       description: Run a bunch of UQ sims in parallel
       run:
         cmd: |
-          spack load helics  # maybe remove this line
+          spack load helics
           /home/yee29/projects/helics/helics-cli/bin/helics run --path=$(MERLIN_INFO)/$(FED)
           echo "DONE"
     - name: cleanup
@@ -33,3 +32,4 @@ study:
       run:
         cmd: rm $(MERLIN_INFO)/samples.csv
         depends: [start_parallel_sims_*]
+

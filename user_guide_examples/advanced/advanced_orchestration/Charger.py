@@ -1,7 +1,7 @@
 """
 Created on 5/27/2020
 
-@author: bearcub
+@author: allisonmcampbell
 """
 
 import helics as h
@@ -44,35 +44,16 @@ def create_message_federate(fedinitstring,name,period):
     fedinfo = h.helicsCreateFederateInfo()
     # Set core type from string
     h.helicsFederateInfoSetCoreTypeFromString(fedinfo, "tcpss")
-    #assert status == 0
     # Federate init string
     # you need to tell helics what message bus to use
     h.helicsFederateInfoSetCoreInitString(fedinfo, fedinitstring)
-    #assert status == 0
-    # Set one second message interval
     h.helicsFederateInfoSetTimeProperty(fedinfo, h.helics_property_time_period, period)
-    #assert status == 0
-    # set wait for current time update to true
     h.helicsFederateInfoSetFlagOption(fedinfo, h.helics_flag_uninterruptible, False)
-    # h.helics_flag_uninterruptible should have integer value of 1
-    #assert status == 0
-    # see 'helics_federate_flags' in
-    # https://docs.helics.org/en/latest/doxygen/helics__enums_8h_source.html
     h.helicsFederateInfoSetIntegerProperty(fedinfo, h.helics_property_int_log_level, 1)
-    # more info:
-    # https://docs.helics.org/en/latest/user-guide/logging.html
-    # https://docs.helics.org/en/latest/doxygen/helics__enums_8h_source.html
-    # scroll to section on 'helics_log_levels'
-    #print('status is',status)
-    # make sure these links aren't dead
     # "terminate_on_error": true,
     h.helicsFederateInfoSetFlagOption(fedinfo, 72, True)
-
     # Create combo federate and give it a name
     fed = h.helicsCreateMessageFederate(name, fedinfo)
-
-    # should this actually be a message federate?
-    #fed = h.helicsCreateMessageFederate(name, fedinfo)
     print("Message federate created")
 
     return fed
@@ -132,15 +113,12 @@ if __name__ == "__main__":
         print(f"end point {end_name} registered to {dest_name}")
 
     end_count = h.helicsFederateGetEndpointCount(fed)
-    #print(end_count)
     fed_name = h.helicsFederateGetName(fed)
     print(" Federate {} has been registered".format(fed_name))
-    #test = h.helicsEndpointGetName(end_EVsoc[0])
-    #print(test)
+
 ######################   Entering Execution Mode  ##########################################################
 
     h.helicsFederateEnterExecutingMode(fed)
-    print('hello!!! entering execution mode')
 
     hours = args.hours # one week
     total_interval = int(60 * 60 * hours)
@@ -148,11 +126,9 @@ if __name__ == "__main__":
                             fed,
                             h.helics_property_time_period))
     grantedtime = 0
-#
-## Step through each time period starting from t = 0
+
     time_sim = []
     instructions = []
-    #for t in range(0, total_interval, update_interval): #
 
     while grantedtime < total_interval:
 
@@ -170,8 +146,7 @@ if __name__ == "__main__":
             if h.helicsEndpointHasMessage(end_EVsoc[j]):
                 msg = h.helicsEndpointGetMessage(end_EVsoc[j])
                 currentsoc = h.helicsMessageGetString(msg)
-                # 2. Send instructions
-                #destination_name = str(h.helicsEndpointGetDefaultDestination(end_EVsoc[j]))
+
                 print(grantedtime/3600,currentsoc)
                 if float(currentsoc) <= 0.9:
                     instructions = 1
@@ -181,15 +156,13 @@ if __name__ == "__main__":
                 logger.debug(f'\t instructions: {instructions} from '
                              f' endpoint {endpoint_name}'
                              f' at time {grantedtime}')
+                # 2. Send instructions
                 h.helicsEndpointSendBytesTo(end_EVsoc[j], message, "")  #
                 logger.debug(f'Sent message')
-                #print('Sent instructions: {}'.format(instructions))
             else:
                 logger.debug(f'\tNo messages at endpoint {endpoint_name} '
                              f'recieved at '
                              f'time {grantedtime}')
 
 
-    #logger.info("Destroying federate")
     destroy_federate(fed)
-    #logger.info("Done!")

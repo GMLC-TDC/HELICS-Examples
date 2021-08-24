@@ -1,0 +1,11 @@
+{
+    "federates": [
+        {
+            "directory": ".",
+            "exec": "python3 -u pisender.py 0",
+            "host": "localhost",
+            "name": "pisender0"
+        }
+    ],
+    "name": "pisender0"
+}

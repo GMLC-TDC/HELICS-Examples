@@ -6,10 +6,10 @@ import pandas as pd
 import numpy as np
 plt.style.use('ggplot')
 
-
-
 def tsplot(x, y, n=20, percentile_min=1, percentile_max=99, color='r', plot_mean=True, plot_median=False, line_color='k', **kwargs):
-    # calculate the lower and upper percentile groups, skipping 50 percentile
+    '''
+    This is a plotting helper function. It calculate the lower and upper percentile groups, skipping 50 percentile.
+    '''
     perc1 = np.percentile(y, np.linspace(percentile_min, 50, num=n, endpoint=False), axis=0)
     perc2 = np.percentile(y, np.linspace(50, percentile_max, num=n+1)[1:], axis=0)
 
@@ -20,12 +20,8 @@ def tsplot(x, y, n=20, percentile_min=1, percentile_max=99, color='r', plot_mean
     # fill lower and upper percentile groups
     for p1, p2 in zip(perc1, perc2):
         plt.fill_between(x, p1, p2, alpha=alpha, color=color, edgecolor=None)
-
-
     if plot_mean:
         plt.plot(x, np.mean(y, axis=0), color=line_color)
-
-
     if plot_median:
         plt.plot(x, np.median(y, axis=0), color=line_color)
 
@@ -41,13 +37,11 @@ def main():
     run = 1
     if len(sys.argv) > 1:
         samples = sys.argv[1]
-        #print(samples)
         output_path = sys.argv[2]
         numEVs = sys.argv[3]
         hours = sys.argv[4]
         plot = sys.argv[5]
         run = sys.argv[6]
-        #print('run: ',run)
     print (f"Generating {samples} samples")
     # variable inputs set internal
     out_json = output_path+'/cli_runner_scripts'
@@ -110,9 +104,7 @@ def main():
                 df.drop(['Hour'], axis=1, inplace=True)
             peak.append(df)
 
-        #print(peak[0].head(),peak[1].head())
         peak_power = pd.concat(peak, axis=1)
-        #print(peak_power.head())
         t = np.array(peak_power.Hour)
         y = np.array(peak_power.iloc[:,1:]).T
         tsplot(t, y, n=100, percentile_min=2.5, percentile_max=97.5, plot_median=True, plot_mean=False, color='g', line_color='navy')

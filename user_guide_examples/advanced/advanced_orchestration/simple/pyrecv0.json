@@ -1,0 +1,11 @@
+{
+    "federates": [
+        {
+            "directory": ".",
+            "exec": "python3 -u pireceiver.py 0",
+            "host": "localhost",
+            "name": "pireceiver0"
+        }
+    ],
+    "name": "pireceiver0"
+}

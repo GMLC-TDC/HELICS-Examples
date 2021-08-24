@@ -2,7 +2,7 @@
 """
 Created on 5/27/2020
 
-@author: bearcub
+@author: allisonmcampbell
 """
 
 import helics as h
@@ -43,37 +43,11 @@ def destroy_federate(fed):
     h.helicsCloseLibrary()
     logger.info('Federate finalized')
 
-def tsplot(x, y, n=20, percentile_min=1, percentile_max=99, color='r', plot_mean=True, plot_median=False, line_color='k', **kwargs):
-    # calculate the lower and upper percentile groups, skipping 50 percentile
-    perc1 = np.percentile(y, np.linspace(percentile_min, 50, num=n, endpoint=False), axis=0)
-    perc2 = np.percentile(y, np.linspace(50, percentile_max, num=n+1)[1:], axis=0)
-
-    if 'alpha' in kwargs:
-        alpha = kwargs.pop('alpha')
-    else:
-        alpha = 1/n
-    # fill lower and upper percentile groups
-    for p1, p2 in zip(perc1, perc2):
-        plt.fill_between(x, p1, p2, alpha=alpha, color=color, edgecolor=None)
-
-
-    if plot_mean:
-        plt.plot(x, np.mean(y, axis=0), color=line_color)
-
-
-    if plot_median:
-        plt.plot(x, np.median(y, axis=0), color=line_color)
-
-    return plt.gca()
-
-
 def create_message_federate(fedinitstring,name,period,offset):
     fedinfo = h.helicsCreateFederateInfo()
     h.helicsFederateInfoSetCoreTypeFromString(fedinfo, "tcpss")
     h.helicsFederateInfoSetCoreInitString(fedinfo, fedinitstring)
-    # Set one second message interval
     h.helicsFederateInfoSetTimeProperty(fedinfo, h.helics_property_time_period, period)
-    # set wait for current time update to true
     h.helicsFederateInfoSetTimeProperty(fedinfo,h.helics_property_time_offset, offset)
     h.helicsFederateInfoSetFlagOption(fedinfo, h.helics_flag_uninterruptible, False)
     h.helicsFederateInfoSetIntegerProperty(fedinfo, h.helics_property_int_log_level, 1)
@@ -103,9 +77,7 @@ def get_new_EV(numEVs):
     lvl2 = np.random.poisson(np.random.normal(50,np.random.uniform(1,2)),1)
     lvl3 = np.random.poisson(np.random.normal(20,np.random.uniform(.05,.25)),1)
     total = lvl1+lvl2+lvl3
-    #print(lvl1,lvl2,lvl3,total)
     p1,p2,p3 = lvl1/total,lvl2/total,lvl3/total
-    #print(p1,p2,p3)
     listOfEVs = np.random.choice([1,2,3],numEVs,p=[p1[0],p2[0],p3[0]]).tolist()
     numLvl1 = listOfEVs.count(1)
     numLvl2 = listOfEVs.count(2)
@@ -143,8 +115,7 @@ if __name__ == "__main__":
 
 
     name = 'Battery'
-    period = 60.0  # 15 min  # this is the default time step for the EV federate
-    offset = 10.0
+    period = 60.0
     fed = create_message_federate(fedinitstring,name,period,offset)
 
     #### Register interfaces #####
@@ -172,7 +143,6 @@ if __name__ == "__main__":
         print(f"end point {end_name} registered to {dest_name}")
 
     end_count = h.helicsFederateGetEndpointCount(fed)
-    #print(end_count)
 
     fed_name = h.helicsFederateGetName(fed)
     print(" Federate {} has been registered".format(fed_name))
@@ -182,26 +152,6 @@ if __name__ == "__main__":
 
     h.helicsFederateEnterExecutingMode(fed)
 
-
-    # we will explore the question: what is the distribution of instantaneous power draw,
-    # given unrestricted access by 10 vehicles.
-    # in each iteration, we will draw from a distribution of lvl1, lvl2, lvl3 chargers
-    # placing a gaussian over each.
-    # eg: out of 100 EVs, ~ 60 will be lvl2, 10 will be lvl3, 30 will be lvl1
-    # But this is the expectation of each.
-    # We can assign stddev to each of these.
-    # lvl2 ~ norm(60,unif(0,5))  -- assumes that most of lvl2 EVs are around 60% of population
-    # lvl1 ~ norm(30,unif(0,10)) -- assumes that there is a large amount of spread in # of lvl1 EVs
-    # lvl3 ~ norm(10,unif(0,1)) -- assumes not many lvl3 EVs, with small spread
-    # in each iteration, the number of EVs connected to the Charger may not addup to 100
-    # that's ok -- we're just calculating the prior predictive check of the
-    # power draw from a distribution of EVs
-
-    # when the simulation starts, draw numEVs samples from this joint distribution
-    # the simulation starts in a snapshot of existing power discharge to the vehicles
-    # i.e., each vehicle is at a random soc, and is connected to the EV Charger.
-    # if an EV reaches >95% SOC, it is disconnected, and the EV Charger
-    # selects a new EV from the joint distribution
     # each vehicle will have its own characteristics:
     # lvl1 = leaf, 120V
     # lvl2 = leaf, 240V
@@ -210,7 +160,7 @@ if __name__ == "__main__":
     charge_rate = [1.8,7.2,50]
     # [120V*15A, 240V*30A, 50kW DC charging]
     batt_size = 62 # leaf capacity is 62 kWh
-    hours = args.hours # one week
+    hours = args.hours
     total_interval = int(60 * 60 * hours)
     update_interval = int(h.helicsFederateGetTimeProperty(
                                 fed,
@@ -285,44 +235,22 @@ if __name__ == "__main__":
                          f' from endpoint {endpoint_name}'
                          f' at time {grantedtime}')
 
-            # Store SOC for later analysis/graphing
-            # if end_EVsoc[j] not in soc:
-            #     soc[end_EVsoc[j]] = []
-            # soc[end_EVsoc[j]].append(float(currentsoc[j]))
-
-            # if end_EVsoc[j] not in power_draw:
-            #     power_draw[end_EVsoc[j]] = []
-            # power_draw[end_EVsoc[j]].append(float(currentpower[j]))
-            # # Data collection vectors
-
         power_raw.append(currentpower.copy())
         logger.debug(f'\tTHE STATE OF CHARGE IS: {currentsoc}')
         soc.append(currentsoc.copy())
-        #logger.debug(f'\tTHE STATE OF CHARGE LIST IS: {soc}')
 
         total_power = 0
         for j in range(0, end_count):
             if currentsoc[j] > 0: # EV is still charging
                 total_power += currentpower[j]
 
-
-
         # Data collection vectors
         time_sim.append(grantedtime)
         power.append(total_power)
-        #power_raw.append(currentpower)
 
-    # Cleaning up HELICS stuff once we've finished the co-simulation.
     destroy_federate(fed)
     # Printing out final results graphs for comparison/diagnostic purposes.
     xaxis = np.array(time_sim)/3600
-#    y = []
-#    for key in soc:
-#        y.append(np.array(soc[key]))
-    logger.debug('shape of power series is: ',np.array(power_raw).T.shape)
-    logger.debug('shape of time series is: ',np.array(time_sim).shape)
-
-
 
     if args.plot == 1:
 
@@ -334,17 +262,11 @@ if __name__ == "__main__":
         plt.ylabel('kW')
         plt.grid(True)
         plt.xlabel('time (hr)')
-        plt.title('Instantaneous Power Draw from 5 EVs')
+        plt.title('Instantaneous Power Draw from '+num_EVs+' EVs')
         plt.savefig('advanced_orchestration_charger_power.png', format='png')
 
         plt.show()
 
-        t = (np.array(time_sim)/3600)
-        y = np.array(power_raw).T
-        tsplot(t, y, n=100, percentile_min=2.5, percentile_max=97.5, plot_median=True, plot_mean=False, color='g', line_color='navy')
-
-        plt.plot()
-        plt.show()
         t = pd.DataFrame({'Hour':(np.array(time_sim)/3600).T})
         vals = pd.DataFrame(np.array(power_raw))
         all_power = t.join(vals)
