@@ -116,6 +116,7 @@ if __name__ == "__main__":
 
     name = 'Battery'
     period = 60.0
+    offset = 10.0
     fed = create_message_federate(fedinitstring,name,period,offset)
 
     #### Register interfaces #####

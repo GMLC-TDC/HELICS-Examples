@@ -45,12 +45,9 @@ def main():
     print (f"Generating {samples} samples")
     # variable inputs set internal
     out_json = output_path+'/cli_runner_scripts'
-    out_logs = output_path+'/cli_logs'
     out_data = output_path+'/results'
     if not os.path.exists(out_json):
         os.makedirs(out_json)
-    if not os.path.exists(out_logs):
-        os.makedirs(out_logs)
     if not os.path.exists(out_data):
         os.makedirs(out_data)
     offset = 10
