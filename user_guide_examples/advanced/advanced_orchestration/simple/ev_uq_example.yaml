@@ -13,8 +13,8 @@ merlin:
     generate:
       cmd: |
         python3 $(SPECROOT)/make_samples.py $(N_SAMPLES) $(MERLIN_INFO)
-        cp $(SPECROOT)/EVMsgFed.py $(MERLIN_INFO)
-        cp $(SPECROOT)/EVControllerMsgFed.py $(MERLIN_INFO)
+        cp $(SPECROOT)/Battery.py $(MERLIN_INFO)
+        cp $(SPECROOT)/Charger.py $(MERLIN_INFO)
     file: $(MERLIN_INFO)/samples.csv
     column_labels: [FED]
 
@@ -25,11 +25,10 @@ study:
       run:
         cmd: |
           spack load helics
-          /home/yee29/projects/helics/helics-cli/bin/helics run --path=$(MERLIN_INFO)/$(FED)
+          helics run --path=$(MERLIN_INFO)/$(FED)
           echo "DONE"
     - name: cleanup
       description: Clean up
       run:
         cmd: rm $(MERLIN_INFO)/samples.csv
         depends: [start_parallel_sims_*]
-

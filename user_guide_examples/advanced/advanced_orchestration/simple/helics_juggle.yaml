@@ -1,5 +1,5 @@
 description:
-    name: Test helics 
+    name: Test helics
     description: Juggle helics data
 
 env:
@@ -21,15 +21,14 @@ merlin:
 
 study:
     - name: start_federates
-      description: say Hello 
+      description: say Hello
       run:
         cmd: |
           spack load helics
-          /home/yee29/projects/helics/helics-cli/bin/helics run --path=$(FED)
+          helics run --path=$(FED)
           echo "DONE"
     - name: cleanup
       description: Clean up
       run:
         cmd: rm $(SPECROOT)/samples.csv
         depends: [start_federates_*]
-
