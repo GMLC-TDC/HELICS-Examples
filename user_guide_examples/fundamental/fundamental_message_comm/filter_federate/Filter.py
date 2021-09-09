@@ -187,7 +187,7 @@ def filter_interfere(eq, interference_threshold_time):
                     logger.debug(f'\t\t\t\tScheduling message for deletion: '
                                  f'eq[{idx}]')
                 else:
-                    logger.debug(f'\t\t\t\tTime delta less of {dt} is greater than'
+                    logger.debug(f'\t\t\t\tTime delta of {dt} is greater than'
                                 f' max interference time of'
                                 f' {interference_threshold_time}.')
                     break
@@ -204,7 +204,7 @@ def filter_interfere(eq, interference_threshold_time):
                          f'\t\t\t\tpayload: {eq[i]["payload"]}'
                          f'\t\t\t\tdelivery time: {eq[i]["time"]}')
             del eq[i]
-            logger.debug(f'eq length: {len(eq)}')
+            logger.debug(f'\t\t\teq length: {len(eq)}')
     return eq
 
 
