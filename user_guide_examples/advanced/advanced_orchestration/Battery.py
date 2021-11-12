@@ -264,7 +264,7 @@ if __name__ == "__main__":
         plt.grid(True)
         plt.xlabel('time (hr)')
         plt.title('Instantaneous Power Draw from '+num_EVs+' EVs')
-        plt.savefig('advanced_orchestration_charger_power.png', format='png')
+        plt.savefig('advanced_orchestration_charger_power.svg', format='svg')
 
         plt.show()
 
