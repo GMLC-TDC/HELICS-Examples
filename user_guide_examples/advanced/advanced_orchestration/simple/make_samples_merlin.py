@@ -24,26 +24,26 @@ def main():
     h_cli_sc.append(output_path+"/broker.json")
 
     for i in range(int(samples)):
-        send_file_name = output_path+"/pysender"+str(i)+".json"
-        recv_file_name = output_path+"/pyrecv"+str(i)+".json"
+        send_file_name = output_path+"/Battery"+str(i)+".json"
+        recv_file_name = output_path+"/Charger"+str(i)+".json"
         sender = open(send_file_name, "w")
         recv = open(recv_file_name, "w")
         h_cli_sc.append(send_file_name)
         h_cli_sc.append(recv_file_name)
 
-        send_name = "pisender"+str(i)
+        send_name = "Battery"+str(i)
         s_json = json.dumps(
             { "federates": [{"directory": ".",
-                             "exec": "python3 -u pisender.py " + str(i),
+                             "exec": "python3 -u Battery.py " + str(i),
                              "host": "localhost",
                              "name": send_name}],
               "name" : send_name},
             indent=4, sort_keys=True)
 
-        recv_name = "pireceiver"+str(i)
+        recv_name = "Charger"+str(i)
         r_json = json.dumps(
             { "federates": [{"directory": ".",
-                             "exec": "python3 -u pireceiver.py " + str(i),
+                             "exec": "python3 -u Charger.py " + str(i),
                              "host": "localhost",
                              "name": recv_name}],
               "name" : recv_name},
