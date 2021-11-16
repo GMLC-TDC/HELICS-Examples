@@ -6,6 +6,7 @@
   "uninterruptible": false,
   "terminate_on_error": false,
   "force_logging_flush": true,
+  "event_triggered": true,
   "endpoints": [
     {
       "name": "filter/main",
