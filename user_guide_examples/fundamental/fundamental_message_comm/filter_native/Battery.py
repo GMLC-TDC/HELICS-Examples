@@ -198,7 +198,6 @@ if __name__ == "__main__":
     for key in soc:
         y.append(np.array(soc[key]))
 
-    plt.figure()
 
     fig, axs = plt.subplots(5, sharex=True, sharey=True)
     fig.suptitle('SOC of each EV Battery')

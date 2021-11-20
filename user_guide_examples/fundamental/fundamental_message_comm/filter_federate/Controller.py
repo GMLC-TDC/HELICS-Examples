@@ -175,7 +175,6 @@ if __name__ == "__main__":
         y.append(np.array(soc[key]))
 
 
-    plt.figure()
 
     fig, axs = plt.subplots(5, sharex=True, sharey=True)
     fig.suptitle('SOC at each charging port')

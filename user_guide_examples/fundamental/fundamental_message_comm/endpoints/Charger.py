@@ -216,7 +216,7 @@ if __name__ == "__main__":
     #   terminals
     xaxis = np.array(time_sim)/3600
     yaxis = np.array(power)
-    plt.figure()
+
     plt.plot(xaxis, yaxis, color='tab:blue', linestyle='-')
     plt.yticks(np.arange(0,100,10))
     plt.ylabel('kW')
