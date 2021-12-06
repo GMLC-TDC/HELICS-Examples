@@ -181,7 +181,12 @@ if __name__ == "__main__":
             endpoint_name = h.helicsEndpointGetName(endid[j])
             if h.helicsEndpointHasMessage(endid[j]):
                 msg = h.helicsEndpointGetMessage(endid[j])
+                source = h.helicsMessageGetOriginalSource(msg)
                 charging_current[j] = float(h.helicsMessageGetString(msg))
+                logger.debug(f'Received message current {charging_current[j]:.2f}'
+                             f' at endpoint {endpoint_name}'
+                             f' from {source}'
+                             f' at time {grantedtime}')
                 logger.debug(f'\tCharging current: {charging_current[j]:.2f} from '
                              f' endpoint {endpoint_name}'
                              f' at time {grantedtime}')
