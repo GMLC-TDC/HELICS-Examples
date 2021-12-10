@@ -1,0 +1,18 @@
+{
+  "name": "Battery",
+  "federates": [
+    {
+      "directory": ".",
+      "exec": "helics_broker -f 3 --loglevel=warning",
+      "host": "localhost",
+      "name": "brokerB"
+    },
+    {
+      "directory": ".",
+      "exec": "python -u Battery.py",
+      "host": "localhost",
+      "name": "Battery",
+      "loglevel": 1
+    }
+  ]
+}
