@@ -2,11 +2,10 @@
   "name": "Controller",
   "log_level": "warning",
   "core_type": "zmq",
-  "broker_address": "tcp://127.0.0.1:25400",
+  "broker_address": "tcp://10.211.55.23",
   "time_delta": 1,
   "uninterruptible": false,
   "terminate_on_error": true,
-  "federate_init_string": "--broker_address=tcp://10.211.55.22",
   "endpoints": [
     {
       "name": "Controller/ep",
