@@ -120,8 +120,12 @@ if __name__ == "__main__":
             if source not in soc:
                 soc[source] = []
             soc[source].append(float(currentsoc))
-
-        time_sim.append(grantedtime)
+            
+            if len(time_sim) > 0:
+                if time_sim[-1] != grantedtime:
+                    time_sim.append(grantedtime)
+            else:
+                time_sim.append(grantedtime)
 
         # Since we've dealt with all the messages that are queued, there's
         #   nothing else for the federate to do until/unless another
