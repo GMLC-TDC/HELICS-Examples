@@ -1,19 +1,25 @@
 {
-    "name": "TransmissionSim",
-    "loglevel": 7,
+    "coreInit": "--federates=1",
+    "coreName": "Transmission Federate",
     "coreType": "zmq",
+    "name": "TransmissionSim",
+    "offset": 0.0,
+    "period": 300,
     "timeDelta": 1.0,
-    "uninterruptible": true,
-
-    "publications": [{
+    "logfile": "output.log",
+    "log_level": "warning",
+    "publications": [
+        {
         "key": "TransmissionSim/transmission_voltage",
         "type": "complex",
         "global": true
-    }],
-
-    "subscriptions": [{
+         }
+    ],
+    "subscriptions": [
+        {
         "key": "IEEE_123_feeder_0/totalLoad",
         "type": "complex",
         "required": true
-    }]
+        }
+    ]
 }

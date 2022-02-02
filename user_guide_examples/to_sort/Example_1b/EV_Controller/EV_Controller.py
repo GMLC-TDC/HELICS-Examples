@@ -27,132 +27,141 @@ if __name__ == "__main__":
     #################################  Registering  federate from json  ########################################
 
     fed = h.helicsCreateCombinationFederateFromConfig("Control.json")
+    # h.helicsFederateRegisterInterfaces(fed, "Control.json")
     federate_name = h.helicsFederateGetName(fed)
-    print(federate_name)
+    logger.info("HELICS Version: {}".format(h.helicsGetVersion()))
+    logger.info("{}: Federate {} has been registered".format(federate_name, federate_name))
     endpoint_count = h.helicsFederateGetEndpointCount(fed)
     subkeys_count = h.helicsFederateGetInputCount(fed)
-    print(subkeys_count)
-    print(endpoint_count)
     ######################   Reference to Publications and Subscription form index  #############################
     endid = {}
     subid = {}
     for i in range(0, endpoint_count):
         endid["m{}".format(i)] = h.helicsFederateGetEndpointByIndex(fed, i)
         end_name = h.helicsEndpointGetName(endid["m{}".format(i)])
-        logger.info("Registered Endpoint ---> {}".format(end_name))
+        logger.info("{}: Registered Endpoint ---> {}".format(federate_name, end_name))
 
     for i in range(0, subkeys_count):
         subid["m{}".format(i)] = h.helicsFederateGetInputByIndex(fed, i)
         status = h.helicsInputSetDefaultComplex(subid["m{}".format(i)], 0, 0)
-        sub_key = h.helicsSubscriptionGetKey(subid["m{}".format(i)])
-        logger.info("Registered Subscription ---> {}".format(sub_key))
+        sub_key = h.helicsSubscriptionGetTarget(subid["m{}".format(i)])
+        logger.info("{}: Registered Subscription ---> {}".format(federate_name, sub_key))
 
-    print(
-        "###############################################################################################"
-    )
-    print(
-        "########################   Entering Execution Mode  ##########################################"
-    )
     ######################   Entering Execution Mode  ##########################################################
     h.helicsFederateEnterExecutingMode(fed)
 
+    plotting = True ## Adjust this flag to visulaize the control actions aas the simulation progresses
     hours = 24
     total_inteval = int(60 * 60 * hours)
     grantedtime = -1
-    update_interval = 5 * 60
-    feeder_limit_upper = 4 * (1000 * 1000)
-    feeder_limit_lower = 2.7 * (1000 * 1000)
+    update_interval = 15 * 60 ## Adjust this to change EV update interval
+    feeder_limit_upper = 2.9 * (1000 * 1000) ## Adjust this to change upper limit to trigger EVs
+    feeder_limit_lower = 2.0 * (1000 * 1000) ## Adjust this to change lower limit to trigger EVs
     k = 0
-    data = {}
+    EV_data = {}
     time_sim = []
     feeder_real_power = []
-    feeder_imag_power = []
+
+
+    if plotting:
+        ax ={}
+        fig = plt.figure()
+        fig.subplots_adjust(hspace=0.4, wspace=0.4)
+        ax['Feeder'] = plt.subplot(313)
+        ax['EV1'] = plt.subplot(331)
+        ax['EV2'] = plt.subplot(332)
+        ax['EV3'] = plt.subplot(333)
+        ax['EV4'] = plt.subplot(334)
+        ax['EV5'] = plt.subplot(335)
+        ax['EV6'] = plt.subplot(336)
+
+
     for t in range(0, total_inteval, update_interval):
 
         while grantedtime < t:
             grantedtime = h.helicsFederateRequestTime(fed, t)
-        time.sleep(0.1)
+            print(grantedtime, t)
 
         time_sim.append(t / 3600)
-        #############################   Subscribing to Feeder Load from to GridLAB-D ##############################################
-        key = []
-        Real_demand = []
-        Imag_demand = []
+        ############################### Subscribing to Feeder Load from to GridLAB-D ###################################
         for i in range(0, subkeys_count):
             sub = subid["m{}".format(i)]
             rload, iload = h.helicsInputGetComplex(sub)
-            sub_key = h.helicsSubscriptionGetKey(sub)
-            print(sub_key)
-            if "totalLoad" in str(sub_key):
-                key_feeder_load = sub_key
-                distribution_fed_name = str(key_feeder_load.split("/totalLoad")[0])
-                Real_feeder_load = rload
-                Imag_feeder_load = iload
-                feeder_real_power.append(rload / 1000)
-                feeder_imag_power.append(iload / 1000)
-            else:
-                try:
-                    data[sub_key].append(rload / 1000)
-                except KeyError:
-                    data[sub_key] = [rload / 1000]
+            feeder_real_power.append(rload)
 
-                key.append(sub_key)
-                Real_demand.append(rload)
-                Imag_demand.append(iload)
+        for i in range(0, endpoint_count):
+            end_point = endid["m{}".format(i)]
+            ####################### Clearing all pending messages and stroing the most recent one ######################
+            """ Note: In case GridLAB-D and EV Controller are running in different intervals 
+                        there might be pending messages which gets stored in the endpoint buffer  """
+            while h.helicsEndpointHasMessage(end_point):
+                end_point_msg_obj = h.helicsEndpointGetMessage(end_point)
+                # logger.info("removing pending messages")
 
-        logger.info("EV Controller grantedtime = {}".format(grantedtime))
+            EV_now = complex(h.helicsMessageGetString(end_point_msg_obj))
+            EV_name = end_point.name.split('/')[-1]
+            if EV_name not in EV_data:
+                    EV_data[EV_name] = []
+            EV_data[EV_name].append(EV_now.real / 1000)
 
-        logger.info("Total Feeder Load is {} + {} j".format(Real_feeder_load, Imag_feeder_load))
+        logger.info("{}: Federate Granted Time = {}".format(federate_name, grantedtime))
+        logger.info("{}: Total Feeder Load is {} kW + {} kVARj ".format(federate_name, round(rload/1000,2), round(iload/1000,2)))
 
-        if Real_feeder_load > feeder_limit_upper:
-            logger.info("Total Feeder Load is over the Feeder Upper Limit")
-            logger.info("Warning ----> Feeder OverLimit --->  Turn off EV")
+        if feeder_real_power[-1] > feeder_limit_upper:
+            logger.info("{}: Warning !!!! Feeder OverLimit ---> Total Feeder Load is over the Feeder Upper Limit".format(federate_name))
 
             if k < endpoint_count:
                 end = endid["m{}".format(k)]
                 logger.info("endid: {}".format(endid))
-                end_name = str(h.helicsEndpointGetName(end))
-                logger.info("Sending endpoint name: {}".format(end_name))
-                destination_name = end_name.replace(federate_name, distribution_fed_name)
-                logger.info(
-                    "Endpoint destination: {}".format(h.helicsEndpointGetDefaultDestination(end))
-                )
-                status = h.helicsEndpointSendMessageRaw(end, "", str("0 + 0 j"))  #
-                logger.info("Endpoint sending status: {}".format(status))
-                logger.info("Turning off {}".format(end_name))
+                source_end_name = str(h.helicsEndpointGetName(end))
+                dest_end_name   = str(h.helicsEndpointGetDefaultDestination(end))
+                logger.info("{}: source endpoint {} and destination endpoint {}".format(federate_name, source_end_name, dest_end_name))
+                # msg = h.helicsEndpointCreateMessage(end)
+                msg = h.helicsFederateCreateMessage(fed)
+                # h.helicsMessageSetSource(msg, source_end_name)
+                # h.helicsMessageSetDestination(msg, dest_end_name)
+                h.helicsMessageSetString(msg, str(complex(0,0)))
+                status = h.helicsEndpointSendMessage(end, msg)
+                # status = h.helicsEndpointSendBytesTo(end, f'{complex(0,0):4f}'.encode(), "")  #
+
+                # logger.info("Endpoint sending status: {}".format(status))
+                logger.info("{}: Turning off {}".format(federate_name, source_end_name))
                 k = k + 1
             else:
-                logger.info("All EVs are Turned off")
+                logger.info("{}: All EVs are turned off")
 
-        if Real_feeder_load < feeder_limit_lower:
-            logger.info("Total Feeder Load is under the Feeder Lower Limit")
-            logger.info("Feeder Can Support EVs ------>  Turn on EV")
+        if feeder_real_power[-1] < feeder_limit_lower:
+            logger.info("{}: Safe !!!! Feeder Can Support EVs --> Total Feeder Load is under the Feeder Lower Limit".format(federate_name))
             if k > 0:
                 k = k - 1
                 end = endid["m{}".format(k)]
-                end_name = h.helicsEndpointGetName(end)
-                destination_name = end_name.replace(federate_name, distribution_fed_name)
-                print("Endpoint Destination {}".format(destination_name))
-                status = h.helicsEndpointSendMessageRaw(end, "", str("200000 + 0 j"))
-                logger.info("Turning on {}".format(end_name))
+                source_end_name = str(h.helicsEndpointGetName(end))
+                dest_end_name   = str(h.helicsEndpointGetDefaultDestination(end))
+                logger.info("{}: source endpoint {} and destination endpoint {}".format(federate_name, source_end_name, dest_end_name))
+                status = h.helicsEndpointSendBytesTo(end, '200000+0.0j', "")
+                logger.info("{}: Turning on {}".format(federate_name, source_end_name))
             else:
-                logger.info("All EVs are Turned on")
+                logger.info("{}: All EVs are turned on".format(federate_name))
 
-    fig = plt.figure()
-    fig.subplots_adjust(hspace=0.4, wspace=0.4)
-    i = 1
-    for keys in data:
-        ax = fig.add_subplot(2, 3, i)
-        ax.plot(time_sim, data[keys])
-        ax.set_ylabel("EV Output in kW")
-        ax.set_xlabel("Time ")
-        ax.set_title(keys)
-        i = i + 1
+        if plotting:
+            ax['Feeder'].clear()
+            ax['Feeder'].plot(time_sim, feeder_real_power)
+            ax['Feeder'].set_xlim([0, 24])
+            ax['Feeder'].grid()
+            for keys in EV_data:
+                ax[keys].clear()
+                ax[keys].plot(time_sim, EV_data[keys])
+                ax[keys].set_ylabel("EV Output in kW")
+                ax[keys].set_xlabel("Time ")
+                ax[keys].set_title(keys)
+                ax[keys].set_xlim([0, 24])
+                ax[keys].grid()
+            plt.show(block=False)
+            plt.pause(0.01)
 
-    plt.show(block=True)
-    data["time"] = time_sim
-    data["feeder_load(real)"] = feeder_real_power
-    pd.DataFrame.from_dict(data=data).to_csv("EV_Outputs.csv", header=True)
+    EV_data["time"] = time_sim
+    EV_data["feeder_load"] = feeder_real_power
+    pd.DataFrame.from_dict(data=EV_data).to_csv("EV_Outputs.csv", header=True)
 
     t = 60 * 60 * 24
     while grantedtime < t:

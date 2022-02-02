@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Oct 11 10:08:26 2018
-
 @author: monish.mukherjee
 """
 import scipy.io as spio
@@ -20,13 +19,12 @@ logger.setLevel(logging.DEBUG)
 
 
 def create_broker():
-    initstring = "--federates=3 --name=mainbroker"
+    initstring = "--federates=2 --name=mainbroker"
     broker = h.helicsCreateBroker("zmq", "", initstring)
     isconnected = h.helicsBrokerIsConnected(broker)
 
     if isconnected == 1:
         pass
-
     return broker
 
 
@@ -60,8 +58,8 @@ def destroy_federate(fed):
     #    status, state = h.helicsFederateGetState(fed)
     #    assert state == 3
 
-    #   while (h.helicsBrokerIsConnected(broker)):
-    #        time.sleep(1)
+    while h.helicsBrokerIsConnected(broker):
+        time.sleep(1)
 
     h.helicsFederateFree(fed)
     h.helicsCloseLibrary()
@@ -69,30 +67,31 @@ def destroy_federate(fed):
 
 if __name__ == "__main__":
 
-    broker = create_broker()
+    #broker = create_broker()
     # fed = create_federate()
 
     #################################  Registering  federate from json  ########################################
 
     fed = h.helicsCreateValueFederateFromConfig("Transmission_json.json")
     h.helicsFederateRegisterInterfaces(fed, "Transmission_json.json")
-    federate_name = h.helicsFederateGetName(fed)[-1]
-    print(" Federate {} has been registered".format(federate_name))
+    federate_name = h.helicsFederateGetName(fed)
+    logger.info("HELICS Version: {}".format(h.helicsGetVersion()))
+    logger.info("{}: Federate {} has been registered".format(federate_name, federate_name))
     pubkeys_count = h.helicsFederateGetPublicationCount(fed)
     subkeys_count = h.helicsFederateGetInputCount(fed)
-    print(subkeys_count)
     ######################   Reference to Publications and Subscription form index  #############################
     pubid = {}
     subid = {}
     for i in range(0, pubkeys_count):
         pubid["m{}".format(i)] = h.helicsFederateGetPublicationByIndex(fed, i)
         pubtype = h.helicsPublicationGetType(pubid["m{}".format(i)])
-        print(pubtype)
+        pubname = h.helicsPublicationGetName(pubid["m{}".format(i)])
+        logger.info("{}: Registered Publication ---> {}".format(federate_name, pubname))
     for i in range(0, subkeys_count):
         subid["m{}".format(i)] = h.helicsFederateGetInputByIndex(fed, i)
         h.helicsInputSetDefaultComplex(subid["m{}".format(i)], 0, 0)
-        sub_key = h.helicsSubscriptionGetKey(subid["m{}".format(i)])
-        print("Registered Subscription ---> {}".format(sub_key))
+        sub_key = h.helicsSubscriptionGetTarget(subid["m{}".format(i)])
+        logger.info("{}: Registered Subscription ---> {}".format(federate_name, sub_key))
 
     ######################   Entering Execution Mode  ##########################################################
     h.helicsFederateEnterInitializingMode(fed)
@@ -102,8 +101,8 @@ if __name__ == "__main__":
     hours = 24
     total_inteval = int(60 * 60 * hours)
     grantedtime = -1
-    pf_interval = 5 * 60  # in seconds (minimim_resolution)
-    acopf_interval = 15 * 60  # in seconds (minimim_resolution)
+    pf_interval    = 30 * 60  # in seconds (minimim_resolution) ## Adjust this to change PF intervals
+    acopf_interval = 60 * 60  # in seconds (minimim_resolution) ## Adjust this to change ACOPF intervals
     random.seed(0)
 
     peak_demand = []
@@ -119,7 +118,7 @@ if __name__ == "__main__":
         "normalized_load_data_1min_ORIGINAL.mat", squeeze_me=True, struct_as_record=False
     )
     load_profiles_1min = profiles["my_data"]
-    resolution_load = numpy.floor(total_inteval / pf_interval)
+    resolution_load = numpy.int(total_inteval / pf_interval)
     points = numpy.floor(numpy.linspace(0, len(load_profiles_1min) - 1, resolution_load + 1))
     time_pf = numpy.linspace(0, total_inteval, resolution_load + 1)
     load_profiles = load_profiles_1min[points.astype(int), :]
@@ -138,7 +137,7 @@ if __name__ == "__main__":
 
     # bus_profiles_index = numpy.random.random_integers(0,load_profiles.shape[1]-1,len(ppc['bus']))
     bus_profiles = load_profiles[:, bus_profiles_index]
-    time_opf = numpy.linspace(0, total_inteval, numpy.floor(total_inteval / acopf_interval) + 1)
+    time_opf = numpy.linspace(0, total_inteval, numpy.int(total_inteval / acopf_interval) + 1)
 
     ###########################   Cosimulation Bus and Load Amplification Factor #########################################
 
@@ -159,26 +158,28 @@ if __name__ == "__main__":
     #########################################   Starting Co-simulation  ####################################################
 
     for t in range(0, total_inteval, pf_interval):
+
         ############################   Publishing Voltage to GridLAB-D #######################################################
 
         voltage_gld = complex(voltage_cosim_bus * 1000)
-        logger.info("Voltage value = {} kV".format(abs(voltage_gld) / 1000))
+        logger.info("{}: Substation Voltage to the Distribution System = {} kV".format(federate_name, round(abs(voltage_gld)/1000, 2)))
         for i in range(0, pubkeys_count):
             pub = pubid["m{}".format(i)]
             status = h.helicsPublicationPublishComplex(pub, voltage_gld.real, voltage_gld.imag)
         # status = h.helicsEndpointSendEventRaw(epid, "fixed_price", 10, t)
 
+        logger.info("{} - {}".format(grantedtime, t))
         while grantedtime < t:
             grantedtime = h.helicsFederateRequestTime(fed, t)
-        time.sleep(0.1)
+            logger.info("{} - {}".format(grantedtime, t))
 
         #############################   Subscribing to Feeder Load from to GridLAB-D ##############################################
 
         for i in range(0, subkeys_count):
             sub = subid["m{}".format(i)]
             rload, iload = h.helicsInputGetComplex(sub)
-        logger.info("Python Federate grantedtime = {}".format(grantedtime))
-        logger.info("Load value = {} kW".format(complex(rload, iload) / 1000))
+        logger.info("{}: Federate Granted Time = {}".format(federate_name,grantedtime))
+        logger.info("{}: Substation Load from Distribution System = {} kW".format(federate_name, complex(round(rload,2), round(iload,2)) / 1000))
         # print(voltage_plot,real_demand)
 
         actual_demand = peak_demand * bus_profiles[x, :]
@@ -186,9 +187,9 @@ if __name__ == "__main__":
         ppc["bus"][:, 3] = actual_demand * math.tan(math.acos(0.85))
         ppc["bus"][cosim_bus, 2] = rload * load_amplification_factor / 1000000
         ppc["bus"][cosim_bus, 3] = iload * load_amplification_factor / 1000000
-        ppopt = ppoption(PF_ALG=1)
+        ppopt = ppoption(PF_ALG=1, OUT_ALL=0, VERBOSE=1)
 
-        print("PF TIme is {} and ACOPF time is {}".format(time_pf[x], time_opf[k]))
+        logger.info("{}: Current AC-PF TIme is {} and Next AC-OPF time is {}".format(federate_name, time_pf[x], time_opf[k]))
 
         ############################  Running OPF For optimal power flow intervals   ##############################
 
@@ -238,8 +239,10 @@ if __name__ == "__main__":
             ax2.set_xlim([0, 25])
             ax2.set_ylabel("Load from distribution [in MW]")
             ax2.set_xlabel("Time [in hours]")
+            ax1.grid()
+            ax2.grid()
             plt.show(block=False)
-            plt.pause(0.1)
+            plt.pause(0.01)
         x = x + 1
 
     ##########################   Creating headers and Printing results to CSVs #####################################
@@ -277,6 +280,6 @@ if __name__ == "__main__":
     t = 60 * 60 * 24
     while grantedtime < t:
         grantedtime = h.helicsFederateRequestTime(fed, t)
-    logger.info("Destroying federate")
+    logger.info("{}: Destroying federate".format(federate_name))
     destroy_federate(fed)
-    logger.info("Done!")
+    logger.info("{}: Done!".format(federate_name))

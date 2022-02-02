@@ -9,7 +9,7 @@ clock {
 #include "include/schedules/commercial_schedules.glm"
 #define stylesheet=http://gridlab-d.svn.sourceforge.net/viewvc/gridlab-d/trunk/core/gridlabd-2_0
 
-#set minimum_timestep=60.000000
+#set minimum_timestep=300.000000
 #set profiler=1
 #set relax_naming_rules=1
 #set randomseed=10
