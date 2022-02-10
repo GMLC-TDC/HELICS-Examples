@@ -100,7 +100,7 @@ def get_new_EV(numEVs):
 
 
 if __name__ == "__main__":
-    np.random.seed(1490)
+    np.random.seed(267)
 
     ##############  Registering  federate from json  ##########################
     fed = h.helicsCreateMessageFederateFromConfig("ChargerConfig.json")
@@ -218,7 +218,7 @@ if __name__ == "__main__":
     yaxis = np.array(power)
 
     plt.plot(xaxis, yaxis, color='tab:blue', linestyle='-')
-    plt.yticks(np.arange(0,100,10))
+    plt.yticks(np.arange(0,25000,1000))
     plt.ylabel('kW')
     plt.grid(True)
     plt.xlabel('time (hr)')

@@ -95,7 +95,7 @@ def get_new_battery(numBattery):
 
 
 if __name__ == "__main__":
-    np.random.seed(2622)
+    np.random.seed(628)
 
     ##########  Registering  federate and configuring with API################
     fedinitstring = " --federates=1"
