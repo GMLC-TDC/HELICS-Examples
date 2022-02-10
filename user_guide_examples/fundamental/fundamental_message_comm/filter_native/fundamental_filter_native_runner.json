@@ -2,7 +2,7 @@
   "federates": [
     {
       "directory": ".",
-      "exec": "helics_broker -f 2 --loglevel=warning",
+      "exec": "helics_broker -f 3 --loglevel=warning",
       "host": "localhost",
       "name": "broker"
     },
@@ -17,6 +17,12 @@
       "exec": "python -u Battery.py",
       "host": "localhost",
       "name": "Battery"
+    },
+    {
+      "directory": ".",
+      "exec": "python -u Controller.py",
+      "host": "localhost",
+      "name": "Controller"
     }
   ],
   "name": "fundamental_filter_native"
