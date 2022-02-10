@@ -22,6 +22,11 @@ import logging
 import numpy as np
 import matplotlib.pyplot as plt
 import time
+import pprint
+
+# Setting up pretty printing, mostly for debugging.
+pp = pprint.PrettyPrinter(indent=4)
+
 
 
 logger = logging.getLogger(__name__)
@@ -40,6 +45,9 @@ def destroy_federate(fed):
     :param fed: Federate to be destroyed
     :return: (none)
     '''
+    # Adding extra time request to clear out any pending messages to avoid
+    #   annoying errors in the broker log. Any message are tacitly disregarded.
+    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
     status = h.helicsFederateDisconnect(fed)
     h.helicsFederateFree(fed)
     h.helicsCloseLibrary()
@@ -162,6 +170,7 @@ def estimate_SOC(charging_V, charging_A):
 if __name__ == "__main__":
     np.random.seed(1490)
 
+
     time.sleep(5)
     ##############  Registering  federate with API  ##########################
     fedinitstring = " --federates=1"
@@ -190,6 +199,7 @@ if __name__ == "__main__":
 
     pub_count = num_EVs
     pubid = {}
+    charging_current = []
     for i in range(0,pub_count):
         # "key":"Charger/EV1_voltage",
         pub_name = f'Charger/EV{i+1}_voltage'
@@ -204,6 +214,7 @@ if __name__ == "__main__":
         sub_name = f'Battery/EV{i+1}_current'
         subid[i] = h.helicsFederateRegisterSubscription(fed, sub_name, 'A')
         logger.debug(f'\tRegistered subscription---> {sub_name}')
+        charging_current.append(0)
 
     end_count = h.helicsFederateGetEndpointCount(fed)
     logger.info(f'\tNumber of endpoints: {end_count}')
@@ -238,10 +249,15 @@ if __name__ == "__main__":
     numLvl1,numLvl2,numLvl3,EVlist = get_new_EV(end_count)
     charging_voltage = calc_charging_voltage(EVlist)
     currentsoc = {}
+    
 
     # Data collection lists
     time_sim = []
     power = []
+
+    query = h.helicsCreateQuery("root", "federate_map")
+    result = h.helicsQueryExecute(query, fed)
+    logger.debug(f'Query name: {pp.pformat(result)}')
 
     # Blocking call for a time request at simulation time 0
     initial_time = 60
@@ -273,13 +289,13 @@ if __name__ == "__main__":
             # Model the physics of the battery charging. This happens
             #   every time step whether a message comes in or not and always
             #   uses the latest value provided by the battery model.
-            charging_current = h.helicsInputGetDouble((subid[j]))
-            logger.debug(f'\tCharging current: {charging_current:.2f} from '
+            charging_current[j] = h.helicsInputGetDouble((subid[j]))
+            logger.debug(f'\tCharging current: {charging_current[j]:.2f} from '
                          f'input {h.helicsSubscriptionGetTarget(subid[j])}')
 
             # New EV is in place after removing charge from old EV,
             # as indicated by the zero current draw.
-            if charging_current == 0:
+            if charging_current[j] == 0:
                 _, _, _, newEVtype = get_new_EV(1)
                 EVlist[j] = newEVtype[0]
                 charge_V = calc_charging_voltage(newEVtype)
@@ -291,7 +307,7 @@ if __name__ == "__main__":
                              f' {charging_voltage[j]}')
             else:
                 # SOC estimation
-                currentsoc[j] = estimate_SOC(charging_voltage[j], charging_current)
+                currentsoc[j] = estimate_SOC(charging_voltage[j], charging_current[j])
                 logger.debug(f'\t EV SOC estimate: {currentsoc[j]:.4f}')
 
 
@@ -342,8 +358,7 @@ if __name__ == "__main__":
         total_power = 0
         #logger.debug(f'Calculating charging power')
         for j in range(0,pub_count):
-            charging_power = charge_rate[(EVlist[j]-1)]
-            total_power += charging_power
+            total_power += (charging_voltage[j] * charging_current[j])
             #logger.debug(f'\tCharging power in kW for EV{j+1}: {charging_power}')
 
         # Data collection vectors
@@ -361,7 +376,7 @@ if __name__ == "__main__":
     yaxis = np.array(power)
     
     plt.plot(xaxis, yaxis, color='tab:blue', linestyle='-')
-    plt.yticks(np.arange(0,200,10))
+    plt.yticks(np.arange(0,13000,1000))
     plt.ylabel('kW')
     plt.grid(True)
     plt.xlabel('time (hr)')

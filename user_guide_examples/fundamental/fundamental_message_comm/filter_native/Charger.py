@@ -207,7 +207,7 @@ if __name__ == "__main__":
         total_power = 0
         for j in range(0, end_count):
             if charging_current[j] > 0: # EV is still charging
-                total_power += charge_rate[(EVlist[j] - 1)]
+                total_power += charging_voltage[j] * charging_current[j]
 
         # Data collection vectors
         time_sim.append(grantedtime)
@@ -223,7 +223,7 @@ if __name__ == "__main__":
     xaxis = np.array(time_sim)/3600
     yaxis = np.array(power)
     plt.plot(xaxis, yaxis, color='tab:blue', linestyle='-')
-    plt.yticks(np.arange(0,100,10))
+    plt.yticks(np.arange(0,20000,1000))
     plt.ylabel('kW')
     plt.grid(True)
     plt.xlabel('time (hr)')
