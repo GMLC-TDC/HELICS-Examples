@@ -326,7 +326,7 @@ if __name__ == "__main__":
     xaxis = np.array(time_sim)/3600
     yaxis = np.array(power)
     plt.plot(xaxis, yaxis, color='tab:blue', linestyle='-')
-    plt.yticks(np.arange(0,200,10))
+    plt.yticks(np.arange(0,24000,1000))
     plt.ylabel('kW')
     plt.grid(True)
     plt.xlabel('time (hr)')

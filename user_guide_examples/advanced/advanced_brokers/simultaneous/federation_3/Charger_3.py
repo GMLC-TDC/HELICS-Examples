@@ -136,7 +136,7 @@ def estimate_SOC(charging_V, charging_A):
 
 
 if __name__ == "__main__":
-    np.random.seed(1493)
+    np.random.seed(1448)
 
     ##############  Registering  federate from json  ##########################
     fed = h.helicsCreateCombinationFederateFromConfig("ChargerConfig_3.json")
@@ -321,7 +321,7 @@ if __name__ == "__main__":
     yaxis = np.array(power)
 
     plt.plot(xaxis, yaxis, color='tab:blue', linestyle='-')
-    plt.yticks(np.arange(0,200,10))
+    plt.yticks(np.arange(0,24000,1000))
     plt.ylabel('kW')
     plt.grid(True)
     plt.xlabel('time (hr)')
