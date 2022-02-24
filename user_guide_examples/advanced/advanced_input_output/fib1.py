@@ -27,32 +27,32 @@ if __name__ == "__main__":
     # Set-up
     done = False
 
-
-    while not done:
     
-        # Federation configuration
-        fed = h.helicsCreateValueFederateFromConfig('fib1_config.json')
+    # Federation configuration
+    fed = h.helicsCreateValueFederateFromConfig('fib1_config.json')
 #         fedinfo = h.helicsCreateFederateInfo()
 #         fedinfo.core_name = "fib1_core"
 #         fedinfo.core_type = 'zmq'
 #         fedinfo.core_init = '-f 1'
 #         fed = h.helicsCreateValueFederate('fib1', fedinfo)
-        #out1 = fed.register_publication('out1', 'int')
-        #out2 = fed.register_publication('out2', 'int')
-        #fed.register_subscription('fib4/out', 'JSON')
-        
+    #out1 = fed.register_publication('out1', 'int')
+    #out2 = fed.register_publication('out2', 'int')
+    #fed.register_subscription('fib4/out', 'JSON')
     
-        # Initialization
-        #fed.enter_initializing_mode()
-        
-        # Add debugging query to see if the entire federation is set-up as expected
-        
-        #data_flow_graph = fed.query('root', 'data_flow_graph')
-        #logger.debug('Data flow of the federation:')
-        #logger.debug(pp.pformat(data_flow_graph))
 
-        # Enter execution
-        fed.enter_executing_mode()
+    # Initialization
+    #fed.enter_initializing_mode()
+    
+    # Add debugging query to see if the entire federation is set-up as expected
+    
+    #data_flow_graph = fed.query('root', 'data_flow_graph')
+    #logger.debug('Data flow of the federation:')
+    #logger.debug(pp.pformat(data_flow_graph))
+
+    # Enter execution
+    fed.enter_executing_mode()
+        
+    while not done:
         
         # Request time and get inputs
         fed.request_time(h.HELICS_TIME_MAXTIME)
@@ -62,7 +62,9 @@ if __name__ == "__main__":
         # Produce outputs
     
         # Check for terminate conditions and terminate as necessary
-        fed.disconnect()
-        h.helicsCloseLibrary()
+        done = True
+        
+    fed.disconnect()
+    h.helicsCloseLibrary()
     
     
