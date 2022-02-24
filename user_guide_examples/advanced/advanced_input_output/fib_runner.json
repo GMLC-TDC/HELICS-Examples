@@ -1,0 +1,24 @@
+{
+    "name": "Fibonnaci demo",
+    "broker": false,
+    "federates": [
+    {
+        "directory": ".",
+        "exec": "python -u fib1.py",
+        "host": "localhost",
+        "name": "fib1"
+    },
+    {
+        "directory": ".",
+        "exec": "python -u fib4.py",
+        "host": "localhost",
+        "name": "fib4"
+    },
+    {
+        "directory": ".",
+        "exec": "helics_broker -f 2",
+        "host": "localhost",
+        "name": "broker"
+    }
+    ]
+}
