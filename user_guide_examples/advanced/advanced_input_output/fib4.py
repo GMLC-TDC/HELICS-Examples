@@ -12,6 +12,7 @@ import helics as h
 import logging
 import json
 import pprint
+import time as t
 
 
 
@@ -19,43 +20,63 @@ logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.DEBUG)
 
-pp = pprint.PrettyPrinter(indent=4)
+pp = pprint.PrettyPrinter(indent=2)
 
 
 if __name__ == "__main__":
     
     # Set-up
     done = False
+    time = 0
     
     # Federation configuration
-    fed = h.helicsCreateValueFederateFromConfig('fib4_config.json')
-#         fedinfo = h.helicsCreateFederateInfo()
-#         fedinfo.core_type = 'zmq'
-#         fedinfo.core_init = '-f 1'
-#         fed = h.helicsCreateValueFederate('fib4', fedinfo)
-    #out1 = fed.register_publication('out1', 'vector')
-    #in1 = fed.register_input('in1', 'double',)
-    #in1.option['MULTI_INPUT_HANDLING_METHOD'] = h.HELICS_MULTI_INPUT_VECTORIZE_OPERATION
+    # fed = h.helicsCreateValueFederateFromConfig('fib4_config.json')
+    fedinfo = h.helicsCreateFederateInfo()
+    fedinfo.core_type = 'zmq'
+    fedinfo.core_init = '-f 1'
+    fed = h.helicsCreateValueFederate('fib4', fedinfo)
+    in1 = fed.register_input('in1', 'double',)
+    in1.option['MULTI_INPUT_HANDLING_METHOD'] = h.HELICS_MULTI_INPUT_VECTORIZE_OPERATION
+    out1 = fed.register_publication('out1', 'vector')
 
     # Initialization
-    #fed.enter_initializing_mode()
-    
-    # Add debugging query to see if the entire federation is set-up as expected
+    fed.enter_initializing_mode()
     
 
     # Enter execution
     fed.enter_executing_mode()
         
-    while not done:
+    while not done:    
+        time += 1
+     
         # Request time and get inputs
-        fed.request_time(h.HELICS_TIME_MAXTIME)
+        granted_time = fed.request_time(time)
+        logger.debug(f'Granted_time: {granted_time}')
+        
+        if in1.is_updated() == True:
+            in_values = in1.vector
+            logger.debug(f'in1 value: {in_values}')
 
-        # Calculate local model
+            # Calculate local model (Fibonnaci series)
+            output1 = in_values[1]
+            output2 = in_values[0]+ in_values[1]
+
     
-        # Produce outputs
-    
-        # Check for terminate conditions and terminate as necessary
-        done = True
+            # Produce outputs
+            output = [output1, output2]
+            out1.publish(output)
+            logger.debug(f'\tPublished output: [{output1}, {output2}]')
+
+            # Check for terminate conditions and terminate as necessary
+            if output2 >= 100:
+                done = True
+            else:
+                done = False
+        elif granted_time >= 1000: # Give up if this takes too many iterations
+            done = True  
+        else:
+            done = False
+
         
     fed.disconnect()
     h.helicsCloseLibrary()

@@ -12,8 +12,7 @@ import helics as h
 import logging
 import json
 import pprint
-from ast import literal_eval
-
+import struct
 
 
 
@@ -29,6 +28,8 @@ if __name__ == "__main__":
     # Set-up
     done = False
     time = 0  # Set up so each federate
+    messages = []
+    output2 = 0
 
     
     # Federation configuration
@@ -36,25 +37,18 @@ if __name__ == "__main__":
     fedinfo = h.helicsCreateFederateInfo()
     fedinfo.core_type = 'zmq'
     fedinfo.core_init = '-f 1'
-    fed = h.helicsCreateValueFederate('fib1', fedinfo)
-    out1 = fed.register_publication('out1', 'integer')
-    out2 = fed.register_publication('out2', 'integer')
-    in1 = fed.register_subscription('fib4/out1', 'string')
-    in1.set_default('[1,1]')
-    
+    fed = h.helicsCreateCombinationFederate('fib3', fedinfo)
+    ep = fed.register_endpoint('ep')
+    out1 = fed.register_publication('out1', 'double')
+    out2 = fed.register_publication('out2', 'double')
+    out1.add_target('fib4/in1')
+    out2.add_target('fib4/in1')
 
     # Initialization
     fed.enter_initializing_mode()
-    
-    # Add debugging query to see if the entire federation is set-up as expected
-#     data_flow_graph = fed.query('root', 'data_flow_graph')
-#     logger.debug('Data flow of the federation:')
-#     logger.debug(pp.pformat(data_flow_graph))
 
     # Enter execution
     fed.enter_executing_mode()
-    
-
         
     while not done:
         time += 1
@@ -63,31 +57,40 @@ if __name__ == "__main__":
         granted_time = fed.request_time(time)
         logger.debug(f'Granted_time: {granted_time}')
         
-        if in1.is_updated() == True or granted_time == 1:
-            input_values = in1.string
-            logger.debug(f'\tin1 value: {input_values}')
+        while ep.has_message():
+            message = ep.get_message()
+            messages.append(message.data)
+            logger.debug(f'\tmessage received: {messages[-1]}')
 
+        if len(messages) == 2:
+        
             # Calculate local model (Fibonnaci series)
-            in_str = input_values
-            in_list = literal_eval(in_str)
-            output1 = in_list[1]
-            output2 = in_list[0] + in_list[1]
-    
+            output1 = int(messages[1])
+            output2 = int(messages[0]) + int(messages[1])
+
             # Produce outputs
             out1.publish(output1)
             out2.publish(output2)
             logger.debug(f'\tPublished output 1: {output1}')
             logger.debug(f'\tPublished output 2: {output2}')
+            messages = [] # delete current list of messages
 
             # Check for terminate conditions and terminate as necessary
             if output2 >= 100:
                 done = True
             else:
                 done = False
-        elif granted_time >= 1000: # Give up if this takes too many iterations
+        elif len(messages) == 0:
+            logger.debug(f'\tReceived no messages')
+        elif len(messages) != 2 and len(messages) != 0:
+            logger.debug(f'\tReceived (len(messages) messages, expecting 2)')
+        
+        if granted_time >= 1000: # Give up if this takes too many iterations
+            done = True
+        elif int(output2) > 100:
             done = True
         else:
-            done = False
+            done = False 
     
       
     fed.disconnect()
