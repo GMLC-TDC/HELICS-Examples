@@ -38,6 +38,7 @@ if __name__ == "__main__":
     fedinfo.core_type = 'zmq'
     fedinfo.core_init = '-f 1'
     fed = h.helicsCreateCombinationFederate('fib3', fedinfo)
+    fed.property[h.HELICS_PROPERTY_TIME_PERIOD] = 1.0
     ep = fed.register_endpoint('ep')
     out1 = fed.register_publication('out1', 'double')
     out2 = fed.register_publication('out2', 'double')
@@ -81,7 +82,8 @@ if __name__ == "__main__":
             else:
                 done = False
         elif len(messages) == 0:
-            logger.debug(f'\tReceived no messages')
+            pass
+            #logger.debug(f'\tReceived no messages')
         elif len(messages) != 2 and len(messages) != 0:
             logger.debug(f'\tReceived (len(messages) messages, expecting 2)')
         

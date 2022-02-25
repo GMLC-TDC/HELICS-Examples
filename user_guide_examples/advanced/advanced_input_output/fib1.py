@@ -37,6 +37,7 @@ if __name__ == "__main__":
     fedinfo.core_type = 'zmq'
     fedinfo.core_init = '-f 1'
     fed = h.helicsCreateValueFederate('fib1', fedinfo)
+    fed.property[h.HELICS_PROPERTY_TIME_PERIOD] = 1.0
     out1 = fed.register_publication('out1', 'integer')
     out2 = fed.register_publication('out2', 'integer')
     in1 = fed.register_subscription('fib4/out1', 'string')

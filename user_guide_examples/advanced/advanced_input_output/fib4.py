@@ -35,6 +35,7 @@ if __name__ == "__main__":
     fedinfo.core_type = 'zmq'
     fedinfo.core_init = '-f 1'
     fed = h.helicsCreateValueFederate('fib4', fedinfo)
+    fed.property[h.HELICS_PROPERTY_TIME_PERIOD] = 1.0
     in1 = fed.register_input('in1', 'double',)
     in1.option['MULTI_INPUT_HANDLING_METHOD'] = h.HELICS_MULTI_INPUT_VECTORIZE_OPERATION
     out1 = fed.register_publication('out1', 'vector')
@@ -55,7 +56,7 @@ if __name__ == "__main__":
         
         if in1.is_updated() == True:
             in_values = in1.vector
-            logger.debug(f'in1 value: {in_values}')
+            logger.debug(f'\tin1 value: {in_values}')
 
             # Calculate local model (Fibonnaci series)
             output1 = in_values[1]
@@ -70,6 +71,7 @@ if __name__ == "__main__":
             # Check for terminate conditions and terminate as necessary
             if output2 >= 100:
                 done = True
+                fed.property[h.HELICS_PROPERTY_TIME_PERIOD] = 1.0
             else:
                 done = False
         elif granted_time >= 1000: # Give up if this takes too many iterations
