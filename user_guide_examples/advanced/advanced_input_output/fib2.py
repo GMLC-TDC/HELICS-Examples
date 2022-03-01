@@ -56,10 +56,8 @@ if __name__ == "__main__":
     fed.enter_executing_mode()
         
     while not done:
-        time += 1
-        
         # Request time and get inputs
-        granted_time = fed.request_time(time)
+        granted_time = fed.request_time(h.HELICS_TIME_MAXTIME)
         logger.debug(f'Granted_time: {granted_time}')
         
         while ep.has_message():
@@ -99,7 +97,7 @@ if __name__ == "__main__":
             pass
             # logger.debug(f'\tReceived no messages')
         elif len(messages) != 2 and len(messages) != 0:
-            logger.debug(f'\tReceived (len(messages) messages, expecting 2)')
+            logger.debug(f'\tReceived {len(messages)} messages, expecting 2')
         
         if granted_time >= 1000: # Give up if this takes too many iterations
             done = True
