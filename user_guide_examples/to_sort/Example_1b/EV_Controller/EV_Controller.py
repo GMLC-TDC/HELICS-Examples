@@ -9,6 +9,7 @@ import time
 import helics as h
 import logging
 import pandas as pd
+import numpy as np
 
 
 logger = logging.getLogger(__name__)
@@ -54,9 +55,9 @@ if __name__ == "__main__":
     hours = 24
     total_inteval = int(60 * 60 * hours)
     grantedtime = -1
-    update_interval = 15 * 60 ## Adjust this to change EV update interval
-    feeder_limit_upper = 2.9 * (1000 * 1000) ## Adjust this to change upper limit to trigger EVs
-    feeder_limit_lower = 2.0 * (1000 * 1000) ## Adjust this to change lower limit to trigger EVs
+    update_interval = 5 * 60 ## Adjust this to change EV update interval
+    feeder_limit_upper = 4 * (1000 * 1000) ## Adjust this to change upper limit to trigger EVs
+    feeder_limit_lower = 2.7 * (1000 * 1000) ## Adjust this to change lower limit to trigger EVs
     k = 0
     EV_data = {}
     time_sim = []
@@ -80,7 +81,6 @@ if __name__ == "__main__":
 
         while grantedtime < t:
             grantedtime = h.helicsFederateRequestTime(fed, t)
-            print(grantedtime, t)
 
         time_sim.append(t / 3600)
         ############################### Subscribing to Feeder Load from to GridLAB-D ###################################
@@ -116,15 +116,9 @@ if __name__ == "__main__":
                 source_end_name = str(h.helicsEndpointGetName(end))
                 dest_end_name   = str(h.helicsEndpointGetDefaultDestination(end))
                 logger.info("{}: source endpoint {} and destination endpoint {}".format(federate_name, source_end_name, dest_end_name))
-                # msg = h.helicsEndpointCreateMessage(end)
                 msg = h.helicsFederateCreateMessage(fed)
-                # h.helicsMessageSetSource(msg, source_end_name)
-                # h.helicsMessageSetDestination(msg, dest_end_name)
-                h.helicsMessageSetString(msg, str(complex(0,0)))
+                h.helicsMessageSetString(msg, '0+0j')
                 status = h.helicsEndpointSendMessage(end, msg)
-                # status = h.helicsEndpointSendBytesTo(end, f'{complex(0,0):4f}'.encode(), "")  #
-
-                # logger.info("Endpoint sending status: {}".format(status))
                 logger.info("{}: Turning off {}".format(federate_name, source_end_name))
                 k = k + 1
             else:
@@ -146,13 +140,17 @@ if __name__ == "__main__":
         if plotting:
             ax['Feeder'].clear()
             ax['Feeder'].plot(time_sim, feeder_real_power)
+            ax['Feeder'].plot(np.linspace(0,24,25), feeder_limit_upper*np.ones(25), 'r--')
+            ax['Feeder'].plot(np.linspace(0,24,25), feeder_limit_lower*np.ones(25), 'g--')
+            ax['Feeder'].set_ylabel("Feeder Load (kW)")
+            ax['Feeder'].set_xlabel("Time (Hrs)")
             ax['Feeder'].set_xlim([0, 24])
             ax['Feeder'].grid()
             for keys in EV_data:
                 ax[keys].clear()
                 ax[keys].plot(time_sim, EV_data[keys])
-                ax[keys].set_ylabel("EV Output in kW")
-                ax[keys].set_xlabel("Time ")
+                ax[keys].set_ylabel("EV Output (kW)")
+                ax[keys].set_xlabel("Time (Hrs)")
                 ax[keys].set_title(keys)
                 ax[keys].set_xlim([0, 24])
                 ax[keys].grid()
@@ -166,5 +164,5 @@ if __name__ == "__main__":
     t = 60 * 60 * 24
     while grantedtime < t:
         grantedtime = h.helicsFederateRequestTime(fed, t)
-    logger.info("Destroying federate")
+    logger.info("{}: Destroying federate".format(federate_name))
     destroy_federate(fed)

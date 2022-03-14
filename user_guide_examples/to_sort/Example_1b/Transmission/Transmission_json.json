@@ -4,7 +4,7 @@
     "coreType": "zmq",
     "name": "TransmissionSim",
     "offset": 0.0,
-    "period": 300,
+    "period": 60,
     "timeDelta": 1.0,
     "logfile": "output.log",
     "log_level": "warning",
