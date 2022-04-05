@@ -30,29 +30,6 @@ def create_broker():
     return broker
 
 
-def create_federate(deltat=1.0, fedinitstring="--federates=1"):
-
-    fedinfo = h.helicsFederateInfoCreate()
-
-    status = h.helicsFederateInfoSetFederateName(fedinfo, "Combination Federate")
-    assert status == 0
-
-    status = h.helicsFederateInfoSetCoreTypeFromString(fedinfo, "zmq")
-    assert status == 0
-
-    status = h.helicsFederateInfoSetCoreInitString(fedinfo, fedinitstring)
-    assert status == 0
-
-    status = h.helicsFederateInfoSetTimeDelta(fedinfo, deltat)
-    assert status == 0
-
-    status = h.helicsFederateInfoSetLoggingLevel(fedinfo, 1)
-    assert status == 0
-
-    fed = h.helicsCreateCombinationFederate(fedinfo)
-
-    return fed
-
 
 def destroy_federate(fed):
     h.helicsFederateDisconnect(fed)
@@ -104,7 +81,7 @@ if __name__ == "__main__":
     total_inteval = int(60 * 60 * hours)
     grantedtime = -1
     pf_interval    = 5 * 60  # in seconds (minimim_resolution) ## Adjust this to change PF intervals
-    acopf_interval = 60 * 60  # in seconds (minimim_resolution) ## Adjust this to change ACOPF intervals
+    acopf_interval = 15 * 60  # in seconds (minimim_resolution) ## Adjust this to change ACOPF intervals
     random.seed(0)
 
     peak_demand = []
@@ -172,7 +149,6 @@ if __name__ == "__main__":
 
         while grantedtime < t:
             grantedtime = h.helicsFederateRequestTime(fed, t)
-        time.sleep(0.1)
 
         #############################   Subscribing to Feeder Load from to GridLAB-D ##############################################
 

@@ -4,7 +4,7 @@
     "coreType": "zmq",
     "name": "DistributionSim",
     "offset": 0.0,
-    "period": 300,
+    "period": 60,
     "timeDelta": 1.0,
     "logfile": "output.log",
     "log_level": "warning",
@@ -38,8 +38,14 @@
             "key" : "IEEE_123_feeder_0/EV6",
             "destination": "EV_Controller/EV6",
             "info" : {
-                "object" : "EV6",
-                "property" : "constant_power_A"
+                "publication_info": {
+                  "object": "EV6",
+                  "property": "constant_power_A"
+                },
+                "subscription_info": {
+                  "object": "EV6",
+                  "property": "constant_power_A"
+              }
             }
         },
         {
@@ -47,8 +53,14 @@
             "key" : "IEEE_123_feeder_0/EV5",
             "destination": "EV_Controller/EV5",
             "info" : {
-                "object" : "EV5",
-                "property" : "constant_power_B"
+                "publication_info": {
+                  "object": "EV5",
+                  "property": "constant_power_B"
+                },
+                "subscription_info": {
+                  "object": "EV5",
+                  "property": "constant_power_B"
+              }
             }
         },
         {
@@ -56,8 +68,14 @@
             "key" : "IEEE_123_feeder_0/EV4",
             "destination": "EV_Controller/EV4",
             "info" : {
-                "object" : "EV4",
-                "property" : "constant_power_C"
+                "publication_info": {
+                  "object": "EV4",
+                  "property": "constant_power_C"
+                },
+                "subscription_info": {
+                  "object": "EV4",
+                  "property": "constant_power_C"
+              }
             }
         },
         {
@@ -65,8 +83,14 @@
             "key" : "IEEE_123_feeder_0/EV3",
             "destination": "EV_Controller/EV3",
             "info" : {
-                "object" : "EV3",
-                "property" : "constant_power_A"
+                "publication_info": {
+                  "object": "EV3",
+                  "property": "constant_power_A"
+                },
+                "subscription_info": {
+                  "object": "EV3",
+                  "property": "constant_power_A"
+              }
             }
         },
         {
@@ -74,8 +98,14 @@
             "key" : "IEEE_123_feeder_0/EV2",
             "destination": "EV_Controller/EV2",
             "info" : {
-                "object" : "EV2",
-                "property" : "constant_power_B"
+                "publication_info": {
+                  "object": "EV2",
+                  "property": "constant_power_B"
+                },
+                "subscription_info": {
+                  "object": "EV2",
+                  "property": "constant_power_B"
+              }
             }
         },
         {
@@ -83,8 +113,14 @@
             "key" : "IEEE_123_feeder_0/EV1",
             "destination": "EV_Controller/EV1",
             "info" : {
-                "object" : "EV1",
-                "property" : "constant_power_C"
+                "publication_info": {
+                  "object": "EV1",
+                  "property": "constant_power_C"
+                },
+                "subscription_info": {
+                  "object": "EV1",
+                  "property": "constant_power_C"
+              }
             }
         }
      ]

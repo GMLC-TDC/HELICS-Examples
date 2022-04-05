@@ -1,139 +1,81 @@
 {
-    "name": "EV_Controller",
-    "loglevel": 5,
-    "coreType": "zmq",
-    "timeDelta": 1.0,
-    "uninterruptible": true,
-
-    "endpoints":[
-    {
-        "name": "EV_Controller/EV6",
-        "type": "genmessage",
-        "global": true
-
-    },
-    {
-        "name": "EV_Controller/EV5",
-        "type": "genmessage",
-        "global": true
-    },
-    {
-        "name": "EV_Controller/EV4",
-        "type": "genmessage",
-        "global": true
-    },
-    {
-        "name": "EV_Controller/EV3",
-        "type": "genmessage",
-        "global": true
-    },
-    {
-        "name": "EV_Controller/EV2",
-        "type": "genmessage",
-        "global": true
-    },
-    {
-        "name": "EV_Controller/EV1",
-        "type": "genmessage",
-        "global": true
-    }
-    ],
-    "filters":
-    [
-    {
-    "name":"filterEV6",
-    "sourcetarget":"EV_Controller/EV6",
-    "mode":"source",
-    "operation":"delay",
-    "properties":
-    {
-        "name":"delay",
-        "value":600
-    }
-    },
-    {
-    "name":"filterEV5",
-    "sourcetarget":"EV_Controller/EV5",
-    "mode":"source",
-    "operation":"delay",
-    "properties":
-    {
-        "name":"delay",
-        "value":600
-    }
-    },
-    {
-    "name":"filterEV4",
-    "sourcetarget":"EV_Controller/EV4",
-    "operation":"delay",
-    "properties":
-    {
-        "name":"delay",
-        "value":600
-    }
-    },
-    {
-    "name":"filterEV3",
-    "sourcetarget":"EV_Controller/EV3",
-    "mode":"source",
-    "operation":"delay",
-    "properties":
-    {
-        "name":"delay",
-        "value":600
-    }
-    },
-    {
-    "name":"filterEV2",
-    "sourcetarget":"EV_Controller/EV2",
-    "mode":"source",
-    "operation":"delay",
-    "properties":
-    {
-        "name":"delay",
-        "value":600
-    }
-    },
-    {
-    "name":"filterEV1",
-    "sourcetarget":"EV_Controller/EV1",
-    "mode":"source",
-    "operation":"delay",
-    "properties":
-    {
-        "name":"delay",
-        "value":600
-    }
-    }
-    ],
-    "subscriptions":[
-    {
-        "key": "IEEE_123_feeder_0/totalLoad",
-        "type": "complex",
-        "required": true
-    },  {
-        "key": "IEEE_123_feeder_0/charge_EV6",
-        "type": "complex",
-        "required": true
-    },    {
-        "key": "IEEE_123_feeder_0/charge_EV5",
-        "type": "complex",
-        "required": true
-    },    {
-        "key": "IEEE_123_feeder_0/charge_EV4",
-        "type": "complex",
-        "required": true
-    },  {
-        "key": "IEEE_123_feeder_0/charge_EV3",
-        "type": "complex",
-        "required": true
-    },  {
-        "key": "IEEE_123_feeder_0/charge_EV2",
-        "type": "complex",
-        "required": true
-    },  {
-        "key": "IEEE_123_feeder_0/charge_EV1",
-        "type": "complex",
-        "required": true
-    }]
+	"coreInit": "--federates=1",
+	"coreName": "EVController Federate",
+	"coreType": "zmq",
+	"name": "EVControllerSim",
+	"offset": 0.0,
+	"period": 300,
+	"timeDelta": 1.0,
+	"logfile": "output.log",
+	"log_level": "warning",
+	"endpoints": [
+		{
+			"key": "EV_Controller/EV6",
+			"destination": "IEEE_123_feeder_0/EV6",
+			"global": true,
+			"type": "string",
+			"info": "This is the endpoint which sends CIM attribute commands to the GridLAB-D simulator."
+		},
+		{
+			"key": "EV_Controller/EV5",
+			"destination": "IEEE_123_feeder_0/EV5",
+			"global": true,
+			"type": "string",
+			"info": "This is the endpoint which sends CIM attribute commands to the GridLAB-D simulator."
+		},
+		{
+			"key": "EV_Controller/EV4",
+			"destination": "IEEE_123_feeder_0/EV4",
+			"global": true,
+			"type": "string",
+			"info": "This is the endpoint which sends CIM attribute commands to the GridLAB-D simulator."
+		},
+		{
+			"key": "EV_Controller/EV3",
+			"destination": "IEEE_123_feeder_0/EV3",
+			"global": true,
+			"type": "string",
+			"info": "This is the endpoint which sends CIM attribute commands to the GridLAB-D simulator."
+		},
+		{
+			"key": "EV_Controller/EV2",
+			"destination": "IEEE_123_feeder_0/EV2",
+			"global": true,
+			"type": "string",
+			"info": "This is the endpoint which sends CIM attribute commands to the GridLAB-D simulator."
+		},
+		{
+			"key": "EV_Controller/EV1",
+			"destination": "IEEE_123_feeder_0/EV1",
+			"global": true,
+			"type": "string",
+			"info": "This is the endpoint which sends CIM attribute commands to the GridLAB-D simulator."
+		}
+	],
+	"filters": [
+		{
+			"name": "EVfilters",
+			"sourcetargets": [
+				"EV_Controller/EV6",
+				"EV_Controller/EV5",
+				"EV_Controller/EV4",
+				"EV_Controller/EV3",
+				"EV_Controller/EV2",
+				"EV_Controller/EV1"
+			],
+			"mode": "source",
+			"operation": "delay",
+			"properties": {
+				"name": "delay",
+				"value": 600
+			}
+		}
+	],
+	"subscriptions": [
+		{
+			"key": "IEEE_123_feeder_0/totalLoad",
+			"type": "complex",
+			"required": true
+		}
+	]
 }
