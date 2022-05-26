@@ -278,4 +278,4 @@ if __name__ == "__main__":
     plt.xlabel("time (hr)")
 
     plt.savefig("advanced_iteration_battery_current.png", format="png")
-    plt.close()
+    plt.show()
