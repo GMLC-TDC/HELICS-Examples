@@ -1,5 +1,5 @@
 {
-  "name": "fundamental_default",
+  "name": "iterative runner",
   "broker": true,
   "federates": [
     {
