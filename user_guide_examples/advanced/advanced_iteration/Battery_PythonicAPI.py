@@ -37,8 +37,7 @@ def destroy_federate(fed):
     :param fed: Federate to be destroyed
     :return: (none)
     """
-    
-    # Adding extra time request to clear out any pending messages to avoid
+     # Adding extra time request to clear out any pending messages to avoid
     #   annoying errors in the broker log. Any message are tacitly disregarded.
     grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
     status = h.helicsFederateDisconnect(fed)
@@ -73,34 +72,25 @@ def get_new_battery(numBattery):
 
 
 if __name__ == "__main__":
-    np.random.seed(628)
+    np.random.seed(2622)
 
     ##########  Registering  federate and configuring from JSON################
     fed = h.helicsCreateValueFederateFromConfig("BatteryConfig.json")
-    federate_name = h.helicsFederateGetName(fed)
-    logger.info(f"Created federate {federate_name}")
 
-    sub_count = h.helicsFederateGetInputCount(fed)
-    logger.debug(f"\tNumber of subscriptions: {sub_count}")
-    pub_count = h.helicsFederateGetPublicationCount(fed)
-    logger.debug(f"\tNumber of publications: {pub_count}")
+    logger.info(f"Created federate {fed.name}")
+    logger.debug(f"\tNumber of subscriptions: {fed.n_inputs}")
+    logger.debug(f"\tNumber of publications: {fed.n_publications}")
 
     # Diagnostics to confirm JSON config correctly added the required
     #   publications and subscriptions
-    subid = {}
-    for i in range(0, sub_count):
-        subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name = h.helicsSubscriptionGetTarget(subid[i])
-        logger.debug(f"\tRegistered subscription---> {sub_name}")
+    for k, v in fed.subscriptions.items():
+        logger.debug(f"\tRegistered subscription---> {k}")
 
-    pubid = {}
-    for i in range(0, pub_count):
-        pubid[i] = h.helicsFederateGetPublicationByIndex(fed, i)
-        pub_name = h.helicsPublicationGetName(pubid[i])
-        logger.debug(f"\tRegistered publication---> {pub_name}")
+    for k, v in fed.publications.items():
+        logger.debug(f"\tRegistered publication---> {k}")
 
     ##############  Entering Execution Mode  ##################################
-    h.helicsFederateEnterExecutingMode(fed)
+    fed.enter_executing_mode()
     logger.info("Entered HELICS execution mode")
 
     # Define battery physics as empirical values
@@ -109,15 +99,25 @@ if __name__ == "__main__":
     # 8 ohms to 150 ohms
     effective_R = np.array([8, 150])
 
-    batt_list = get_new_battery(pub_count)
+    subid = {}
+    for i in range(0, fed.n_inputs):
+        subid[i] = h.helicsFederateGetInputByIndex(fed, i)
+        sub_name = h.helicsSubscriptionGetTarget(subid[i])
+
+    pubid = {}
+    for i in range(0, fed.n_publications):
+        pubid[i] = h.helicsFederateGetPublicationByIndex(fed, i)
+        pub_name = h.helicsPublicationGetName(pubid[i])
+
+    batt_list = get_new_battery(fed.n_publications)
 
     current_soc = {}
-    for i in range(0, pub_count):
+    for i in range(0, fed.n_publications):
         current_soc[i] = (np.random.randint(0, 60)) / 100
 
     hours = 24 * 7
     total_interval = int(60 * 60 * hours)
-    update_interval = int(h.helicsFederateGetTimeProperty(fed, h.HELICS_PROPERTY_TIME_PERIOD))
+    update_interval = int(fed.property["TIME_PERIOD"])
     grantedtime = 0
 
     # Data collection lists
@@ -131,19 +131,18 @@ if __name__ == "__main__":
         # Time request for the next physical interval to be simulated
         requested_time = grantedtime + update_interval
         logger.debug(f"Requesting time {requested_time}")
-        grantedtime = h.helicsFederateRequestTime(fed, requested_time)
+        grantedtime = fed.request_time(requested_time)
         logger.debug(f"Granted time {grantedtime}")
 
         # Iterating over publications in this case since this example
         #  uses only one charging voltage for all five batteries
 
-        for j in range(0, pub_count):
+        for j in range(0, fed.n_publications):
             logger.debug(f"Battery {j+1} time {grantedtime}")
 
             # Get the applied charging voltage from the EV
-            charging_voltage = h.helicsInputGetDouble((subid[j]))
-            logger.debug(f"\tReceived voltage {charging_voltage:.2f}" 
-                        f" from input {h.helicsSubscriptionGetTarget(subid[j])}")
+            charging_voltage = subid[j].double
+            logger.debug(f"\tReceived voltage {charging_voltage:.2f} from input targetting {subid[j].target}")
 
             # Calculate charging current and update SOC
             R = np.interp(current_soc[j], socs, effective_R)
@@ -162,8 +161,8 @@ if __name__ == "__main__":
             logger.debug(f"\tSOC: {current_soc[j]:.4f}")
 
             # Publish out charging current
-            h.helicsPublicationPublishDouble(pubid[j], charging_current)
-            logger.debug(f"\tPublished {h.helicsPublicationGetName(pubid[j])} with value " f"{charging_current:.2f}")
+            pubid[j].publish(charging_current)
+            logger.debug(f"\tPublished {pub_name[j]} with value " f"{charging_current:.2f}")
 
             # Store SOC for later analysis/graphing
             if pubid[j] not in soc:
@@ -173,14 +172,13 @@ if __name__ == "__main__":
         # Data collection vectors
         time_sim.append(grantedtime)
 
-    # Cleaning up HELICS stuff once we've finished the co-simulation.
-    destroy_federate(fed)
     # Printing out final results graphs for comparison/diagnostic purposes.
     xaxis = np.array(time_sim) / 3600
     y = []
     for key in soc:
         y.append(np.array(soc[key]))
 
+    plt.figure()
 
     fig, axs = plt.subplots(5, sharex=True, sharey=True)
     fig.suptitle("SOC of each EV Battery")
