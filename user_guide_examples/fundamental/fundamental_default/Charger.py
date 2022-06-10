@@ -158,7 +158,7 @@ if __name__ == "__main__":
     # Apply initial charging voltage
     for j in range(0, pub_count):
         h.helicsPublicationPublishDouble(pubid[j], charging_voltage[j])
-        logger.debug(f"\tPublishing charging voltage of {charging_voltage[j]}"
+        logger.debug(f"\tPublishing {h.helicsPublicationGetName(pubid[j])} of {charging_voltage[j]}"
                     f" at time {grantedtime}")
 
     ########## Main co-simulation loop ########################################
@@ -182,7 +182,7 @@ if __name__ == "__main__":
 
             # Publish updated charging voltage
             h.helicsPublicationPublishDouble(pubid[j], charging_voltage[j])
-            logger.debug(f"\tPublishing charging voltage of {charging_voltage[j]}"
+            logger.debug(f"\tPublishing {h.helicsPublicationGetName(pubid[j])} of {charging_voltage[j]}"
                          f" at time {grantedtime}")
 
         # Calculate the total power required by all chargers. This is the
