@@ -14,7 +14,7 @@ import numpy as np
 import json
 import pprint 
 
-sim_max_time = 10
+sim_max_time = 11 # To make sure the last message is receeived
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
@@ -51,15 +51,17 @@ if __name__ == "__main__":
     fedinfo = h.helicsCreateFederateInfo()
     fedinfo.core_type = "zmq"
     fedinfo.core_init = "-f 1"
-    comboFed = h.helicsCreateCombinationFederate("comboFed", fedinfo)
-    # ep = comboFed.register_global_endpoint("endpoint")
-    ep = h.helicsFederateRegisterGlobalTargetedEndpoint(comboFed, "endpoint", "")
+    h.helicsFederateInfoSetIntegerProperty(fedinfo, h.HELICS_PROPERTY_INT_LOG_LEVEL, h.helics_log_level_interfaces)
+    receiverFed = h.helicsCreateCombinationFederate("receiverFed", fedinfo)
+    
+    # ep = receiverFed.register_global_endpoint("endpoint")
+    ep = h.helicsFederateRegisterGlobalTargetedEndpoint(receiverFed, "endpoint", "")
     
     # Add subscription
-    # sub = comboFed.register_subscription("value_out_1", "double")
+    # sub = receiverFed.register_subscription("value_out_1", "double")
 
     #Add the translator(s)
-    translator = h.helicsFederateRegisterGlobalTranslator(comboFed, h.HELICS_TRANSLATOR_TYPE_JSON, "translator")
+    translator = h.helicsFederateRegisterGlobalTranslator(receiverFed, h.HELICS_TRANSLATOR_TYPE_JSON, "translator")
     # Cheating and just copying the hard-coded names from both federates
     # To do this properly you might have to do a query or something similar.
     # As of Feb 1, the APIs to wire in the translator from the translator's
@@ -69,17 +71,23 @@ if __name__ == "__main__":
     h.helicsEndpointAddSourceTarget(ep, "translator")
     
     
-    comboFed.enter_executing_mode()
+    receiverFed.enter_executing_mode()
     logger.info('Entered HELICS execution mode')
     
     query = h.helicsCreateQuery("root", "dependency_graph")
-    graph = h.helicsQueryExecute(query, comboFed)
+    graph = h.helicsQueryExecute(query, receiverFed)
+    logger.info("Dependency graph query result:")
     logger.info(pprint.pformat(graph))
     
     granted_time = 0
     
     while granted_time < sim_max_time:
-        granted_time = comboFed.request_time(granted_time + 1)
+        request_time = int(granted_time + 1)
+        logger.debug(f"Requested time: {request_time}")
+        # Pick one timing strategy from the lines below
+        granted_time = receiverFed.request_time(request_time) # Traditional
+        # granted_time = receiverFed.request_time(h.HELICS_TIME_MAXTIME) # controller-style
+        
         logger.debug(f"Granted time: {granted_time}")
         # logger.debug(f"\tlast published value: {sub.double}")
         msgDict = {"type": "double", "value": 0}
@@ -96,4 +104,4 @@ if __name__ == "__main__":
 #         ep.send_data(out_msg)
 #         logger.debug(f"\tnew sent message: {jsonStr}\n")
         
-    destroy_federate(comboFed)
+    destroy_federate(receiverFed)
