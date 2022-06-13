@@ -53,7 +53,7 @@ if __name__ == "__main__":
     fedinfo = h.helicsCreateFederateInfo()
     fedinfo.core_type = "zmq"
     fedinfo.core_init = "-f 1"
-    h.helicsFederateInfoSetIntegerProperty(fedinfo, h.HELICS_PROPERTY_INT_LOG_LEVEL, h.helics_log_level_interfaces)
+    fedinfo.property[h.HELICS_PROPERTY_INT_LOG_LEVEL] = h.HELICS_LOG_LEVEL_ERROR
     senderFed = h.helicsCreateValueFederate("senderFed", fedinfo)
     pub = h.helicsFederateRegisterGlobalPublication(senderFed, "value_out_1", h.HELICS_DATA_TYPE_DOUBLE)
     #sub = senderFed.register_subscription("translator", "double")
