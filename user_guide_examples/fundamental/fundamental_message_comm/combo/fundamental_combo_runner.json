@@ -1,12 +1,7 @@
 {
   "name": "fundamental_combo",
+  "broker": true,
   "federates": [
-    {
-      "directory": ".",
-      "exec": "helics_broker -f 3 --loglevel=warning",
-      "host": "localhost",
-      "name": "broker"
-    },
     {
       "directory": ".",
       "exec": "python -u Charger.py",

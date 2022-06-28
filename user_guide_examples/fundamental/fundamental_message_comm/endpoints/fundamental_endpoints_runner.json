@@ -1,12 +1,7 @@
 {
   "name": "fundamental_endpoints",
+  "broker": true,
   "federates": [
-    {
-      "directory": ".",
-      "exec": "helics_broker -f 2 --loglevel=debug",
-      "host": "localhost",
-      "name": "helics_broker"
-    },
     {
       "directory": ".",
       "exec": "python -u Charger.py",
