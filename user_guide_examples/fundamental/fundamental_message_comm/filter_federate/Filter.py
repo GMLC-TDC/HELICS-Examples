@@ -27,8 +27,6 @@ import logging
 import pprint
 import os
 import sys
-
-
 import helics as h
 import random
 from operator import itemgetter

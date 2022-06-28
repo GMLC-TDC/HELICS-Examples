@@ -14,10 +14,11 @@ SOC modeled by the charger
 trevor.hardy@pnnl.gov
 """
 
+import matplotlib.pyplot as plt
 import helics as h
 import logging
 import numpy as np
-import matplotlib.pyplot as plt
+
 
 
 logger = logging.getLogger(__name__)

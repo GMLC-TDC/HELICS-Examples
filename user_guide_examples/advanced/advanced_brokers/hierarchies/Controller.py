@@ -11,12 +11,12 @@ or not (based on whether it is full).
 allison.m.campbell@pnnl.gov
 """
 
+import matplotlib.pyplot as plt
 import helics as h
 import logging
 import numpy as np
 import sys
 import time
-import matplotlib.pyplot as plt
 import pandas as pd
 
 logger = logging.getLogger(__name__)

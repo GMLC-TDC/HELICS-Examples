@@ -22,10 +22,10 @@ source input, defined in ChargerController.json.
 trevor.hardy@pnnl.gov
 """
 
+import matplotlib.pyplot as plt
 import helics as h
 import logging
 import numpy as np
-import matplotlib.pyplot as plt
 import sys
 
 
