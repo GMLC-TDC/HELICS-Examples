@@ -1,7 +1,12 @@
 {
   "name": "fundamental_integration",
-  "broker": true,
   "federates": [
+    {
+      "directory": ".",
+      "exec": "helics_broker -f3",
+      "host": "localhost",
+      "name": "broker"
+    },
     {
       "directory": ".",
       "exec": "python -u Charger.py",
