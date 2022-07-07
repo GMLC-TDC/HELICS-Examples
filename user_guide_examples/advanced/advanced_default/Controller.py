@@ -46,6 +46,8 @@ def destroy_federate(fed):
 
 
 if __name__ == "__main__":
+    np.random.seed(1490)
+    
     ##############  Registering  federate from json  ##########################
     fed = h.helicsCreateMessageFederateFromConfig("ControllerConfig.json")
     federate_name = h.helicsFederateGetName(fed)
