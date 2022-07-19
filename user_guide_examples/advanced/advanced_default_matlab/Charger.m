@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
+
+%{
 Created on 9/15/2020
 
 This is a simple EV federate that models a set of EV terminals in an
@@ -15,7 +15,8 @@ level) and begins charging.
 
 @author: Allison M. Campbell, Trevor Hardy
 allison.m.campbell@pnnl.gov, trevor.hardy@pnnl.gov
-"""
+%}
+
 %% Utility Functions
 
 function destroy_federate(fed, fid)
