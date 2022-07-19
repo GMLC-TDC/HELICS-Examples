@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
-"""
+
+%{
 Created on 8/31/2020
 
 This is a simple battery value federate that models the physics of an EV
@@ -12,12 +12,12 @@ SOC modeled by the charger
 
 @author: Trevor Hardy
 trevor.hardy@pnnl.gov
-"""
+%}
 
 
 %% Utility Functions
 
-function destroy_federate(fed, fid):
+function destroy_federate(fed, fid)
     %{
     As part of ending a HELICS co-simulation it is good housekeeping to
     formally destroy a federate. Doing so informs the rest of the
@@ -32,7 +32,7 @@ function destroy_federate(fed, fid):
 
     % Adding extra time request to clear out any pending messages to avoid
     % annoying errors in the broker log. Any message are tacitly disregarded.
-    grantedtime = helics.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME);
+    grantedtime = helics.helicsFederateRequestTime(fed, helics.HELICS_TIME_MAXTIME);
     status = helics.helicsFederateDisconnect(fed);
     helics.helicsFederateFree(fed);
     helics.helicsCloseLibrary();
@@ -186,7 +186,7 @@ try
 
     saveas(gcf, 'advanced_default_battery_SOCs.png', 'png');
 catch
-    fprintf(fid, 'Something happend, closing log file');
-    fprintf('Something happend, closing log file');
+    fprintf(fid, 'Something happend, closing log file\n');
+    fprintf('Battery: Something happend, closing log file\n');
     fclose(fid);
 end
