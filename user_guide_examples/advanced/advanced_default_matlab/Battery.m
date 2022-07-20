@@ -15,65 +15,19 @@ trevor.hardy@pnnl.gov
 %}
 
 
-%% Utility Functions
-
-function destroy_federate(fed, fid)
-    %{
-    As part of ending a HELICS co-simulation it is good housekeeping to
-    formally destroy a federate. Doing so informs the rest of the
-    federation that it is no longer a part of the co-simulation and they
-    should proceed without it (if applicable). Generally this is done
-    when the co-simulation is complete and all federates end execution
-    at more or less the same wall-clock time.
-
-    :param fed: Federate to be destroyed
-    :return: (none)
-    %}
-
-    % Adding extra time request to clear out any pending messages to avoid
-    % annoying errors in the broker log. Any message are tacitly disregarded.
-    grantedtime = helics.helicsFederateRequestTime(fed, helics.HELICS_TIME_MAXTIME);
-    status = helics.helicsFederateDisconnect(fed);
-    helics.helicsFederateFree(fed);
-    helics.helicsCloseLibrary();
-    fprintf(fid, 'Federate finalized\n');
-end
-
-function listOfBatts = get_new_battery(numBattery)
-    %{
-    Using hard-coded probabilities, a distribution of battery of
-    fixed battery sizes are generated. The number of batteries is a user
-    provided parameter.
-
-    :param numBattery: Number of batteries to generate
-    :return
-        listOfBatts: List of generated batteries
-
-    %}
-
-    % # Probabilities of a new EV having a battery at a given capacity.
-    % #   The three random values (25,62, 100) are the kWh of the randomly
-    % #   selected battery.
-    size_1 = 0.2;
-    size_2 = 0.2;
-    size_3 = 0.6;
-    listOfBatts = randsample([25,62,100],numBattery,true,[size_1,size_2,size_3]);
-end
-
-
 %% Main Program
-    rng(2608);
+rng(2608);
 try
     fid = fopen('Battery.log', 'w');
     %%%%%%%%%  Registering  federate and configuring from JSON %%%%%%%%
-    fed = helics.helicsCreateValueFederateFromConfig("BatteryConfig.json");
+    fed = helics.helicsCreateValueFederateFromConfig('BatteryConfig.json');
     federate_name = helics.helicsFederateGetName(fed);
     fprintf(fid, 'Created federate %s\n', federate_name);
     fprintf('Created federate %s\n', federate_name);
 
     sub_count = helics.helicsFederateGetInputCount(fed);
     fprintf(fid,'\tNumber of subscriptions: %d\n', sub_count);
-    pub_count = h.helicsFederateGetPublicationCount(fed);
+    pub_count = helics.helicsFederateGetPublicationCount(fed);
     fprintf(fid,'\tNumber of publications: %d\n', pub_count);
 
     % Diagnostics to confirm JSON config correctly added the required
@@ -86,8 +40,8 @@ try
         fprintf(fid,'\tRegistered subscription---> %s\n', sub_name{i});
     end
 
-    pubid = {}
-    pub_name = {}
+    pubid = {};
+    pub_name = {};
     for i=1:pub_count
         pubid{i} = helics.helicsFederateGetPublicationByIndex(fed, i-1);
         pub_name{i} = helics.helicsPublicationGetName(pubid{i});
@@ -104,7 +58,7 @@ try
 
     hours = 24*7; % one week
     total_interval = 60 * 60 * hours;
-    update_interval = helics.helicsFederateGetTimeProperty(fed,helics.HELICS_PROPERTY_TIME_PERIOD);
+    update_interval = helics.helicsFederateGetTimeProperty(fed,helics.HelicsProperties.HELICS_PROPERTY_TIME_PERIOD);
     grantedtime = 0;
 
     % Define battery physics as empirical values
@@ -119,7 +73,7 @@ try
     % Data collection lists
     time_sim = [];
     current = [];
-    soc = cell(sub_id, 1);
+    soc = cell(sub_count, 1);
 
     % As long as granted time is in the time range to be simulated...
     while grantedtime < total_interval
@@ -135,7 +89,7 @@ try
 
             % Get the applied charging voltage from the EV
             charging_voltage = helics.helicsInputGetDouble(subid{j});
-            fprintf(fid,'\tReceived voltage %0.2f{charging_voltage:.2f} from input %s\n', charging_voltage, helics.helicsSubscriptionGetTarget(subid{j}));
+            fprintf(fid,'\tReceived voltage %0.2f from input %s\n', charging_voltage, helics.helicsSubscriptionGetTarget(subid{j}));
 
             % EV is fully charged and a new EV is moving in
             % This is indicated by the charging removing voltage when it
@@ -144,7 +98,7 @@ try
                 new_batt = get_new_battery(1);
                 batt_list(j) = new_batt;
                 current_soc(j) = randi(80)/100;
-                charging_current = 0
+                charging_current = 0;
             end
             % Calculate charging current and update SOC
             R =  interp1(socs, effective_R, current_soc(j));
@@ -153,7 +107,7 @@ try
             fprintf(fid,'\tCharging current (A): %0.2f\n',charging_current);
             added_energy = (charging_current * charging_voltage * update_interval/3600) / 1000;
             fprintf(fid,'\tAdded energy (kWh): %0.4f', added_energy);
-            current_soc(j) = current_soc(j) + added_energy / batt_list[j];
+            current_soc(j) = current_soc(j) + added_energy / batt_list(j);
             fprintf(fid,'\tSOC: %0.4f', current_soc(j));
 
 
@@ -163,7 +117,7 @@ try
             fprintf(fid,'\tPublished %s with value %0.2f', pub_name{j}, charging_current); 
 
             % Store SOC for later analysis/graphing
-            soc{j}(end+1) = current_soc(j)
+            soc{j}(end+1) = current_soc(j);
         end
         % Data collection vectors
         time_sim(end+1) = grantedtime;
@@ -171,7 +125,7 @@ try
     end
 %% Post Processing
     % Cleaning up HELICS stuff once we've finished the co-simulation.
-    destroy_federate(fed);
+    destroy_federate(fed, fid);
     % Printing out final results graphs for comparison/diagnostic purposes.
     xaxis = time_sim/3600;
     varnames = cell(5,1);
@@ -181,12 +135,15 @@ try
     y = array2table(cell2mat(soc).', 'VariableName', varnames);
     y.x = time_sim.'/3600;
 
-    stackedplot(y, 'XVariable', 'x', 'Title', 'SOC of each EV Battery', 'xlabel', 'time (hr)');
+    s = stackedplot(y, 'XVariable', 'x', 'Title', 'SOC of each EV Battery', 'xlabel', 'time (hr)');
+    ax = findobj(s.NodeChildren, 'Type','Axes');
+    set(ax, 'YTick', 0:0.25:1, 'YLim', [0, 1]);
     grid();
 
     saveas(gcf, 'advanced_default_battery_SOCs.png', 'png');
-catch
+catch ME
     fprintf(fid, 'Something happend, closing log file\n');
     fprintf('Battery: Something happend, closing log file\n');
     fclose(fid);
+    rethrow(ME);
 end

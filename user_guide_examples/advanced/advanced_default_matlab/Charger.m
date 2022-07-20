@@ -17,111 +17,13 @@ level) and begins charging.
 allison.m.campbell@pnnl.gov, trevor.hardy@pnnl.gov
 %}
 
-%% Utility Functions
-
-function destroy_federate(fed, fid)
-    %{
-    As part of ending a HELICS co-simulation it is good housekeeping to
-    formally destroy a federate. Doing so informs the rest of the
-    federation that it is no longer a part of the co-simulation and they
-    should proceed without it (if applicable). Generally this is done
-    when the co-simulation is complete and all federates end execution
-    at more or less the same wall-clock time.
-
-    :param fed: Federate to be destroyed
-    :return: (none)
-    %}
-    
-    % Adding extra time request to clear out any pending messages to avoid
-    %   annoying errors in the broker log. Any message are tacitly disregarded.
-    grantedtime = helics.helicsFederateRequestTime(fed, helics.HELICS_TIME_MAXTIME);
-    status = helics.helicsFederateDisconnect(fed);
-    helics.helicsFederateFree(fed);
-    helics.helicsCloseLibrary();
-    fprintf(fid, 'Federate finalized\n');
-end
-
-function [numLvl1,numLvl2,numLvl3,listOfEVs] = get_new_EV(numEVs)
-    %{
-    Using hard-coded probabilities, a distribution of EVs with support
-    for specific charging levels are generated. The number of EVs
-    generated is defined by the user.
-
-    :param numEVs: Number of EVs
-    :return
-        numLvL1: Number of new EVs that will charge at level 1
-        numLvL2: Number of new EVs that will charge at level 2
-        numLvL3: Number of new EVs that will charge at level 3
-        listOfEVs: List of all EVs (and their charging levels) generated
-
-    %}
-
-    % Probabilities of a new EV charging at the specified level.
-    lvl1 = 0.05;
-    lvl2 = 0.6;
-    lvl3 = 0.35;
-    listOfEVs = randsample([1,2,3],numEVs,true,[lvl1,lvl2,lvl3]);
-    numLvl1 = sum(listOfEVs == 1);
-    numLvl2 = sum(listOfEVs == 2);
-    numLvl3 = sum(listOfEVs == 3);
-
-end
-
-
-
-function charging_voltage = calc_charging_voltage(EV_list)
-    %{
-    This function uses the pre-defined charging powers and maps them to
-    standard (more or less) charging voltages. This allows the charger
-    to apply an appropriately modeled voltage to the EV based on the
-    charging power level
-
-    :param EV_list: Value of "1", "2", or "3" to indicate charging level
-    :return: charging_voltage: List of charging voltages corresponding
-            to the charging power.
-    %}
-
-    % Ignoring the difference between AC and DC voltages for this application
-    charge_voltages = [120, 240, 630];
-    charging_voltage = charge_voltages * [EV_List == [1,2,3].'];
-
-end
-
-function SOC_estimate = estimate_SOC(charging_V, charging_A)
-    %{
-    The charger has no direct knowledge of the SOC of the EV battery it
-    is charging but instead must estimate it based on the effective resistance
-    of the battery which is calculated from the applied charging voltage and
-    measured charging current. The effective resistance model is used here is
-    identical to that of the actual battery; if both the charging voltage
-    and current were measured perfectly the SOC estimate here would exactly
-    match the true SOC modeled by the battery. For fun, though, a small
-    amount of Gaussian noise is added to the current value. This noise
-    creates larger errors as the charging current goes down (EV battery
-    reaching full SOC).
-
-    :param charging_V: Applied charging voltage
-    :param charging_A: Charging current as passed back by the battery federate
-    :return: SOC estimate
-    %}
-
-    socs = [0, 1];
-    effective_R = [8, 150];
-    mu = 0;
-    sigma = 0.2
-    noise = mu + sigma*randn();
-    measured_A = charging_A + noise;
-    measured_R = charging_V / measured_A;
-    SOC_estimate = interp1(effective_R, socs, measured_R);
-
-end
 
 %% Main Program
-    rng(1490);
+rng(1490);
 try
     fid = fopen('Charger.log', 'w');
     %%%%%%%%%%%%%  Registering  federate from json  %%%%%%%%%%%%%%%%%%%%%
-    fed = helics.helicsCreateCombinationFederateFromConfig("ChargerConfig.json");
+    fed = helics.helicsCreateCombinationFederateFromConfig('ChargerConfig.json');
     federate_name = helics.helicsFederateGetName(fed);
     fprintf(fid, 'Created federate %s\n', federate_name);
     end_count = helics.helicsFederateGetEndpointCount(fed);
@@ -149,7 +51,7 @@ try
         sub_name = helics.helicsSubscriptionGetTarget(subid{i});
         fprintf(fid,'\tRegistered subscription---> %s\n', sub_name);
     end
-    pubid = {}
+    pubid = {};
     for i=1:pub_count
         pubid{i} = helics.helicsFederateGetPublicationByIndex(fed, i-1);
         pub_name = helics.helicsPublicationGetName(pubid{i});
@@ -166,19 +68,19 @@ try
 
     hours = 24*7; % one week
     total_interval = 60 * 60 * hours;
-    update_interval = helics.helicsFederateGetTimeProperty(fed, helics.HELICS_PROPERTY_TIME_PERIOD);
+    update_interval = helics.helicsFederateGetTimeProperty(fed, helics.HelicsProperties.HELICS_PROPERTY_TIME_PERIOD);
     grantedtime = 0;
 
     % Generate an initial fleet of EVs, one for each previously defined
     %   endpoint. This gives each EV a unique link to the EV controller
     %   federate.
-    numLvl1,numLvl2,numLvl3,EVlist = get_new_EV(end_count);
+    [~,~,~,EVlist] = get_new_EV(end_count);
     charging_voltage = calc_charging_voltage(EVlist);
     currentsoc = [];
 
     % Data collection lists
-    time_sim = []
-    power = []
+    time_sim = [];
+    power = [];
     charging_current = [];
 
     % Blocking call for a time request at simulation time 0
@@ -191,7 +93,7 @@ try
     % Apply initial charging voltage
     for j=1:pub_count
         helics.helicsPublicationPublishDouble(pubid{j}, charging_voltage(j));
-        fprintf(fid,'\tPublishing charging voltage of %0.2f at time %d\n', charging_voltage(j). grantedtime);
+        fprintf(fid,'\tPublishing charging voltage of %0.2f at time %d\n', charging_voltage(j), grantedtime);
     end
 
 %%    ########## Main co-simulation loop ########################################
@@ -215,19 +117,19 @@ try
 
             % New EV is in place after removing charge from old EV,
             % as indicated by the zero current draw.
-            if charging_current(j) == 0:
+            if charging_current(j) == 0
                 [~, ~, ~, newEVtype] = get_new_EV(1);
                 EVlist(j) = newEVtype;
                 charge_V = calc_charging_voltage(newEVtype);
                 charging_voltage(j) = charge_V;
 
                 currentsoc(j) = 0; % Initial SOC estimate
-                printf(fid,'\t New EV, SOC estimate: %0.4f\n', currentsoc(j));
-                printf(fid,'\t New EV, charging voltage: %0.2f\n', charging_voltage(j));
+                fprintf(fid,'\tNew EV, SOC estimate: %0.4f\n', currentsoc(j));
+                fprintf(fid,'\tNew EV, charging voltage: %0.2f\n', charging_voltage(j));
             else
                 % SOC estimation
                 currentsoc(j) = estimate_SOC(charging_voltage(j), charging_current(j));
-                printf(fid,'\t EV SOC estimate: %0.4f\n', currentsoc(j));
+                fprintf(fid,'\tEV SOC estimate: %0.4f\n', currentsoc(j));
             end
 
 
@@ -235,8 +137,8 @@ try
             endpoint_name = helics.helicsEndpointGetName(endid{j});
             if helics.helicsEndpointHasMessage(endid{j})
                 msg = helics.helicsEndpointGetMessage(endid{j});
-                instructions = helics.helicsMessageGetString(msg)
-                source = helics.helicsMessageGetOriginalSource(msg)
+                instructions = helics.helicsMessageGetString(msg);
+                source = helics.helicsMessageGetOriginalSource(msg);
                 fprintf(fid, '\tReceived message at endpoint %s, from source %s at time %d with command %s', endpoint_name, source, grantedtime, instructions);
 
                 % Update charging state based on message from controller
@@ -245,12 +147,12 @@ try
                 %       EV Controller sends anything else: stop charging
                 % The default state is charging (1) so we only need to
                 %   do something if the controller says to stop
-                if str2num(instructions) == 0:
+                if str2num(instructions) == 0
                     % Stop charing this EV
                     charging_voltage(j) = 0;
                     fprintf(fid, '\tEV full; removing charging voltage\n');
                 end
-            else:
+            else
                 fprintf(fid, '\tNo messages at endpoint %s recieved at time %d\n', endpoint_name, grantedtime);
             end
 
@@ -263,7 +165,7 @@ try
                 destination_name = sprintf('%s', helics.helicsEndpointGetDefaultDestination(endid{j}));
                 message = sprintf('%0.4f', currentsoc(j));
                 helics.helicsEndpointSendBytesTo(endid{j}, message, '');
-                fprintf(fid, 'Sent message from endpoint %s to destination %s at time %d with payload SOC %s', endpoint_name,destination_name, grantedtime, message);
+                fprintf(fid, 'Sent message from endpoint %s to destination %s at time %d with payload SOC %s\n', endpoint_name,destination_name, grantedtime, message);
             end
         end
         % Calculate the total power required by all chargers. This is the
@@ -291,8 +193,9 @@ try
     title('Instantaneous Power Draw from 5 EVs');
     % Saving graph to file
     saveas(gcf, 'advanced_default_charging_power.png', 'png');
-catch
+catch ME
     fprintf(fid, 'Something happend, closing log file\n');
     fprintf('Charger: Something happend, closing log file\n');
     fclose(fid);
+    rethrow(ME);
 end
