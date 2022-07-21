@@ -77,7 +77,9 @@ if __name__ == "__main__":
     #   again.
 
 
- 
+    # Bug related to inconsistent interpretation of HELICS_TIME_MAXTIME
+    # (maybe just in PyHELICS?) has us temporarily changing the terminal
+    # condition for this example
     # starttime = h.HELICS_TIME_MAXTIME
     starttime = total_interval
     logger.debug(f'Requesting initial time {starttime}')
