@@ -121,7 +121,7 @@ if __name__ == "__main__":
 
     ############## Some Setup #################################################
     epsilon = 1e-4
-    iterative_mode = True
+    iterative_mode = False
     batt_list = get_new_battery(pub_count)
 
     # initialize battery soc
@@ -187,7 +187,7 @@ if __name__ == "__main__":
         feditr.set_pub(fed, pubid, charging_current)
         itr += 1
     
-    state_plot(iinit, "advanced_iteration_current_init.png", 
+    state_plot(iinit, "noiter_main/advanced_iteration_current_init.png", 
             xlabel="Iteration", ykey= "Batt", title="Battery Charging Current [A]")
 
     logger.info("=== Entering HELICS Main Loop")
@@ -234,7 +234,7 @@ if __name__ == "__main__":
             if iterative_mode:
                 # Publish updated current values (Publishing forces re-iteration!)
                 feditr.set_pub(fed, pubid, charging_current)
-                
+                    
                 itr += 1
             else:
                 break
@@ -272,7 +272,7 @@ if __name__ == "__main__":
         axs[j].set(ylabel=f"Batt{j+1}")
         axs[j].grid(True)
     plt.xlabel("time (hr)")
-    plt.savefig("advanced_iteration_battery_SOCs.png", format="png")
+    plt.savefig("noiter_main/advanced_iteration_battery_SOCs.png", format="png")
     plt.close()
 
     fig, axs = plt.subplots(5, sharex=True, sharey=False)
@@ -284,5 +284,5 @@ if __name__ == "__main__":
     
     plt.xlabel("time (hr)")
 
-    plt.savefig("advanced_iteration_battery_current.png", format="png")
+    plt.savefig("noiter_main/advanced_iteration_battery_current.png", format="png")
     plt.show()
