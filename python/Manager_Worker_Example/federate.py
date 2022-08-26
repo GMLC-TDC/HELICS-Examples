@@ -22,8 +22,8 @@ class Federate:
 		self.sub.append(h.helicsFederateRegisterSubscription(self.vfed, target, ""))
 
 	def destroy(self):
-		h.helicsFederateFinalize(self.vfed)
-		h.helicsFederateFree(self.vfed)
+	    h.helicsFederateDisconnect(self.vfed)
+	    h.helicsFederateFree(self.vfed)
 #		print("Federate: Federate finalized")
 
 	def start_async(self):
