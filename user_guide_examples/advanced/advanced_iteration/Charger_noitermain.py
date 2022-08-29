@@ -223,7 +223,7 @@ if __name__ == "__main__":
         feditr.set_pub(fed, pubid, [x["V"] for x in charging_voltage])
         itr += 1
     
-    state_plot(vinit, "noiter_main/advanced_iteration_voltage_init.png", 
+    state_plot(vinit, "advanced_iteration_voltage_init.png", 
             xlabel="Iteration", ykey="EV", title="EV Charging Voltage [V]")
 
     logger.info("=== Entering HELICS Main Loop")
@@ -307,7 +307,7 @@ if __name__ == "__main__":
     plt.grid(True)
     plt.xlabel("time (hr)")
     plt.title("Instantaneous Power Draw from 5 EVs")
-    plt.savefig("noiter_main/advanced_iteration_charger_power.png", format="png")
+    plt.savefig("advanced_iteration_charger_power.png", format="png")
     plt.close()
 
     fig, axs = plt.subplots(5, sharex=True, sharey=False)
@@ -318,5 +318,5 @@ if __name__ == "__main__":
         axs[j].grid(True)
     
     plt.xlabel("time (hr)")
-    plt.savefig("noiter_main/advanced_iteration_charger_voltage.png", format="png")
+    plt.savefig("advanced_iteration_charger_voltage.png", format="png")
     plt.show()
