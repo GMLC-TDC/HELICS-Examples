@@ -165,7 +165,7 @@ if __name__ == "__main__":
     charger_ratings = get_charger_ratings(EVlist)
 
     epsilon = 1e-2
-    iterative_mode = True
+    iterative_mode = False
 
     hours = 24 * 5
     total_interval = int(60 * 60 * hours)
@@ -250,7 +250,7 @@ if __name__ == "__main__":
                 logger.debug("\tIteration complete!")
                 break
             else:
-                if iterative_mode:   
+                if iterative_mode:
                     logger.debug("\tIterating")
             
             # Get Subscriptions (the charging currents)

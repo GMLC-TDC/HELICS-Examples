@@ -121,7 +121,7 @@ if __name__ == "__main__":
 
     ############## Some Setup #################################################
     epsilon = 1e-4
-    iterative_mode = True
+    iterative_mode = False
     batt_list = get_new_battery(pub_count)
 
     # initialize battery soc
@@ -234,7 +234,7 @@ if __name__ == "__main__":
             if iterative_mode:
                 # Publish updated current values (Publishing forces re-iteration!)
                 feditr.set_pub(fed, pubid, charging_current)
-                
+                    
                 itr += 1
             else:
                 break

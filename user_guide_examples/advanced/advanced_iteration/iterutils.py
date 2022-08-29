@@ -23,7 +23,7 @@ class FedItr:
         if not iterative_mode:
             grantedtime = h.helicsFederateRequestTime(fed, requested_time)
             self.logger.debug(f"{s}Requested time {requested_time} - Granted time {grantedtime}")
-            return grantedtime
+            return grantedtime, h.helics_iteration_result_next_step
         else:
             grantedtime, itr_state = h.helicsFederateRequestTimeIterative(fed,requested_time,itr_flag)
             self.logger.debug(f"{s}Requested time: {requested_time} - Granted time: {grantedtime} - itr: {itr} - itr request: {ireq(itr_flag)} - itr status: {ires(itr_state)}")
