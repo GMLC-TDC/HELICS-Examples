@@ -35,6 +35,9 @@ def destroy_federate(fed):
     :param fed: Federate to be destroyed
     :return: (none)
     '''
+    # Adding extra time request to clear out any pending messages to avoid
+    #   annoying errors in the broker log. Any message are tacitly disregarded.
+    # grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
     status = h.helicsFederateDisconnect(fed)
     h.helicsFederateFree(fed)
     h.helicsCloseLibrary()
@@ -99,7 +102,7 @@ if __name__ == "__main__":
     #   represent and is an approximation for a point in time very far in
     #   in the future).
     # fake_max_time = int(h.HELICS_TIME_MAXTIME)
-    # starttime = fake_max_time
+    # starttime = int(h.HELICS_TIME_MAXTIME)
     # starttime = h.HELICS_TIME_MAXTIME
     starttime = total_interval
     logger.debug(f'Requesting initial time {starttime}')
@@ -152,8 +155,8 @@ if __name__ == "__main__":
         #   nothing else for the federate to do until/unless another
         #   message comes in. Request a time very far into the future
         #   and take a break until/unless a new message arrives.
-        logger.debug(f'Requesting time {total_interval}')
-        grantedtime = h.helicsFederateRequestTime (fed, total_interval)
+        logger.debug(f'Requesting time {starttime}')
+        grantedtime = h.helicsFederateRequestTime (fed, starttime)
         logger.info(f'Granted time: {grantedtime}')
 
     # Close out co-simulation execution cleanly now that we're done.
