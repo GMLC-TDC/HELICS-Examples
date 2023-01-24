@@ -1,6 +1,6 @@
 {
   "name": "Filter",
-  "loglevel": 1,
+  "loglevel": "debug",
   "coreType": "zmq",
   "period": 1,
   "uninterruptible": true,

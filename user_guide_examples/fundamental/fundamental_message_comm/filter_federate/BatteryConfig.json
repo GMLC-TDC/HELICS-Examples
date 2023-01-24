@@ -1,6 +1,6 @@
 {
   "name": "Battery",
-  "loglevel": 1,
+  "loglevel": "debug",
   "coreType": "zmq",
   "period": 60,
   "uninterruptible": false,

@@ -1,7 +1,7 @@
 
 {
   "name": "Controller",
-  "loglevel": 1,
+  "loglevel": "debug",
   "coreType": "zmq",
   "timedelta": 1,
   "uninterruptible": false,
