@@ -8,7 +8,9 @@ export MPLBACKEND=AGG
 set -o errexit
 
 # Delete out the existing log files so we don't fool ourselves with old results
-find . -name "*.log" | xargs rm
+if [ ! $CI ]; then
+  find . -name "*.log" | xargs rm
+fi
 
 #Advanced
 echo "\n###### Advanced broker hierarchies #####"
