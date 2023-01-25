@@ -1,4 +1,4 @@
-#! /bin/zsh
+#! /bin/sh
 
 # Setting environment variable to prevent plots from printing
 # A faux backend that displays nothing
