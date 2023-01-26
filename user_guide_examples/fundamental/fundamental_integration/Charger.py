@@ -382,5 +382,5 @@ if __name__ == "__main__":
     plt.xlabel('time (hr)')
     plt.title('Instantaneous Power Draw from 5 EVs')
     # Saving graph to file
-    plt.savefig('fundamental_final_charging_power.png', format='png')
-    plt.show()
+    #plt.savefig('fundamental_final_charging_power.png', format='png')
+    #plt.show()

@@ -223,6 +223,6 @@ if __name__ == "__main__":
     plt.xlabel('time (hr)')
     #for ax in axs():
 #        ax.label_outer()
-    plt.savefig('fundamental_endpoints_battery_SOCs.png', format='png')
+    # plt.savefig('fundamental_endpoints_battery_SOCs.png', format='png')
 
-    plt.show()
+    # plt.show()

@@ -221,6 +221,6 @@ if __name__ == "__main__":
     #for ax in axs():
 #        ax.label_outer()
     # Saving graph to file
-    plt.savefig('fundamental_combo_battery_SOCs.png', format='png')
+    #plt.savefig('fundamental_combo_battery_SOCs.png', format='png')
 
-    plt.show()
+    #plt.show()
