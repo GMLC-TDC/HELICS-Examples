@@ -18,11 +18,11 @@ import matplotlib.pyplot as plt
 import helics as h
 import logging
 import numpy as np
+import argparse
 
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
-logger.setLevel(logging.DEBUG)
 
 
 def destroy_federate(fed):
@@ -72,7 +72,9 @@ def get_new_battery(numBattery):
     return listOfBatts
 
 
-if __name__ == "__main__":
+def run_example(args):
+    logging.basicConfig(level=args.loglevel.upper())
+
     np.random.seed(628)
 
     ##########  Registering  federate and configuring from JSON################
@@ -182,32 +184,47 @@ if __name__ == "__main__":
         y.append(np.array(soc[key]))
 
 
-    fig, axs = plt.subplots(5, sharex=True, sharey=True)
-    fig.suptitle("SOC of each EV Battery")
+    if args.graph.upper() == 'True':
+        fig, axs = plt.subplots(5, sharex=True, sharey=True)
+        fig.suptitle("SOC of each EV Battery")
 
-    axs[0].plot(xaxis, y[0], color="tab:blue", linestyle="-")
-    axs[0].set_yticks(np.arange(0, 1.25, 0.5))
-    axs[0].set(ylabel="Batt1")
-    axs[0].grid(True)
+        axs[0].plot(xaxis, y[0], color="tab:blue", linestyle="-")
+        axs[0].set_yticks(np.arange(0, 1.25, 0.5))
+        axs[0].set(ylabel="Batt1")
+        axs[0].grid(True)
 
-    axs[1].plot(xaxis, y[1], color="tab:blue", linestyle="-")
-    axs[1].set(ylabel="Batt2")
-    axs[1].grid(True)
+        axs[1].plot(xaxis, y[1], color="tab:blue", linestyle="-")
+        axs[1].set(ylabel="Batt2")
+        axs[1].grid(True)
 
-    axs[2].plot(xaxis, y[2], color="tab:blue", linestyle="-")
-    axs[2].set(ylabel="Batt3")
-    axs[2].grid(True)
+        axs[2].plot(xaxis, y[2], color="tab:blue", linestyle="-")
+        axs[2].set(ylabel="Batt3")
+        axs[2].grid(True)
 
-    axs[3].plot(xaxis, y[3], color="tab:blue", linestyle="-")
-    axs[3].set(ylabel="Batt4")
-    axs[3].grid(True)
+        axs[3].plot(xaxis, y[3], color="tab:blue", linestyle="-")
+        axs[3].set(ylabel="Batt4")
+        axs[3].grid(True)
 
-    axs[4].plot(xaxis, y[4], color="tab:blue", linestyle="-")
-    axs[4].set(ylabel="Batt5")
-    axs[4].grid(True)
-    plt.xlabel("time (hr)")
-    # for ax in axs():
-    #        ax.label_outer()
-    plt.savefig("fundamental_default_battery_SOCs.png", format="png")
+        axs[4].plot(xaxis, y[4], color="tab:blue", linestyle="-")
+        axs[4].set(ylabel="Batt5")
+        axs[4].grid(True)
+        plt.xlabel("time (hr)")
+        # for ax in axs():
+        #        ax.label_outer()
+        plt.savefig("fundamental_default_battery_SOCs.png", format="png")
 
-    plt.show()
+        plt.show()
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Run example.')
+    parser.add_argument('-g', '--graph',
+                        help='Switch to disable the display of the graphs',
+                        nargs='?',
+                        default=True)
+    parser.add_argument('--loglevel',
+                        help='Set logging level for this script',
+                        nargs='?',
+                        default = 'WARNING')
+    args = parser.parse_args()
+    run_example(args)

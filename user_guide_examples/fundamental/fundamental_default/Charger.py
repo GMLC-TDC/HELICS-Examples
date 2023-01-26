@@ -16,11 +16,11 @@ import matplotlib.pyplot as plt
 import helics as h
 import logging
 import numpy as np
+import argparse
 
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
-logger.setLevel(logging.DEBUG)
 
 
 def destroy_federate(fed):
@@ -98,7 +98,8 @@ def get_new_EV(numEVs):
     return numLvl1, numLvl2, numLvl3, listOfEVs
 
 
-if __name__ == "__main__":
+def run_example(args):
+    logging.basicConfig(level=args.loglevel.upper())
     np.random.seed(1490)
 
     ##############  Registering  federate from json  ##########################
@@ -200,17 +201,32 @@ if __name__ == "__main__":
     # Cleaning up HELICS stuff once we've finished the co-simulation.
     destroy_federate(fed)
 
-    # Output graph showing the charging profile for each of the charging
-    #   terminals
-    xaxis = np.array(time_sim) / 3600
-    yaxis = np.array(power)
+    if args.graph.upper() == 'True':
+        # Output graph showing the charging profile for each of the charging
+        #   terminals
+        xaxis = np.array(time_sim) / 3600
+        yaxis = np.array(power)
 
-    plt.plot(xaxis, yaxis, color="tab:blue", linestyle="-")
-    plt.yticks(np.arange(0, 11000, 1000))
-    plt.ylabel("kW")
-    plt.grid(True)
-    plt.xlabel("time (hr)")
-    plt.title("Instantaneous Power Draw from 5 EVs")
-    plt.savefig("fundamental_default_charger_power.png", format="png")
+        plt.plot(xaxis, yaxis, color="tab:blue", linestyle="-")
+        plt.yticks(np.arange(0, 11000, 1000))
+        plt.ylabel("kW")
+        plt.grid(True)
+        plt.xlabel("time (hr)")
+        plt.title("Instantaneous Power Draw from 5 EVs")
+        plt.savefig("fundamental_default_charger_power.png", format="png")
 
-    plt.show()
+        plt.show()
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Run example.')
+    parser.add_argument('-g', '--graph',
+                        help='Switch to disable the display of the graphs',
+                        nargs='?',
+                        default=True)
+    parser.add_argument('--loglevel',
+                        help='Set logging level for this script',
+                        nargs='?',
+                        default = 'WARNING')
+    args = parser.parse_args()
+    run_example(args)
