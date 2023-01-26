@@ -33,6 +33,6 @@ echo "\n###### Fundamental native filters ######"
 cd ../filter_native
 helics run --path=./fundamental_filter_native_runner.json
 
-echo "\n##### Fundamental filter federate #####"
-cd ../filter_federate
-helics run --path=./fundamental_filter_runner.json
+# echo "\n##### Fundamental filter federate #####"
+# cd ../filter_federate
+# helics run --path=./fundamental_filter_runner.json
