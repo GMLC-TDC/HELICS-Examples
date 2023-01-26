@@ -15,7 +15,7 @@ fi
 # Fundamental
 echo "\n###### Fundamental default #####"
 cd ./fundamental/fundamental_default
-helics run --path=./fundamental_default_runner.json 
+helics run --path=./fundamental_default_runner_autotest.json 
 
 echo "\n###### Fundamental integration ######"
 cd ../fundamental_integration
