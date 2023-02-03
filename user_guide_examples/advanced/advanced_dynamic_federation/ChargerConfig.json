@@ -91,9 +91,10 @@
       "global": true
     },
     {
-      "key":"Battery/EV5_current",
+      "key":"BatteryLate/EV5_current",
       "type":"double",
       "unit":"A",
+      "default": 0,
       "global": true
     }
   ]

@@ -19,6 +19,12 @@
       "exec": "python -u Battery.py",
       "host": "localhost",
       "name": "Battery"
+    },
+    {
+      "directory": ".",
+      "exec": "python -u BatteryLate.py",
+      "host": "localhost",
+      "name": "BatteryLate"
     }
   ]
 }

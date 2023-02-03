@@ -31,12 +31,6 @@
       "type":"double",
       "unit":"A",
       "global": true
-    },
-    {
-      "key":"Battery/EV5_current",
-      "type":"double",
-      "unit":"A",
-      "global": true
     }
   ],
   "subscriptions":[
@@ -60,12 +54,6 @@
     },
     {
       "key":"Charger/EV4_voltage",
-      "type":"double",
-      "unit":"V",
-      "global": true
-    },
-    {
-      "key":"Charger/EV5_voltage",
       "type":"double",
       "unit":"V",
       "global": true

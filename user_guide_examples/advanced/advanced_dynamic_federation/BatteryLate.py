@@ -74,7 +74,7 @@ def get_new_battery(numBattery):
 
 
 if __name__ == "__main__":
-    late_flag = False
+    late_flag = True
     np.random.seed(2608)
 
     ##########  Registering  federate and configuring from JSON################
