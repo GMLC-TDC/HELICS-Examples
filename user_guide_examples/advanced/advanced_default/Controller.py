@@ -46,6 +46,8 @@ def destroy_federate(fed):
 
 
 if __name__ == "__main__":
+    np.random.seed(1490)
+    
     ##############  Registering  federate from json  ##########################
     fed = h.helicsCreateMessageFederateFromConfig("ControllerConfig.json")
     federate_name = h.helicsFederateGetName(fed)
@@ -75,8 +77,11 @@ if __name__ == "__main__":
     #   again.
 
 
- 
-    starttime = h.HELICS_TIME_MAXTIME
+    # Bug related to inconsistent interpretation of HELICS_TIME_MAXTIME
+    # (maybe just in PyHELICS?) has us temporarily changing the terminal
+    # condition for this example
+    # starttime = h.HELICS_TIME_MAXTIME
+    starttime = total_interval
     logger.debug(f'Requesting initial time {starttime}')
     grantedtime = h.helicsFederateRequestTime (fed, starttime)
     logger.debug(f'Granted time {grantedtime}')
@@ -131,8 +136,8 @@ if __name__ == "__main__":
         #   nothing else for the federate to do until/unless another
         #   message comes in. Request a time very far into the future
         #   and take a break until/unless a new message arrives.
-        logger.debug(f'Requesting time {h.HELICS_TIME_MAXTIME}')
-        grantedtime = h.helicsFederateRequestTime (fed, h.HELICS_TIME_MAXTIME)
+        logger.debug(f'Requesting time {starttime}')
+        grantedtime = h.helicsFederateRequestTime (fed, starttime)
         logger.info(f'Granted time: {grantedtime}')
 
     # Close out co-simulation execution cleanly now that we're done.

@@ -63,7 +63,7 @@ def create_value_federate(fedinitstring,name,period):
     # "uninterruptible": false,
     h.helicsFederateInfoSetFlagOption(fedinfo, h.helics_flag_uninterruptible, False)
     # "terminate_on_error": true,
-    h.helicsFederateInfoSetFlagOption(fedinfo, 72, True)
+    h.helicsFederateInfoSetFlagOption(fedinfo, h.HELICS_FLAG_TERMINATE_ON_ERROR, True)
     # "wait_for_current_time_update": true,
     h.helicsFederateInfoSetFlagOption(fedinfo, h.helics_flag_wait_for_current_time_update, True)
     # "name": "Battery",
@@ -95,7 +95,7 @@ def get_new_battery(numBattery):
 
 
 if __name__ == "__main__":
-    np.random.seed(628)
+    np.random.seed(2608)
 
     ##########  Registering  federate and configuring with API################
     fedinitstring = " --federates=1"
@@ -108,12 +108,13 @@ if __name__ == "__main__":
     num_EVs = 5
     pub_count = num_EVs
     pubid = {}
+    pub_name = {}
     for i in range(0,pub_count):
         # "key":"Battery/EV1_current",
-        pub_name = f'Battery/EV{i+1}_current'
+        pub_name[i] = f'Battery/EV{i+1}_current'
         pubid[i] = h.helicsFederateRegisterGlobalTypePublication(
-                    fed, pub_name, 'double', 'A')
-        logger.debug(f'\tRegistered publication---> {pub_name}')
+                    fed, pub_name[i], 'double', 'A')
+        logger.debug(f'\tRegistered publication---> {pub_name[i]}')
 
     sub_count = num_EVs
     subid = {}
@@ -132,7 +133,7 @@ if __name__ == "__main__":
     h.helicsFederateEnterExecutingMode(fed)
     logger.info('Entered HELICS execution mode')
 
-    hours = 24*1 # one week
+    hours = 24*7 # one week
     total_interval = int(60 * 60 * hours)
     update_interval = int(h.helicsFederateGetTimeProperty(
                                 fed,
