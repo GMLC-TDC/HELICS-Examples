@@ -184,7 +184,7 @@ def run_example(args):
         y.append(np.array(soc[key]))
 
 
-    if args.graph.upper() == 'True':
+    if args.graph:
         fig, axs = plt.subplots(5, sharex=True, sharey=True)
         fig.suptitle("SOC of each EV Battery")
 

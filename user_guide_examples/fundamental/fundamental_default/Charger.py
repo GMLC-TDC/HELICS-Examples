@@ -201,7 +201,7 @@ def run_example(args):
     # Cleaning up HELICS stuff once we've finished the co-simulation.
     destroy_federate(fed)
 
-    if args.graph.upper() == 'True':
+    if args.graph:
         # Output graph showing the charging profile for each of the charging
         #   terminals
         xaxis = np.array(time_sim) / 3600
