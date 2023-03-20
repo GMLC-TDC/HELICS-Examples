@@ -1,0 +1,18 @@
+{
+  "name": "delay pi exchange",
+  "broker": false,
+  "federates": [
+    {
+      "directory": ".",
+      "exec": "python -u pisender.py",
+      "host": "localhost",
+      "name": "pisender"
+    },
+    {
+      "directory": ".",
+      "exec": "python -u pireceiver.py",
+      "host": "localhost",
+      "name": "pireceiver"
+    }
+  ]
+}
