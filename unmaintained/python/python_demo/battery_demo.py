@@ -103,11 +103,11 @@ while (granted_time < max_sim_time) and (v > 0):
         soc = soc + added_charge
         last_time = granted_time
         logger.info(f'\tAdded charge (Ah): {added_charge:.5f}')
-        logger.info(f'\tSOC (Ah): {soc:.3f}')
+        logger.info(f'\tSOC (Ah): {soc:.5f}')
 
         # Send outputs
         h.helicsPublicationPublishDouble(pub_i, i)
-        logger.info(f'\tPublished charging current (A): {i:.3f}')
+        logger.info(f'\tPublished charging current (A): {i:.5f}')
     else:
         # Don't need to do anything, simulation will terminate on next pass
         #    through while loop
