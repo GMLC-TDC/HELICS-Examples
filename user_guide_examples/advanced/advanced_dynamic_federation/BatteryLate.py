@@ -79,7 +79,7 @@ if __name__ == "__main__":
 
     ##########  Registering  federate and configuring from JSON################
     if late_flag: 
-        time.sleep(5.0)
+        time.sleep(20.0)
         fed = h.helicsCreateValueFederateFromConfig("BatteryLateConfig.json")
     else:
         fed = h.helicsCreateValueFederateFromConfig("BatteryConfig.json")
@@ -114,12 +114,8 @@ if __name__ == "__main__":
 
 
     ##############  Entering Execution Mode  ##################################
-    # if late_flag:
-    #     time.sleep(5.0)
-
     h.helicsFederateEnterExecutingMode(fed)
     logger.info('Entered HELICS execution mode')
-
 
     hours = 24*7 # one week
     total_interval = int(60 * 60 * hours)

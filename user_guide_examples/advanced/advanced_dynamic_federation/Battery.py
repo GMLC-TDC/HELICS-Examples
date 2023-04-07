@@ -19,6 +19,7 @@ import helics as h
 import logging
 import numpy as np
 import time
+import pprint as pp
 
 
 logger = logging.getLogger(__name__)
@@ -42,10 +43,28 @@ def destroy_federate(fed):
     '''
     # Adding extra time request to clear out any pending messages to avoid
     #   annoying errors in the broker log. Any message are tacitly disregarded.
-    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    logger.debug(f'Hi2!')
+    h.helicsFederateRequestTimeAsync(fed, h.HELICS_TIME_MAXTIME)
+    logger.debug(f'Hi3!')
+    time.sleep(20)
+    logger.debug(f'Hi4!')
+    if not h.helicsFederateIsAsyncOperationCompleted(fed):
+        query = h.helicsCreateQuery("broker", "global_time_debugging") 
+        query_result = h.helicsQueryExecute(query, fed) 
+        logger.debug(pp.pprint(query_result))
+        logger.debug(f'Hi5!')
+        h.helicsAbort(42, "error")  #this will kill the federation so you don’t have to
+        logger.debug(f'Hi6!')
+    else:
+        h.helicsFederateRequestTimeComplete(fed)
+
+    logger.debug(f'Hi7!')
     status = h.helicsFederateDisconnect(fed)
+    logger.debug(f'Hi8!')
     h.helicsFederateFree(fed)
+    logger.debug(f'Hi9!')
     h.helicsCloseLibrary()
+    logger.debug(f'Hi10!')
     logger.info('Federate finalized')
 
 
@@ -200,6 +219,7 @@ if __name__ == "__main__":
 
 
 
+    logger.debug(f'Hi!')
     # Cleaning up HELICS stuff once we've finished the co-simulation.
     destroy_federate(fed)
     # Printing out final results graphs for comparison/diagnostic purposes.
