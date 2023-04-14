@@ -115,6 +115,11 @@ if __name__ == "__main__":
     for i in range(0, pub_count):
         current_soc[i] = (np.random.randint(0, 60)) / 100
 
+    # log initialized battery conditions
+    logger.info("Initialized Battery State:")
+    for i in range(0, pub_count):
+        logger.info(f"\tBattery {i+1}: soc = {current_soc[i]:.4f}, Rating = {batt_list[i]} kWh")
+
     hours = 24 * 7
     total_interval = int(60 * 60 * hours)
     update_interval = int(h.helicsFederateGetTimeProperty(fed, h.HELICS_PROPERTY_TIME_PERIOD))
