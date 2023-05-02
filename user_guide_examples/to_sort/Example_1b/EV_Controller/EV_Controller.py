@@ -132,7 +132,7 @@ if __name__ == "__main__":
                 source_end_name = str(h.helicsEndpointGetName(end))
                 dest_end_name   = str(h.helicsEndpointGetDefaultDestination(end))
                 logger.info("{}: source endpoint {} and destination endpoint {}".format(federate_name, source_end_name, dest_end_name))
-                status = h.helicsEndpointSendBytesTo(end, '200000+0.0j', "")
+                status = h.helicsEndpointSendBytes(end, '200000+0.0j')
                 logger.info("{}: Turning on {}".format(federate_name, source_end_name))
             else:
                 logger.info("{}: All EVs are turned on".format(federate_name))

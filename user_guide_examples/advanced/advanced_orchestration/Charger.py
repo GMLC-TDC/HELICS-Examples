@@ -157,7 +157,7 @@ if __name__ == "__main__":
                              f' endpoint {endpoint_name}'
                              f' at time {grantedtime}')
                 # 2. Send instructions
-                h.helicsEndpointSendBytesTo(end_EVsoc[j], message, "")  #
+                h.helicsEndpointSendBytes(end_EVsoc[j], message)  #
                 logger.debug(f'Sent message')
             else:
                 logger.debug(f'\tNo messages at endpoint {endpoint_name} '
