@@ -283,7 +283,7 @@ if __name__ == "__main__":
                 destination_name = str(
                     h.helicsEndpointGetDefaultDestination(endid[j]))
                 message = f'{currentsoc[j]:4f}'
-                h.helicsEndpointSendBytesTo(endid[j], message.encode(), '')
+                h.helicsEndpointSendBytes(endid[j], message.encode())
                 logger.debug(f'Sent message from endpoint {endpoint_name}'
                              f' to destination {destination_name}'
                              f' at time {grantedtime}'

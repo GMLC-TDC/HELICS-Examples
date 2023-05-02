@@ -164,7 +164,7 @@ try
             if mod(grantedtime,900) == 0
                 destination_name = sprintf('%s', helics.helicsEndpointGetDefaultDestination(endid{j}));
                 message = sprintf('%0.4f', currentsoc(j));
-                helics.helicsEndpointSendBytesTo(endid{j}, message, '');
+                helics.helicsEndpointSendBytes(endid{j}, message);
                 fprintf(fid, 'Sent message from endpoint %s to destination %s at time %d with payload SOC %s\n', endpoint_name,destination_name, grantedtime, message);
             end
         end
