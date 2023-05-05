@@ -289,8 +289,6 @@ if __name__ == "__main__":
             if grantedtime % 900 == 0:
                 destination_name = endid[j].default_destination
                 message = f'{currentsoc[j]:4f}'
-                logger.debug(message)
-                logger.debug(type(message))
                 endid[j].send_data(message, destination_name)  #
                 logger.debug(f'Sent message from endpoint {endpoint_name}'
                              f' to destination {destination_name}'
