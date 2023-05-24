@@ -86,7 +86,9 @@ if __name__ == "__main__":
         ############################### Subscribing to Feeder Load from to GridLAB-D ###################################
         for i in range(0, subkeys_count):
             sub = subid["m{}".format(i)]
-            rload, iload = h.helicsInputGetComplex(sub)
+            demand = h.helicsInputGetComplex(sub)
+            rload = demand.real;
+            iload = demand.imag
             feeder_real_power.append(rload)
 
         for i in range(0, endpoint_count):

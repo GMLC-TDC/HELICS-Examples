@@ -154,7 +154,9 @@ if __name__ == "__main__":
 
         for i in range(0, subkeys_count):
             sub = subid["m{}".format(i)]
-            rload, iload = h.helicsInputGetComplex(sub)
+            demand = h.helicsInputGetComplex(sub)
+            rload = demand.real;
+            iload = demand.imag;
         logger.info("{}: Federate Granted Time = {}".format(federate_name,grantedtime))
         logger.info("{}: Substation Load from Distribution System = {} kW".format(federate_name, complex(round(rload,2), round(iload,2)) / 1000))
         # print(voltage_plot,real_demand)
