@@ -40,8 +40,7 @@ def destroy_federate(fed):
     :return: (none)
     '''
     status = h.helicsFederateDisconnect(fed)
-    h.helicsFederateFree(fed)
-    h.helicsCloseLibrary()
+    h.helicsFederateDestroy(fed)
     logger.info('Federate finalized')
 
 

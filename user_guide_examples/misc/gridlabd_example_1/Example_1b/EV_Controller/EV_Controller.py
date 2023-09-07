@@ -19,8 +19,7 @@ logger.setLevel(logging.DEBUG)
 
 def destroy_federate(fed):
     h.helicsFederateDisconnect(fed)
-    h.helicsFederateFree(fed)
-    h.helicsCloseLibrary()
+    h.helicsFederateDestroy(fed)
 
 
 if __name__ == "__main__":

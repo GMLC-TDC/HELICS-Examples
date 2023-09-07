@@ -61,8 +61,7 @@ def destroy_federate(fed):
     while h.helicsBrokerIsConnected(broker):
         time.sleep(1)
 
-    h.helicsFederateFree(fed)
-    h.helicsCloseLibrary()
+    h.helicsFederateDestroy(fed)
 
 
 if __name__ == "__main__":

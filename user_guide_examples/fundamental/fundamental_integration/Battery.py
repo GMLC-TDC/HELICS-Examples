@@ -47,8 +47,7 @@ def destroy_federate(fed):
     #   annoying errors in the broker log. Any message are tacitly disregarded.
     grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
     status = h.helicsFederateDisconnect(fed)
-    h.helicsFederateFree(fed)
-    h.helicsCloseLibrary()
+    h.helicsFederateDestroy(fed)
     logger.info('Federate finalized')
 
 def create_value_federate(fedinitstring,name,period):

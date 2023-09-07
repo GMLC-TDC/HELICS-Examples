@@ -43,9 +43,7 @@ def destroy_federate(fed):
     # Adding extra time request to clear out any pending messages to avoid
     #   annoying errors in the broker log. Any message are tacitly disregarded.
     grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
-    status = h.helicsFederateDisconnect(fed)
-    h.helicsFederateFree(fed)
-    h.helicsCloseLibrary()
+    h.helicsFederateDestroy(fed)
     logger.info('Federate finalized')
 
 
@@ -291,7 +289,7 @@ if __name__ == "__main__":
                     h.helicsEndpointGetDefaultDestination(endid[j]))
                 message = f'{currentsoc[j]:4f}'
                 h.helicsEndpointSendBytes(endid[j], message.encode())  #
-                logger.debug(f'Sent message from endpoint {endpoint_name}'
+                logger.debug(f'\tSent message from endpoint {endpoint_name}'
                              f' to destination {destination_name}'
                              f' at time {grantedtime}'
                              f' with payload SOC {message}')
