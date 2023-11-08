@@ -18,8 +18,10 @@ logger.setLevel(logging.DEBUG)
 
 
 def destroy_federate(fed):
-    h.helicsFederateDisconnect(fed)
+    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    status = h.helicsFederateDisconnect(fed)
     h.helicsFederateDestroy(fed)
+    logger.info("Federate finalized")
 
 
 if __name__ == "__main__":

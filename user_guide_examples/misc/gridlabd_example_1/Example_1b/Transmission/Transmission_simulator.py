@@ -53,15 +53,10 @@ def create_federate(deltat=1.0, fedinitstring="--federates=1"):
 
 
 def destroy_federate(fed):
-    h.helicsFederateDisconnect(fed)
-
-    #    status, state = h.helicsFederateGetState(fed)
-    #    assert state == 3
-
-    while h.helicsBrokerIsConnected(broker):
-        time.sleep(1)
-
+    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    status = h.helicsFederateDisconnect(fed)
     h.helicsFederateDestroy(fed)
+    logger.info("Federate finalized")
 
 
 if __name__ == "__main__":
