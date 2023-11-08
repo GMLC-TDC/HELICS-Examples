@@ -4,9 +4,9 @@ clock {
     stoptime '2013-08-29 00:00:00';
 }
 
-#include "include/schedules/appliance_schedules.glm"
-#include "include/schedules/water_and_setpoint_schedule_v5.glm"
-#include "include/schedules/commercial_schedules.glm"
+#include "include/schedules/appliance_schedules.glm";
+#include "include/schedules/water_and_setpoint_schedule_v5.glm";
+#include "include/schedules/commercial_schedules.glm";
 #define stylesheet=http://gridlab-d.svn.sourceforge.net/viewvc/gridlab-d/trunk/core/gridlabd-2_0
 
 #set minimum_timestep=60.000000;
