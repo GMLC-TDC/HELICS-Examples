@@ -1,5 +1,5 @@
 {
-    "broker": false,
+    "broker": true,
     "federates":[
         {
             "directory":"./Transmission/",
@@ -15,7 +15,7 @@
         },
         {
             "directory":"./Distribution/",
-            "exec":"gld_gcc IEEE_123_feeder_0.glm --verbose",
+            "exec":"gridlabd IEEE_123_feeder_0.glm --verbose",
             "host":"localhost",
             "name":"GridLABDFederate"
         }

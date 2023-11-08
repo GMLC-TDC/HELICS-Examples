@@ -96,7 +96,7 @@ if __name__ == "__main__":
         "normalized_load_data_1min_ORIGINAL.mat", squeeze_me=True, struct_as_record=False
     )
     load_profiles_1min = profiles["my_data"]
-    resolution_load = numpy.int(total_inteval / pf_interval)
+    resolution_load = int(total_inteval / pf_interval)
     points = numpy.floor(numpy.linspace(0, len(load_profiles_1min) - 1, resolution_load + 1))
     time_pf = numpy.linspace(0, total_inteval, resolution_load + 1)
     load_profiles = load_profiles_1min[points.astype(int), :]
@@ -115,7 +115,7 @@ if __name__ == "__main__":
 
     # bus_profiles_index = numpy.random.random_integers(0,load_profiles.shape[1]-1,len(ppc['bus']))
     bus_profiles = load_profiles[:, bus_profiles_index]
-    time_opf = numpy.linspace(0, total_inteval, numpy.int(total_inteval / acopf_interval) + 1)
+    time_opf = numpy.linspace(0, total_inteval, int(total_inteval / acopf_interval) + 1)
 
     ###########################   Cosimulation Bus and Load Amplification Factor #########################################
 
