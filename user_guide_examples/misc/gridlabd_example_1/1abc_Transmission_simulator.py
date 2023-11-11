@@ -213,7 +213,8 @@ if __name__ == "__main__":
         x = x + 1
         
         if t == (total_inteval - pf_interval):
-            plt.savefig(f"./output/{case_num}_transmission_plot.png")
+            plt.tight_layout()
+            plt.savefig(f"./output/{case_num}_transmission_plot.png", dpi=200)
 
     ##########################   Creating headers and Printing results to CSVs #####################################
 

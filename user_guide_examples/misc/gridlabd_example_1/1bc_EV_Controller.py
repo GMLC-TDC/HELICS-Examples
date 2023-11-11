@@ -168,7 +168,8 @@ if __name__ == "__main__":
             plt.pause(0.01)
             
             if t == (total_inteval - update_interval):
-            	plt.savefig(f"./output/{case_num}_EV_plot.png")
+                plt.tight_layout()
+                plt.savefig(f"./output/{case_num}_EV_plot.png", dpi=200)
 
     EV_data["time"] = time_sim
     EV_data["feeder_load"] = feeder_real_power
