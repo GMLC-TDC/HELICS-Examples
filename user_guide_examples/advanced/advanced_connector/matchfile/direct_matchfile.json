@@ -1,0 +1,14 @@
+{
+  "connections": [
+  ["Charger/EV1_output_voltage", "Battery/EV1_input_voltage", "from_to"],
+  ["Charger/EV2_output_voltage", "Battery/EV2_input_voltage", "from_to"],
+  ["Charger/EV3_output_voltage", "Battery/EV3_input_voltage", "from_to"],
+  ["Charger/EV4_output_voltage", "Battery/EV4_input_voltage", "from_to"],
+  ["Charger/EV5_output_voltage", "Battery/EV5_input_voltage", "from_to"],
+  ["Charger/EV1_input_current", "Battery/EV1_output_current", "to_from"],
+  ["Charger/EV2_input_current", "Battery/EV2_output_current", "to_from"],
+  ["Charger/EV3_input_current", "Battery/EV3_output_current", "to_from"],
+  ["Charger/EV4_input_current", "Battery/EV4_output_current", "to_from"],
+  ["Charger/EV5_input_current", "Battery/EV5_output_current", "to_from"],
+  ]
+}

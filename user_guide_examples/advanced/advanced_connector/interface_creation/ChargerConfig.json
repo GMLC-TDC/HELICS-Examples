@@ -1,0 +1,9 @@
+{
+  "core_name": "Charger",
+  "core_type": "zmq",
+  "log_level": "warning",
+  "name": "Charger",
+  "period": 60,
+  "terminate_on_error": true,
+  "uninterruptible": false
+}
