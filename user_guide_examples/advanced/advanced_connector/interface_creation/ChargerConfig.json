@@ -1,5 +1,4 @@
 {
-  "core_name": "Charger",
   "core_type": "zmq",
   "log_level": "warning",
   "name": "Charger",

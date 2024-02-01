@@ -99,12 +99,15 @@ def check_existing_interfaces(fed):
         pub_name = h.helicsPublicationGetName(pubid[i])
         logger.debug(f"\tRegistered publication---> {pub_name}")
         
+    return sub_count, subid, pub_count, pubid
+        
 
 # Function that will be run in response to a pre-defined custom query
 # used when the HELICS connector federate commands other federates to
 # create interfaces and connect them to form the federation.
 @h.ffi.callback("void query(const char *query, int querySize, HelicsQueryBuffer buffer, void *user_data)")
-def query_callback(query_ptr, size:int, query_buffer:h.HelicsQueryBuffer, user_data):
+def query_callback(query_ptr, size:int, query_buffer_ptr, user_data):
+    query_buffer = h.HelicsQueryBuffer(query_buffer_ptr)
     logger.debug("Query callback called")
     query_str = h.ffi.string(query_ptr,size).decode()
     logger.debug(f"Query is string {query_str}")
@@ -116,14 +119,16 @@ def query_callback(query_ptr, size:int, query_buffer:h.HelicsQueryBuffer, user_d
         pubs = []
         inputs = []
         for EVnum in range(1, num_EVs + 1):
-            pubs.append({
-                "global": True,
-                "key": f"Battery/EV{EVnum}_output_current",
-            })
-            inputs.append({
-                "global": True,
-                "key": f"Battery/EV{EVnum}_input_voltage",
-            })
+#             pubs.append({
+#                 "global": True,
+#                 "key": f"Battery/EV{EVnum}_output_current",
+#             })
+#             inputs.append({
+#                 "global": True,
+#                 "key": f"Battery/EV{EVnum}_input_voltage",
+#             })
+            pubs.append(f"Battery/EV{EVnum}_output_current")
+            inputs.append(f"Battery/EV{EVnum}_input_voltage")
         response_dict = {
             "publications": pubs,
             "inputs": inputs,
@@ -144,49 +149,29 @@ class UserData(object):
 
 
 def register_interfaces_from_command(fed, cmd):
-    if "command" in cmd.keys() and cmd["command"] == "register_interfaces":
-        if "payload" in cmd.keys():
-            if "publications" in cmd["payload"].keys():
-                if isinstance(cmd["payload"]["publications"], list):
-                    for pub in cmd["payload"]["publications"]:
-                        name = pub["key"]
-                        # This example assumes all interfaces are floats
-                        if pub["global"]:
-                            h.helicsFederateRegisterGlobalPublication(fed, 
-                                name, h.HELICS_DATA_TYPE_DOUBLE, None)
-                        else:
-                            h.helicsFederateRegisterPublication(fed, 
-                                name, h.HELICS_DATA_TYPE_DOUBLE, None)
-                else:
-                    raise ValueError("Expecting publications to be stored in a list")
-            elif "inputs" in cmd["payload"].keys():
-                if isinstance(cmd["payload"]["inputs"], list):
-                    for inpt in cmd["payload"]["inputs"]:
-                        name = inpt["key"]
-                        # This example assumes all interfaces are floats
-                        if inpt["global"]:
-                            h.helicsFederateRegisterGlobalInput(fed, 
-                                name, h.HELICS_DATA_TYPE_DOUBLE, None)
-                        else:
-                            h.helicsFederateRegisterInput(fed, 
-                                name, h.HELICS_DATA_TYPE_DOUBLE, None)
-                else:
-                    raise ValueError("Expecting inputs to be stored in a list")
-            elif "endpoints" in cmd["payload"].keys():
-                if isinstance(cmd["payload"]["endpoints"], list):
-                    for endpt in cmd["payload"]["endpoints"]:
-                        name = endpt["key"]
-                        # This example assumes all interfaces are floats
-                        if inpt["global"]:
-                            h.helicsFederateRegisterGlobalEndpoint(fed, name)
-                        else:
-                            h.helicsFederateRegisterEndpoint(fed, name)
-                else:
-                    raise ValueError("Expecting endpoints to be stored in a list")
-        else:
-            raise ValueError("Expecting 'payload' to be an object in JSON")
+    logger.debug(f"received command: {cmd}")
+    if "command" not in cmd.keys():
+        raise ValueError("Expecting 'command' object in command JSON")
+    elif "publications" not in cmd.keys():
+        raise ValueError("Expecting 'publications' object in command JSON")
+    elif "inputs" not in cmd.keys():
+        raise ValueError("Expecting 'inputs' object in command JSON")
+    elif cmd["command"] != "register_interfaces":
+        raise ValueError("Expecting 'register_interfaces' as value of 'command'")
     else:
-        raise ValueError("Expecting 'command' to be an object in JSON with value 'register_interfaces'.")
+        if isinstance(cmd["publications"], list):
+            for pub in cmd["publications"]:
+                # This example assumes all interfaces are floats and global
+                h.helicsFederateRegisterGlobalPublication(fed, pub, 
+                    h.HELICS_DATA_TYPE_DOUBLE)
+        else:
+            raise ValueError("Expecting publications to be stored in a list")
+        if isinstance(cmd["inputs"], list):
+            for inp in cmd["inputs"]:
+                h.helicsFederateRegisterGlobalInput(fed, inp, 
+                    h.HELICS_DATA_TYPE_DOUBLE)
+        else:
+            raise ValueError("Expecting inputs to be stored in a list")
 
 
 if __name__ == "__main__":
@@ -218,12 +203,13 @@ if __name__ == "__main__":
     if len(command) == 0:
         raise TypeError("Empty command.")
     try: 
+        logger.debug(f"command string: {command}")
         cmd = json.loads(command)
     except:
         raise TypeError("Not able to convert command string to JSON.")
     
-    register_federates_from_command(fed, cmd)       
-    check_existing_interfaces(fed)
+    register_interfaces_from_command(fed, cmd)       
+    sub_count, subid, pub_count, pubid = check_existing_interfaces(fed)
 
     ##############  Entering Execution Mode  ##################################
     h.helicsFederateEnterExecutingMode(fed)
