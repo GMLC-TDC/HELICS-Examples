@@ -102,30 +102,36 @@ def get_new_EV(numEVs):
 
 
 def check_existing_interfaces(fed):
-    sub_count = h.helicsFederateGetInputCount(fed)
-    logger.debug(f"\tNumber of subscriptions: {sub_count}")
+    input_count = h.helicsFederateGetInputCount(fed)
+    logger.debug(f"\tNumber of subscriptions: {input_count}")
     pub_count = h.helicsFederateGetPublicationCount(fed)
     logger.debug(f"\tNumber of publications: {pub_count}")
 
     # Diagnostics to confirm JSON config correctly added the required
     #   publications and subscriptions
-    subid = {}
-    if sub_count == 0:
+    inputid = {}
+    if input_count == 0:
         logger.debug(f"\tNo subscriptions defined in config file.")
-    for i in range(0, sub_count):
-        subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name = h.helicsSubscriptionGetTarget(subid[i])
-        logger.debug(f"\tRegistered subscription---> {sub_name}")
+    for i in range(0, input_count):
+        h_input = h.helicsFederateGetInputByIndex(fed, i)
+        input_name = h.helicsInputGetName(h_input)
+        str1, str2 = input_name.split("/") #  "Charger/EV3_input_current"
+        idx = int(str2[2]) -1
+        inputid[idx] = h_input
+        logger.debug(f"\tRegistered input {idx + 1} ---> {input_name}")
 
     pubid = {}
     if pub_count == 0:
         logger.debug(f"\tNo publications defined in config file.")
     for i in range(0, pub_count):
-        pubid[i] = h.helicsFederateGetPublicationByIndex(fed, i)
-        pub_name = h.helicsPublicationGetName(pubid[i])
-        logger.debug(f"\tRegistered publication---> {pub_name}")
-
-    return sub_count, subid, pub_count, pubid
+        h_pub = h.helicsFederateGetPublicationByIndex(fed, i)
+        pub_name = h.helicsPublicationGetName(h_pub)
+        str1, str2 = pub_name.split("/") #  "Charger/EV3_input_current"
+        idx = int(str2[2]) - 1
+        pubid[idx] = h_pub
+        logger.debug(f"\tRegistered publication {idx + 1} ---> {pub_name}")
+        
+    return input_count, inputid, pub_count, pubid
 
 
 
@@ -290,7 +296,7 @@ if __name__ == "__main__":
             #   uses the latest value provided by the battery model.
             charging_current[j] = h.helicsInputGetDouble((subid[j]))
             logger.debug(f"\tCharging current: {charging_current[j]:.2f} from"
-                        f" input {h.helicsSubscriptionGetTarget(subid[j])}")
+                        f" input {h.helicsInputGetTarget(subid[j])}")
 
             # Publish updated charging voltage
             h.helicsPublicationPublishDouble(pubid[j], charging_voltage[j])
