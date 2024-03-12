@@ -9,27 +9,27 @@
   "endpoints": [
     {
       "name": "Charger/EV1.soc",
-      "destination": "Controller/ep",
+      "destination": "EV_1_translator",
       "global": true
     },
     {
       "name": "Charger/EV2.soc",
-      "destination": "Controller/ep",
+      "destination": "EV_2_translator",
       "global": true
     },
     {
       "name": "Charger/EV3.soc",
-      "destination": "Controller/ep",
+      "destination": "EV_3_translator",
       "global": true
     },
     {
       "name": "Charger/EV4.soc",
-      "destination": "Controller/ep",
+      "destination": "EV_4_translator",
       "global": true
     },
     {
       "name": "Charger/EV5.soc",
-      "destination": "Controller/ep",
+      "destination": "EV_5_translator",
       "global": true
     }
   ],

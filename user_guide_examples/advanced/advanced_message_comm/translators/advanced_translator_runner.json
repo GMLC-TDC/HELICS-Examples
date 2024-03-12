@@ -1,7 +1,13 @@
 {
   "name": "advanced_default",
-  "broker": true,
+  "broker": false,
   "federates": [    
+    {
+      "directory": ".",
+      "exec": "helics_broker -f3 --log_level=trace",
+      "host": "localhost",
+      "name": "broker"
+    },
     {
       "directory": ".",
       "exec": "python -u Charger.py",

@@ -115,7 +115,7 @@ def check_existing_interfaces(fed):
     for i in range(0, input_count):
         h_input = h.helicsFederateGetInputByIndex(fed, i)
         input_name = h.helicsInputGetName(h_input)
-        str1, str2 = input_name.split("/") #  "Charger/EV3_input_current"
+        str1, str2 = input_name.split("/") #  input_name = "Charger/EV3_input_current"
         idx = int(str2[2]) -1
         inputid[idx] = h_input
         logger.debug(f"\tRegistered input {idx + 1} ---> {input_name}")
@@ -170,8 +170,7 @@ def query_callback(query_ptr, size:int, query_buffer_ptr, user_data):
     logger.debug("Query callback called")
     query_str = h.ffi.string(query_ptr,size).decode()
     logger.debug(f"Query is string {query_str}")
-    # num_EVS = h.ffi.from_handle(user_data).num_EVs
-    num_EVs = 5
+    num_EVS = h.ffi.from_handle(user_data).num_EVs
     logger.debug(f"Number of EVs is {num_EVs}")
     if query_str == "potential_interfaces":
         logger.debug("Query is 'potential_interfaces'")

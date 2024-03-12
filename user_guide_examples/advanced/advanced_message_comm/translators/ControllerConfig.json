@@ -1,15 +1,85 @@
 {
   "name": "Controller",
   "core_name": "controller_core",
-  "log_level": "warning",
+  "log_level": "data",
   "core_type": "zmq",
-  "time_delta": 1,
+  "period": 300,
   "uninterruptible": false,
   "terminate_on_error": true,
+  "translators": [
+    {
+       "name": "EV_1_translator",
+       "type": "json",
+       "global": true,
+       "info": "test info translator 1",
+       "source_endpoints": "Charger/EV1.soc",
+       "destination_inputs": "Controller/EV1.soc"
+     },
+     {
+       "name": "EV_2_translator",
+       "type": "json",
+       "global": true,
+       "info": "",
+       "source_endpoints": "Charger/EV2.soc",
+       "destination_inputs": "Controller/EV2.soc"
+     },
+     {
+       "name": "EV_3_translator",
+       "type": "json",
+       "global": true,
+       "info": "",
+       "source_endpoints": "Charger/EV3.soc",
+       "destination_inputs": "Controller/EV3.soc"
+     },
+     {
+       "name": "EV_4_translator",
+       "type": "json",
+       "global": true,
+       "info": "",
+       "source_endpoints": "Charger/EV4.soc",
+       "destination_inputs": "Controller/EV4.soc"
+     },
+     {
+       "name": "EV_5_translator",
+       "type": "json",
+       "global": true,
+       "info": "",
+       "source_endpoints": "Charger/EV5.soc",
+       "destination_inputs": "Controller/EV5.soc"
+     }
+  ],
+  "inputs": [
+    {
+      "name": "Controller/EV1.soc",
+      "type": "double",
+      "global": true
+    },
+    {
+      "name": "Controller/EV2.soc",
+      "type": "double",
+      "global": true
+    },
+    {
+      "name": "Controller/EV3.soc",
+      "type": "double",
+      "global": true
+    },
+    {
+      "name": "Controller/EV4.soc",
+      "type": "double",
+      "global": true
+    },
+    {
+      "name": "Controller/EV5.soc",
+      "type": "double",
+      "global": true
+    }
+  ],
   "endpoints": [
     {
       "name": "Controller/ep",
       "global": true
+      
     }
   ]
 }
