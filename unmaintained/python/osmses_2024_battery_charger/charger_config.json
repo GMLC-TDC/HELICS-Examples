@@ -1,0 +1,27 @@
+{
+    "name": "charger",
+    "core_type": "zmq",
+    "log_level": "warning",
+    "period": 60,
+    "terminate_on_error": true,
+    "uninterruptible": false,
+    "wait_for_current_time_update": true,
+    "publications": [
+      {
+        "global": true,
+        "key": "charging_voltage",
+        "type": "double",
+        "unit": "V"
+      }
+    ],
+    "subscriptions": [
+      {
+        "global": true,
+        "key": "charging_current",
+        "type": "double",
+        "unit": "A",
+        "default": 10
+      }
+    ]
+  }
+  
