@@ -74,7 +74,7 @@ if __name__ == "__main__":
     charging_voltage_pub = fed.get_publication_by_index(0)
     charging_voltage_pub_name = charging_voltage_pub.name
     sim_time_stepsize_s =fed.property["TIME_PERIOD"]
-
+ 
     # HELICS start co-simulation
     fed.enter_executing_mode()
 
@@ -84,9 +84,10 @@ if __name__ == "__main__":
         sim_time_hr = granted_sim_time / 3600          
         logger.debug(f"Sim time (hr): {sim_time_hr:.2f}")  
 
-        charging_current = h.helicsInputGetDouble(charging_current_sub)
-        # charging_current = charging_current_sub.value
+        # *****  Get latest inputs from rest of federation *****
+        charging_current = charging_current_sub.value
 
+        # Update internal model
         # Simple propotional controller 
         charging_current_delta = charging_current_target - charging_current
         logger.debug(f"\tCharging current delta: {charging_current_delta :.2f}")
@@ -97,6 +98,8 @@ if __name__ == "__main__":
         if charging_voltage < charging_voltage_min:
             charging_voltage = charging_voltage_min
         logger.debug(f"\tCharging voltage: {charging_voltage :.2f}")
+
+        # Publish out latest outputs to rest of federation
         charging_voltage_pub.publish(charging_voltage)
         
         # Collect data for later analysis

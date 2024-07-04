@@ -89,14 +89,17 @@ if __name__ == "__main__":
         # If battery is full assume its stops charging on its own
         #  and the charging current goes to zero.
 
-        
-        charging_voltage = h.helicsInputGetDouble(charging_voltage_sub)
-        # charging_voltage = charging_voltage.value
+        # Get latest inputs from rest of federation
+        charging_voltage = charging_voltage_sub.value
+
+        # *****  Get latest inputs from rest of federation *****
         if soc >= 1:
             charging_current = 0
         else:
             charging_current = charging_voltage / charging_R
         logger.debug(f"\tCharging current (A): {charging_current:.2f}")
+
+        # Publish out latest outputs to rest of federation
         charging_current_pub.publish(charging_current)
 
         added_energy_kWh = (charging_current * charging_voltage * (sim_time_stepsize_s / 3600)) / 1000
