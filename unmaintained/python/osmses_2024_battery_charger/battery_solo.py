@@ -52,6 +52,8 @@ if __name__ == "__main__":
     # As long as granted time is in the time range to be simulated, 
     # update the model
     while sim_time < final_sim_time:  
+        # Advance simulation time
+        sim_time += sim_time_stepsize_s
         sim_time_hr = sim_time / 3600  
         logger.debug(f"Sim time (hr): {sim_time_hr:.2f}")    
         # R is modeled as a function of SOC. Calculate the effective charging
@@ -75,10 +77,6 @@ if __name__ == "__main__":
         recorded_time.append(sim_time_hr)
         recorded_soc.append(soc)
         recorded_charging_current.append(charging_current)
-
-        # Advance simulation time
-        sim_time += sim_time_stepsize_s
-
 
     # Printing out final results graphs
     fig, axs = plt.subplots(2, sharex=True)

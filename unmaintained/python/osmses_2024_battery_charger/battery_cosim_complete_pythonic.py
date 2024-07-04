@@ -64,7 +64,7 @@ if __name__ == "__main__":
     recorded_charging_current = []
 
 
-    # HELICS setup
+    # *****  HELICS setup  *****
     fed = h.helicsCreateValueFederateFromConfig("battery_config.json")
     fed_name =  h.helicsFederateGetName(fed)
     charging_voltage_sub = fed.get_subscription_by_index(0)
@@ -74,52 +74,48 @@ if __name__ == "__main__":
     sim_time_stepsize_s =fed.property["TIME_PERIOD"]
 
     
-    # HELICS start co-simulation
+    # *****  HELICS start co-simulation  *****
     fed.enter_executing_mode()
 
     # As long as granted time is in the time range to be simulated, 
     # update the model
     while granted_sim_time < final_sim_time:  
+        # ***** Advance simulation time *****
+        requested_sim_time += sim_time_stepsize_s
+        logger.debug(f"Requesting time: {requested_sim_time/3600}")
+        granted_sim_time = fed.request_time(requested_sim_time)
         sim_time_hr = granted_sim_time / 3600  
-        logger.debug(f"Sim time (hr): {sim_time_hr:.2f}")    
-        # R is modeled as a function of SOC. Calculate the effective charging
+        logger.debug(f"Granted sim time (hr): {sim_time_hr:.2f}")    
+
+        # *****  Get latest inputs from rest of federation *****
+        charging_voltage = charging_voltage_sub.value
+
+        # *****  Update internal model  *****
+                # R is modeled as a function of SOC. Calculate the effective charging
         # R as a linear interpolation of the 
         charging_R = np.interp(soc, soc_range, R_range)
         logger.debug(f"\tCharging R (ohms): {charging_R:.2f}")
         # If battery is full assume its stops charging on its own
         #  and the charging current goes to zero.
-
-        # Get latest inputs from rest of federation
-        charging_voltage = charging_voltage_sub.value
-
-        # *****  Get latest inputs from rest of federation *****
         if soc >= 1:
             charging_current = 0
         else:
             charging_current = charging_voltage / charging_R
         logger.debug(f"\tCharging current (A): {charging_current:.2f}")
-
-        # Publish out latest outputs to rest of federation
-        charging_current_pub.publish(charging_current)
-
         added_energy_kWh = (charging_current * charging_voltage * (sim_time_stepsize_s / 3600)) / 1000
         logger.debug(f"\tAdded energy (kWh): {added_energy_kWh:.4f}")
         soc = soc + added_energy_kWh / battery_size_kWh
         logger.debug(f"\tSOC: {soc:.4f}")
-
         # Collect data for later analysis
         recorded_time.append(sim_time_hr)
         recorded_soc.append(soc)
         recorded_charging_current.append(charging_current)
 
-        # Advance simulation time
-        requested_sim_time += sim_time_stepsize_s
-        logger.debug(f"\tRequesting time: {requested_sim_time}")
-        granted_sim_time = fed.request_time(requested_sim_time)
-        logger.debug(f"\tGranted time: {granted_sim_time}")
+        # ***** Publish out latest outputs to rest of federation *****
+        charging_current_pub.publish(charging_current)
 
 
-    # HELICS end co-simulation
+    # *****  HELICS end co-simulation  *****
     fed.disconnect()
     h.helicsFederateDestroy(fed)
 

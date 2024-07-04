@@ -66,7 +66,7 @@ if __name__ == "__main__":
     recorded_charging_current = []
 
 
-    # HELICS setup
+    # *****  HELICS setup  *****
     fed = h.helicsCreateValueFederateFromConfig("charger_config.json")
     fed_name =  h.helicsFederateGetName(fed)
     charging_current_sub = h.helicsFederateGetInputByIndex(fed, 0)
@@ -75,17 +75,23 @@ if __name__ == "__main__":
     charging_voltage_pub_name = h.helicsPublicationGetName(charging_voltage_pub)
     sim_time_stepsize_s = h.helicsFederateGetTimeProperty(fed, h.HELICS_PROPERTY_TIME_PERIOD)
 
-    # HELICS start co-simulation
+    # *****  HELICS start co-simulation  *****
     h.helicsFederateEnterExecutingMode(fed)
 
     # As long as granted time is in the time range to be simulated, 
     # update the model
     while granted_sim_time < final_sim_time:
-        sim_time_hr = granted_sim_time / 3600          
-        logger.debug(f"Sim time (hr): {sim_time_hr:.2f}")  
+        # *****  Advance simulation time  *****
+        requested_sim_time += sim_time_stepsize_s
+        logger.debug(f"Requesting time: {requested_sim_time/3600}")
+        granted_sim_time = fed.request_time(requested_sim_time)
+        sim_time_hr = granted_sim_time / 3600  
+        logger.debug(f"Granted sim time (hr): {sim_time_hr:.2f}")    
 
+        # *****  Get latest inputs from rest of federation  *****
         charging_current = h.helicsInputGetDouble(charging_current_sub)
 
+        # *****  Update internal model  *****
         # Simple propotional controller 
         charging_current_delta = charging_current_target - charging_current
         logger.debug(f"\tCharging current delta: {charging_current_delta :.2f}")
@@ -96,20 +102,15 @@ if __name__ == "__main__":
         if charging_voltage < charging_voltage_min:
             charging_voltage = charging_voltage_min
         logger.debug(f"\tCharging voltage: {charging_voltage :.2f}")
-        h.helicsPublicationPublishDouble(charging_voltage_pub, charging_voltage)
-        
         # Collect data for later analysis
         recorded_time.append(sim_time_hr)
         recorded_charging_voltage.append(charging_voltage)
         recorded_charging_current.append(charging_current)
 
-        # Advance simulation time
-        requested_sim_time += sim_time_stepsize_s
-        logger.debug(f"\tRequesting time: {requested_sim_time}")
-        granted_sim_time = h.helicsFederateRequestTime(fed, requested_sim_time)
-        logger.debug(f"\tGranted time: {granted_sim_time}")
+        # *****  Publish out latest outputs to rest of federation  *****
+        h.helicsPublicationPublishDouble(charging_voltage_pub, charging_voltage)
 
-    # HELICS end co-simulation
+    # *****  HELICS end co-simulation  *****
     h.helicsFederateDisconnect(fed)
     h.helicsFederateDestroy(fed)
 

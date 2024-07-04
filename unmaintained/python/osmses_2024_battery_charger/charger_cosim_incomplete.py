@@ -91,18 +91,25 @@ if __name__ == "__main__":
     recorded_charging_voltage = []
     recorded_charging_current = []
 
-    
+    # *****  HELICS setup  *****
+
+    # ******  HELICS start co-simulation  *****
 
     # As long as granted time is in the time range to be simulated, 
     # update the model
     while sim_time < final_sim_time:
+
+        # *****  Advance simulation time  *****
+        sim_time += sim_time_stepsize_s
         sim_time_hr = sim_time / 3600          
         logger.debug(f"Sim time (hr): {sim_time_hr:.2f}")  
 
+        # *****  Get latest inputs from rest of federation  *****
         # Model battery charging current
         charging_current = charging_voltage / battery_R
         battery_R = battery_R * 1.0001
 
+        # *****  Update internal model  *****
         # Simple propotional controller 
         charging_current_delta = charging_current_target - charging_current
         logger.debug(f"\tCharging current delta: {charging_current_delta :.2f}")
@@ -113,16 +120,15 @@ if __name__ == "__main__":
         if charging_voltage < charging_voltage_min:
             charging_voltage = charging_voltage_min
         logger.debug(f"\tCharging voltage: {charging_voltage :.2f}")
-        
         # Collect data for later analysis
         recorded_time.append(sim_time_hr)
         recorded_charging_voltage.append(charging_voltage)
         recorded_charging_current.append(charging_current)
 
-        # Advance simulation time
-        sim_time += sim_time_stepsize_s
+        # *****  Publish out latest outputs to rest of federation  *****
 
-    # HELICS end co-simulation
+
+    # *****  HELICS end co-simulation  *****
 
     # Printing out final results graphs
     fig, axs = plt.subplots(2, sharex=True)

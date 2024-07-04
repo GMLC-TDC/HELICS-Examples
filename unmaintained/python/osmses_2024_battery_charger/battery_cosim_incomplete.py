@@ -88,15 +88,22 @@ if __name__ == "__main__":
     recorded_soc = []
     recorded_charging_current = []
 
-    # HELICS setup
+    # *****  HELICS setup  *****
 
-    # HELICS start co-simulation
+    # ******  HELICS start co-simulation  *****
 
     # As long as granted time is in the time range to be simulated, 
     # update the model
     while sim_time < final_sim_time:  
-        sim_time_hr = sim_time / 3600  
-        logger.debug(f"Sim time (hr): {sim_time_hr:.2f}")    
+
+        # *****  Advance simulation time  *****
+        sim_time += sim_time_stepsize_s
+        sim_time_hr = sim_time / 3600 
+        logger.debug(f"Sim time (hr): {sim_time_hr:.2f}")  
+
+        # *****  Get latest inputs from rest of federation *****
+
+        # *****  Update internal model  *****
         # R is modeled as a function of SOC. Calculate the effective charging
         # R as a linear interpolation of the 
         charging_R = np.interp(soc, soc_range, R_range)
@@ -108,21 +115,19 @@ if __name__ == "__main__":
         else:
             charging_current = charging_voltage / charging_R
         logger.debug(f"\tCharging current (A): {charging_current:.2f}")
-
         added_energy_kWh = (charging_current * charging_voltage * (sim_time_stepsize_s / 3600)) / 1000
         logger.debug(f"\tAdded energy (kWh): {added_energy_kWh:.4f}")
         soc = soc + added_energy_kWh / battery_size_kWh
         logger.debug(f"\tSOC: {soc:.4f}")
-
         # Collect data for later analysis
         recorded_time.append(sim_time_hr)
         recorded_soc.append(soc)
         recorded_charging_current.append(charging_current)
 
-        # Advance simulation time
-        sim_time += sim_time_stepsize_s
+        # *****  Publish out latest outputs to rest of federation  *****
 
-    # HELICS end co-simulation
+
+    # *****  HELICS end co-simulation  *****
 
     # Printing out final results graphs
     fig, axs = plt.subplots(2, sharex=True)
