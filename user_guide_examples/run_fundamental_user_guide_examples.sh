@@ -9,7 +9,7 @@ set -o errexit
 
 # Delete out the existing log files so we don't fool ourselves with old results
 if [ ! $CI ]; then
-  find . -name "*.log" | xargs rm
+  find . -name "*.log" | xargs -r rm
 fi
 
 # Fundamental
