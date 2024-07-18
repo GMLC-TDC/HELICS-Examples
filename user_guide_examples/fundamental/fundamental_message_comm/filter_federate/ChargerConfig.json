@@ -68,31 +68,31 @@
   ],
   "subscriptions":[
     {
-      "key":"Battery/EV1_current",
+      "target":"Battery/EV1_current",
       "type":"double",
       "unit":"A",
       "global": true
     },
     {
-      "key":"Battery/EV2_current",
+      "target":"Battery/EV2_current",
       "type":"double",
       "unit":"A",
       "global": true
     },
     {
-      "key":"Battery/EV3_current",
+      "target":"Battery/EV3_current",
       "type":"double",
       "unit":"A",
       "global": true
     },
     {
-      "key":"Battery/EV4_current",
+      "target":"Battery/EV4_current",
       "type":"double",
       "unit":"A",
       "global": true
     },
     {
-      "key":"Battery/EV5_current",
+      "target":"Battery/EV5_current",
       "type":"double",
       "unit":"A",
       "global": true

@@ -40,31 +40,31 @@
   ],
   "subscriptions":[
     {
-      "key":"Charger/EV1_voltage",
+      "target":"Charger/EV1_voltage",
       "type":"double",
       "unit":"V",
       "global": true
     },
     {
-      "key":"Charger/EV2_voltage",
+      "target":"Charger/EV2_voltage",
       "type":"double",
       "unit":"V",
       "global": true
     },
     {
-      "key":"Charger/EV3_voltage",
+      "target":"Charger/EV3_voltage",
       "type":"double",
       "unit":"V",
       "global": true
     },
     {
-      "key":"Charger/EV4_voltage",
+      "target":"Charger/EV4_voltage",
       "type":"double",
       "unit":"V",
       "global": true
     },
     {
-      "key":"Charger/EV5_voltage",
+      "target":"Charger/EV5_voltage",
       "type":"double",
       "unit":"V",
       "global": true
