@@ -12,6 +12,7 @@ intelligence and simply applies a constant charging voltage.
 trevor.hardy@pnnl.gov
 """
 
+import argparse
 import matplotlib.pyplot as plt
 import helics as h
 import logging
@@ -21,26 +22,6 @@ import numpy as np
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.DEBUG)
-
-
-def destroy_federate(fed):
-    """
-    As part of ending a HELICS co-simulation it is good housekeeping to
-    formally destroy a federate. Doing so informs the rest of the
-    federation that it is no longer a part of the co-simulation and they
-    should proceed without it (if applicable). Generally this is done
-    when the co-simulation is complete and all federates end execution
-    at more or less the same wall-clock time.
-
-    :param fed: Federate to be destroyed
-    :return: (none)
-    """
-    # Adding extra time request to clear out any pending messages to avoid
-    #   annoying errors in the broker log. Any message are tacitly disregarded.
-    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
-    status = h.helicsFederateDisconnect(fed)
-    h.helicsFederateDestroy(fed)
-    logger.info("Federate finalized")
 
 
 def calc_charging_voltage(EV_list):
@@ -98,7 +79,13 @@ def get_new_EV(numEVs):
 
 
 if __name__ == "__main__":
-    np.random.seed(1490)
+    parser = argparse.ArgumentParser(description="Demo HELICS Federate")
+    parser.add_argument("-r", "--random_seed", nargs="?", default=1490)
+    parser.add_argument("-d", "--days", nargs="?", default=1)
+    parser.add_argument("-p", "--show_plots", nargs="?", default=True)
+    args = parser.parse_args()
+
+    np.random.seed(args.random_seed)
 
     ##############  Registering  federate from json  ##########################
     fed = h.helicsCreateValueFederateFromConfig("ChargerConfig.json")
@@ -113,13 +100,13 @@ if __name__ == "__main__":
     # Diagnostics to confirm JSON config correctly added the required
     #   publications, and subscriptions.
     subid = {}
-    for i in range(0, sub_count):
+    for i in range(sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
         sub_name = h.helicsSubscriptionGetTarget(subid[i])
         logger.debug(f"\tRegistered subscription---> {sub_name}")
 
     pubid = {}
-    for i in range(0, pub_count):
+    for i in range(pub_count):
         pubid[i] = h.helicsFederateGetPublicationByIndex(fed, i)
         pub_name = h.helicsPublicationGetName(pubid[i])
         logger.debug(f"\tRegistered publication---> {pub_name}")
@@ -138,9 +125,11 @@ if __name__ == "__main__":
     charging_voltage = calc_charging_voltage(EVlist)
     currentsoc = {}
 
-    hours = 24 * 7
+    hours = 24 * 1  # one day
     total_interval = int(60 * 60 * hours)
-    update_interval = int(h.helicsFederateGetTimeProperty(fed, h.HELICS_PROPERTY_TIME_PERIOD))
+    update_interval = int(
+        h.helicsFederateGetTimeProperty(fed, h.HELICS_PROPERTY_TIME_PERIOD)
+    )
     grantedtime = 0
 
     # Data collection lists
@@ -155,10 +144,12 @@ if __name__ == "__main__":
     logger.debug(f"Granted time {grantedtime}")
 
     # Apply initial charging voltage
-    for j in range(0, pub_count):
+    for j in range(pub_count):
         h.helicsPublicationPublishDouble(pubid[j], charging_voltage[j])
-        logger.debug(f"\tPublishing {h.helicsPublicationGetName(pubid[j])} of {charging_voltage[j]}"
-                    f" at time {grantedtime}")
+        logger.debug(
+            f"\tPublishing {h.helicsPublicationGetName(pubid[j])} of {charging_voltage[j]}"
+            f" at time {grantedtime}"
+        )
 
     ########## Main co-simulation loop ########################################
     # As long as granted time is in the time range to be simulated...
@@ -170,46 +161,49 @@ if __name__ == "__main__":
         grantedtime = h.helicsFederateRequestTime(fed, requested_time)
         logger.debug(f"Granted time {grantedtime}")
 
-        for j in range(0, pub_count):
+        for j in range(pub_count):
             logger.debug(f"EV {j + 1} time {grantedtime}")
             # Model the physics of the battery charging. This happens
             #   every time step whether a message comes in or not and always
             #   uses the latest value provided by the battery model.
             charging_current[j] = h.helicsInputGetDouble((subid[j]))
-            logger.debug(f"\tCharging current: {charging_current[j]:.2f} from"
-                        f" input {h.helicsSubscriptionGetTarget(subid[j])}")
+            logger.debug(
+                f"\tCharging current: {charging_current[j]:.2f} from"
+                f" input {h.helicsSubscriptionGetTarget(subid[j])}"
+            )
 
             # Publish updated charging voltage
             h.helicsPublicationPublishDouble(pubid[j], charging_voltage[j])
-            logger.debug(f"\tPublishing {h.helicsPublicationGetName(pubid[j])} of {charging_voltage[j]}"
-                         f" at time {grantedtime}")
+            logger.debug(
+                f"\tPublishing {h.helicsPublicationGetName(pubid[j])} of {charging_voltage[j]}"
+                f" at time {grantedtime}"
+            )
 
         # Calculate the total power required by all chargers. This is the
         #   primary metric of interest, to understand the power profile
         #   and capacity requirements required for this charging garage.
         total_power = 0
-        for j in range(0, pub_count):
+        for j in range(pub_count):
             if charging_current[j] > 0:  # EV is still charging
-                total_power += (charging_voltage[j] * charging_current[j])
+                total_power += charging_voltage[j] * charging_current[j]
 
         # Data collection vectors
         time_sim.append(grantedtime)
         power.append(total_power)
 
     # Cleaning up HELICS stuff once we've finished the co-simulation.
-    destroy_federate(fed)
-
+    fed.disconnect()
     # Output graph showing the charging profile for each of the charging
     #   terminals
     xaxis = np.array(time_sim) / 3600
     yaxis = np.array(power)
-
     plt.plot(xaxis, yaxis, color="tab:blue", linestyle="-")
     plt.yticks(np.arange(0, 11000, 1000))
     plt.ylabel("kW")
     plt.grid(True)
     plt.xlabel("time (hr)")
     plt.title("Instantaneous Power Draw from 5 EVs")
+    # Saving graph to file
     plt.savefig("fundamental_default_charger_power.png", format="png")
-
-    plt.show()
+    if args.show_plots:
+        plt.show()

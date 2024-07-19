@@ -11,6 +11,7 @@ or not (based on whether it is full).
 allison.m.campbell@pnnl.gov
 """
 
+import argparse
 import matplotlib.pyplot as plt
 import helics as h
 import logging
@@ -24,33 +25,16 @@ logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.DEBUG)
 
 
-def destroy_federate(fed):
-    '''
-    As part of ending a HELICS co-simulation it is good housekeeping to
-    formally destroy a federate. Doing so informs the rest of the
-    federation that it is no longer a part of the co-simulation and they
-    should proceed without it (if applicable). Generally this is done
-    when the co-simulation is complete and all federates end execution
-    at more or less the same wall-clock time.
-
-    :param fed: Federate to be destroyed
-    :return: (none)
-    '''
-
-    # Adding extra time request to clear out any pending messages to avoid
-    #   annoying errors in the broker log. Any message are tacitly disregarded.
-    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
-    status = h.helicsFederateDisconnect(fed)
-    h.helicsFederateDestroy(fed)
-    logger.info('Federate finalized')
-
-
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Demo HELICS Federate")
+    parser.add_argument("-d", "--days", nargs="?", default=268)
+    parser.add_argument("-p", "--show_plots", nargs="?", default=True)
+    args = parser.parse_args()
+
     ##############  Registering  federate from json  ##########################
     fed = h.helicsCreateMessageFederateFromConfig("ControllerConfig.json")
     federate_name = h.helicsFederateGetName(fed)
-    logger.info(f'Created federate {federate_name}')
-
+    logger.info(f"Created federate {federate_name}")
 
     #### Register endpoint #####
     # Only one endpoint for the controller
@@ -60,9 +44,9 @@ if __name__ == "__main__":
 
     ##############  Entering Execution Mode  ##################################
     h.helicsFederateEnterExecutingMode(fed)
-    logger.info('Entered HELICS execution mode')
+    logger.info("Entered HELICS execution mode")
 
-    hours = 24*1 # one week
+    hours = 24 * args.days  # one day
     total_interval = int(60 * 60 * hours)
     grantedtime = 0
 
@@ -80,10 +64,9 @@ if __name__ == "__main__":
     #   represent and is an approximation for a point in time very far in
     #   in the future).
     starttime = h.HELICS_TIME_MAXTIME
-    logger.debug(f'Requesting initial time {starttime}')
-    grantedtime = h.helicsFederateRequestTime (fed, starttime)
-    logger.debug(f'Granted time {grantedtime}')
-
+    logger.debug(f"Requesting initial time {starttime}")
+    grantedtime = h.helicsFederateRequestTime(fed, starttime)
+    logger.debug(f"Granted time {grantedtime}")
 
     time_sim = []
     soc = {}
@@ -100,9 +83,11 @@ if __name__ == "__main__":
             msg = h.helicsEndpointGetMessage(endid)
             currentsoc = h.helicsMessageGetString(msg)
             source = h.helicsMessageGetOriginalSource(msg)
-            logger.debug(f'\tReceived message from endpoint {source}'
-                         f' at time {grantedtime}'
-                         f' with SOC {currentsoc}')
+            logger.debug(
+                f"\tReceived message from endpoint {source}"
+                f" at time {grantedtime}"
+                f" with SOC {currentsoc}"
+            )
 
             # Send back charging command based on current SOC
             #   Our very basic protocol:
@@ -115,9 +100,11 @@ if __name__ == "__main__":
                 instructions = 0
             message = str(instructions)
             h.helicsEndpointSendBytesTo(endid, message.encode(), source)
-            logger.debug(f'\tSent message to endpoint {source}'
-                         f' at time {grantedtime}'
-                         f' with payload {instructions}')
+            logger.debug(
+                f"\tSent message to endpoint {source}"
+                f" at time {grantedtime}"
+                f" with payload {instructions}"
+            )
 
             # Store SOC for later analysis/graphing
             if source not in soc:
@@ -130,46 +117,45 @@ if __name__ == "__main__":
         #   nothing else for the federate to do until/unless another
         #   message comes in. Request a time very far into the future
         #   and take a break until/unless a new message arrives.
-        logger.debug(f'Requesting time {h.HELICS_TIME_MAXTIME}')
-        grantedtime = h.helicsFederateRequestTime (fed, h.HELICS_TIME_MAXTIME)
-        logger.info(f'Granted time: {grantedtime}')
+        logger.debug(f"Requesting time {h.HELICS_TIME_MAXTIME}")
+        grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+        logger.info(f"Granted time: {grantedtime}")
 
     # Close out co-simulation execution cleanly now that we're done.
-    destroy_federate(fed)
-
+    fed.disconnect()
     # Printing out final results graphs for comparison/diagnostic purposes.
-    xaxis = np.array(time_sim)/3600
+    xaxis = np.array(time_sim) / 3600
     y = []
     for key in soc:
         y.append(np.array(soc[key]))
 
-
     fig, axs = plt.subplots(5, sharex=True, sharey=True)
-    fig.suptitle('SOC at each charging port')
+    fig.suptitle("SOC at each charging port")
 
-    axs[0].plot(xaxis, y[0], color='tab:blue', linestyle='-')
-    axs[0].set_yticks(np.arange(0,1.25,0.5))
-    axs[0].set(ylabel='Port 1')
+    axs[0].plot(xaxis, y[0], color="tab:blue", linestyle="-")
+    axs[0].set_yticks(np.arange(0, 1.25, 0.5))
+    axs[0].set(ylabel="Port 1")
     axs[0].grid(True)
 
-    axs[1].plot(xaxis, y[1], color='tab:blue', linestyle='-')
-    axs[1].set(ylabel='Port 2')
+    axs[1].plot(xaxis, y[1], color="tab:blue", linestyle="-")
+    axs[1].set(ylabel="Port 2")
     axs[1].grid(True)
 
-    axs[2].plot(xaxis, y[2], color='tab:blue', linestyle='-')
-    axs[2].set(ylabel='Port 3')
+    axs[2].plot(xaxis, y[2], color="tab:blue", linestyle="-")
+    axs[2].set(ylabel="Port 3")
     axs[2].grid(True)
 
-    axs[3].plot(xaxis, y[3], color='tab:blue', linestyle='-')
-    axs[3].set(ylabel='Port 4')
+    axs[3].plot(xaxis, y[3], color="tab:blue", linestyle="-")
+    axs[3].set(ylabel="Port 4")
     axs[3].grid(True)
 
-    axs[4].plot(xaxis, y[4], color='tab:blue', linestyle='-')
-    axs[4].set(ylabel='Port 5')
+    axs[4].plot(xaxis, y[4], color="tab:blue", linestyle="-")
+    axs[4].set(ylabel="Port 5")
     axs[4].grid(True)
-    plt.xlabel('time (hr)')
-    #for ax in axs():
-#        ax.label_outer()
+    plt.xlabel("time (hr)")
+    # for ax in axs():
+    #        ax.label_outer()
     # Saving graph to file
-    plt.savefig('fundamental_combo_estimated_SOCs.png', format='png')
-    plt.show()
+    plt.savefig("fundamental_combo_estimated_SOCs.png", format="png")
+    if args.show_plots:
+        plt.show()

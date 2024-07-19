@@ -25,26 +25,6 @@ logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.DEBUG)
 
 
-def destroy_federate(fed):
-    """
-    As part of ending a HELICS co-simulation it is good housekeeping to
-    formally destroy a federate. Doing so informs the rest of the
-    federation that it is no longer a part of the co-simulation and they
-    should proceed without it (if applicable). Generally this is done
-    when the co-simulation is complete and all federates end execution
-    at more or less the same wall-clock time.
-
-    :param fed: Federate to be destroyed
-    :return: (none)
-    """
-     # Adding extra time request to clear out any pending messages to avoid
-    #   annoying errors in the broker log. Any message are tacitly disregarded.
-    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
-    status = h.helicsFederateDisconnect(fed)
-    h.helicsFederateDestroy(fed)
-    logger.info("Federate finalized")
-
-
 def get_new_battery(numBattery):
     """
     Using hard-coded probabilities, a distribution of batteries of
@@ -99,22 +79,22 @@ if __name__ == "__main__":
     effective_R = np.array([8, 150])
 
     subid = {}
-    for i in range(0, fed.n_inputs):
+    for i in range(fed.n_inputs):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
         sub_name = h.helicsSubscriptionGetTarget(subid[i])
 
     pubid = {}
-    for i in range(0, fed.n_publications):
+    for i in range(fed.n_publications):
         pubid[i] = h.helicsFederateGetPublicationByIndex(fed, i)
         pub_name = h.helicsPublicationGetName(pubid[i])
 
     batt_list = get_new_battery(fed.n_publications)
 
     current_soc = {}
-    for i in range(0, fed.n_publications):
+    for i in range(fed.n_publications):
         current_soc[i] = (np.random.randint(0, 60)) / 100
 
-    hours = 24 * 7
+    hours = 24 * 1  # one day
     total_interval = int(60 * 60 * hours)
     update_interval = int(fed.property["TIME_PERIOD"])
     grantedtime = 0
@@ -136,12 +116,14 @@ if __name__ == "__main__":
         # Iterating over publications in this case since this example
         #  uses only one charging voltage for all five batteries
 
-        for j in range(0, fed.n_publications):
+        for j in range(fed.n_publications):
             logger.debug(f"Battery {j+1} time {grantedtime}")
 
             # Get the applied charging voltage from the EV
             charging_voltage = subid[j].double
-            logger.debug(f"\tReceived voltage {charging_voltage:.2f} from input targetting {subid[j].target}")
+            logger.debug(
+                f"\tReceived voltage {charging_voltage:.2f} from input targeting {subid[j].target}"
+            )
 
             # Calculate charging current and update SOC
             R = np.interp(current_soc[j], socs, effective_R)
@@ -154,14 +136,18 @@ if __name__ == "__main__":
                 charging_current = charging_voltage / R
             logger.debug(f"\tCharging current (A): {charging_current:.2f}")
 
-            added_energy = (charging_current * charging_voltage * update_interval / 3600) / 1000
+            added_energy = (
+                charging_current * charging_voltage * update_interval / 3600
+            ) / 1000
             logger.debug(f"\tAdded energy (kWh): {added_energy:.4f}")
             current_soc[j] = current_soc[j] + added_energy / batt_list[j]
             logger.debug(f"\tSOC: {current_soc[j]:.4f}")
 
             # Publish out charging current
             pubid[j].publish(charging_current)
-            logger.debug(f"\tPublished {pub_name[j]} with value " f"{charging_current:.2f}")
+            logger.debug(
+                f"\tPublished {pub_name[j]} with value " f"{charging_current:.2f}"
+            )
 
             # Store SOC for later analysis/graphing
             if pubid[j] not in soc:
