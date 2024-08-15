@@ -71,7 +71,7 @@ if __name__ == "__main__":
     charging_voltage_sub_name = charging_voltage_sub.name
     charging_current_pub = fed.get_publication_by_index(0)
     charging_current_pub_name = charging_current_pub.name
-    sim_time_stepsize_s =fed.property["TIME_PERIOD"]
+    sim_time_stepsize_s =fed.property[h.helics_property_time_period]
 
     
     # *****  HELICS start co-simulation  *****
