@@ -44,26 +44,45 @@ logger.setLevel(logging.DEBUG)
 
 
 if __name__ == "__main__":
-    # *****  Model parameter definitions and data setup  *****
     # Maximum charging power per EV
     max_charging_power = 10000
     min_ev_charging_power = 3000
-    regulated_total_charging_power = 20000
     ev_charging_power_delta = max_charging_power - min_ev_charging_power
     regulated_charging_power = {}
+    regulated_total_charging_power = 20000
+    ev_count = 5
+
+
 
     # Simulation time management variable
-    hours = 24 * 7
+    hours = 24
     final_sim_time = int(60 * 60 * hours)
     sim_time_stepsize_s = None
     init_sim_time = 0
     requested_sim_time = init_sim_time
     granted_sim_time = 0
 
-    
+    # Data collection variables
+    recorded_time = []
+    recorded_charging_power = {
+        "EV 1": [],
+        "EV 2": [],
+        "EV 3": [],
+        "EV 4": [],
+        "EV 5": []
+    }
+    recorded_ev_SOCs= {
+        "EV 1": [],
+        "EV 2": [],
+        "EV 3": [],
+        "EV 4": [],
+        "EV 5": []
+    }
 
-    # *****  HELICS configuration  *****
-    # Load in HELICS configuration from JSON 
+    recorded_total_charging_power = []
+    average_ev_SOC_percent = []
+
+    # *****  HELICS setup  *****
     fed = h.helicsCreateValueFederateFromConfig("EV_Charge_Manager_config.json")
     fed_name =  h.helicsFederateGetName(fed)
     sub_count = h.helicsFederateGetInputCount(fed)
@@ -88,26 +107,7 @@ if __name__ == "__main__":
         pub_name = h.helicsPublicationGetName(pub_obj)
         pubs[i] = {"pub obj": pub_obj, "pub name": pub_name}
         logger.debug(f"\tRegistered publication---> {pub_name}")
-
-    # *****  Data collection setup  *****
-    # Each EV produces two subscriptions and one publication in the HELICS
-    # configuration
-    ev_count = pub_count
-
-    recorded_charging_power = {}
-    recorded_ev_SOCs= {}
-    recorded_time = []
-    ev_names = []
-    # Setting up data collection dictionaries with the keys being the 
-    # EV name
-    for sub in subs.keys():
-        ev_name = sub[sub_name] # TODO: update this based on the subscription name
-        ev_names.append(ev_name)
-        recorded_charging_power[ev_name] = []
-        recorded_ev_SOCs[ev_name] = []
-
-    recorded_total_charging_power = []
-
+ 
     # *****  HELICS start co-simulation  *****
     fed.enter_executing_mode()
 
@@ -123,12 +123,14 @@ if __name__ == "__main__":
         recorded_time.append(sim_time_hr)
 
         total_charging_power = 0
-        for i, ev_name in enumerate(ev_names): 
+        average_ev_SOC = 0
+        for i in range(0, ev_count): 
             # Get latest inputs from rest of federation 
             # SOC and corresponding vehicle location subs are separated by 
             # an index delta of sub_count
             logger.debug(f"\t{subs[i]['sub name']}")
-            soc_percent = h.helicsInputGetDouble(subs[i]["sub obj"])  
+            soc_percent = h.helicsInputGetDouble(subs[i]["sub obj"])
+            average_ev_SOC += soc_percent  
             logger.debug(f"\t\treceived SOC of {soc_percent}")
             logger.debug(f"\t{subs[i + ev_count]['sub name']}")
             vehicle_location = h.helicsInputGetString(subs[i + ev_count]["sub obj"])  
@@ -139,7 +141,7 @@ if __name__ == "__main__":
             # Higher SOC -> lower charging power (down to min_charging_power)
             # Lower SOC -> higher charging power (up to max_charging_power)
             soc_factor = soc_percent/100
-            recorded_ev_SOCs[ev_names[i]].append(soc_factor) 
+            recorded_ev_SOCs[f"EV {i+1}"].append(soc_factor) 
             soc_remainder = 1 - soc_factor
             if soc_factor == 1:
                 regulated_charging_power[i] = 0
@@ -159,15 +161,21 @@ if __name__ == "__main__":
             scaling_factor = 1
             logger.debug(f"\t\tNo reduction in charging power needed to stay under total charging limit of {regulated_total_charging_power}.")
 
+        # Collect data on total charging power for use in post-processing
         total_charging_power = 0
         for i in range(0, ev_count): 
             regulated_charging_power[i] = regulated_charging_power[i] * scaling_factor
             total_charging_power += regulated_charging_power[i]
             h.helicsPublicationPublishDouble(pubs[i]["pub obj"], regulated_charging_power[i])
             logger.debug(f"\t\t{pubs[i]['pub name']} sent charging power of {regulated_charging_power[i]}") 
-            recorded_charging_power[ev_name].append(regulated_charging_power[i])
+            recorded_charging_power[f"EV {i+1}"].append(regulated_charging_power[i])
         logger.debug(f"\t\tPost-regulated total charging power: {total_charging_power}")      
         recorded_total_charging_power.append(total_charging_power)
+
+        # Collect data on average SOC for use in post-processing
+        average_ev_SOC_percent.append(average_ev_SOC/ev_count)
+
+
     
     # *****  HELICS end co-simulation  *****
     fed.disconnect()
@@ -175,66 +183,18 @@ if __name__ == "__main__":
 
 
     # Printing out final results graphs for comparison/diagnostic purposes.
+    # Total charging power
     fig, axs = plt.subplots()
     axs.plot(recorded_time, recorded_total_charging_power)
     axs.set_yticks(np.arange(0, 30000, 5000))
     axs.set_xlabel("Time (hrs)")
-    axs.set_ylabel("Total Charging Power")
-    # plt.show()
-
-
-    fig, axs = plt.subplots(5, sharex=True, sharey=True)
-    fig.suptitle("Battery Charging Power")
-
-    axs[0].plot(recorded_time, recorded_charging_power["EV 1"], color="tab:blue", linestyle="-")
-    axs[0].set_yticks(np.arange(0, 10000, 2500))
-    axs[0].set(ylabel="EV 1")
-    axs[0].grid(True)
-
-    axs[1].plot(recorded_time, recorded_charging_power["EV 2"], color="tab:blue", linestyle="-")
-    axs[1].set(ylabel="EV 2")
-    axs[1].grid(True)
-
-    axs[2].plot(recorded_time, recorded_charging_power["EV 3"], color="tab:blue", linestyle="-")
-    axs[2].set(ylabel="EV 3")
-    axs[2].grid(True)
-
-    axs[3].plot(recorded_time, recorded_charging_power["EV 4"], color="tab:blue", linestyle="-")
-    axs[3].set(ylabel="EV 4")
-    axs[3].grid(True)
-
-    axs[4].plot(recorded_time, recorded_charging_power["EV 5"], color="tab:blue", linestyle="-")
-    axs[4].set(ylabel="EV 5")
-    axs[4].grid(True)
-    plt.xlabel("time (hr)")
-    # plt.show()
-
-
-    fig, axs = plt.subplots(5, sharex=True, sharey=True)
-    fig.suptitle("SOC of each EV Battery")
-
-    axs[0].plot(recorded_time, recorded_ev_SOCs["EV 1"], color="tab:blue", linestyle="-")
-    axs[0].set_yticks(np.arange(0, 1.25, 0.25))
-    axs[0].set(ylabel="EV 1")
-    axs[0].grid(True)
-
-    axs[1].plot(recorded_time, recorded_ev_SOCs["EV 2"], color="tab:blue", linestyle="-")
-    axs[1].set(ylabel="EV 2")
-    axs[1].grid(True)
-
-    axs[2].plot(recorded_time, recorded_ev_SOCs["EV 3"], color="tab:blue", linestyle="-")
-    axs[2].set(ylabel="EV 3")
-    axs[2].grid(True)
-
-    axs[3].plot(recorded_time, recorded_ev_SOCs["EV 4"], color="tab:blue", linestyle="-")
-    axs[3].set(ylabel="EV 4")
-    axs[3].grid(True)
-
-    axs[4].plot(recorded_time, recorded_ev_SOCs["EV 5"], color="tab:blue", linestyle="-")
-    axs[4].set(ylabel="EV 5")
-    axs[4].grid(True)
-    plt.xlabel("time (hr)")
+    axs.set_ylabel("Total Charging Power (W)")
+    
+    # Average EV SOC
+    fig2, axs2 = plt.subplots()
+    axs2.plot(recorded_time, average_ev_SOC_percent)
+    axs2.set_yticks(np.arange(0, 100, 20))
+    axs2.set_xlabel("Time (hrs)")
+    axs2.set_ylabel("Average EV SOC (%)")
+    
     plt.show()
-
-
-
