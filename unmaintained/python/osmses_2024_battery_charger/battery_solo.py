@@ -2,7 +2,9 @@
 """
 Created on 4 July 2024
 
-Simple model of a battery charging from a fixed source.
+Simple model of a battery charging from a fixed voltage source.
+
+The charging current of the battery is a function of the SOC of the battery.
 
 
 
@@ -80,7 +82,7 @@ if __name__ == "__main__":
 
     # Printing out final results graphs
     fig, axs = plt.subplots(2, sharex=True)
-    fig.suptitle("Battery Charging Performance")
+    fig.suptitle("Battery Charging Performance - Battery")
 
     axs[0].plot(recorded_time, recorded_soc, color="tab:blue", linestyle="-")
     axs[0].set_yticks(np.arange(0, 1.2, 0.2))
@@ -94,3 +96,4 @@ if __name__ == "__main__":
 
     plt.xlabel("Time (hr)")
     plt.show()
+

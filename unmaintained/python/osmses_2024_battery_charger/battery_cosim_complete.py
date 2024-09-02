@@ -120,7 +120,7 @@ if __name__ == "__main__":
 
     # Printing out final results graphs
     fig, axs = plt.subplots(2, sharex=True)
-    fig.suptitle("Battery Model Data")
+    fig.suptitle("Battery Charging Performance - Battery")
 
     axs[0].plot(recorded_time, recorded_soc, color="tab:blue", linestyle="-")
     axs[0].set_yticks(np.arange(0, 1.2, 0.2))

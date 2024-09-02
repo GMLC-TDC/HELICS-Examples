@@ -84,7 +84,7 @@ if __name__ == "__main__":
     
     # Printing out final results graphs
     fig, axs = plt.subplots(2, sharex=True)
-    fig.suptitle("Battery Charging Performance")
+    fig.suptitle("Battery Charging Performance - Charger")
 
     axs[0].plot(recorded_time, recorded_charging_voltage, color="tab:blue", linestyle="-")
     axs[0].set_yticks(np.arange(0, 330, 30))

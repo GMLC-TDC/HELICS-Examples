@@ -50,7 +50,7 @@ if __name__ == "__main__":
     # voltage to regulate the current
     charging_voltage_adjust_k = 1
 
-    charging_current_target = 5
+    charging_current_target = 12
 
     # Simulation time management variable
     hours = 24 * 7
@@ -116,7 +116,7 @@ if __name__ == "__main__":
 
     # Printing out final results graphs
     fig, axs = plt.subplots(2, sharex=True)
-    fig.suptitle("Charger Controller Data")
+    fig.suptitle("Battery Charging Performance - Charger")
 
     axs[0].plot(recorded_time, recorded_charging_voltage, color="tab:blue", linestyle="-")
     axs[0].set_yticks(np.arange(0, 500, 50))
