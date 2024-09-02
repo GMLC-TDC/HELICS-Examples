@@ -17,18 +17,18 @@ participate in a HELICS-based co-simulation. API defintions at:
 https://python.helics.org/api/capi-py/
 
             h.helicsCreateValueFederateFromConfig(<JSON configuration file name>)
-(optional)  h.helicsFederateGetName(<name of federate object>)
-            h.helicsFederateGetInputByIndex(<name of federate object>, 0)
-(optional)  h.helicsInputGetTarget(<name of input object>)
-            h.helicsFederateGetPublicationByIndex(<name of federate object>, 0)
-(optional)  h.helicsPublicationGetName(<name of pub object>)
-            h.helicsFederateEnterExecutingMode(<name of federate object>)
-            h.helicsFederateGetTimeProperty(<name of federate object>, h.HELICS_PROPERTY_TIME_PERIOD)
-            h.helicsFederateRequestTime(<name of federate object>, <time to request>)
-            h.helicsInputGetDouble(<name of input object>)
-            h.helicsPublicationPublishDouble(<name of pub object>, <value to publish>)
-            h.helicsFederateDisconnect(<name of federate object>)
-            helicsFederateDestroy(<name of federate object>)
+(optional)  h.helicsFederateGetName(<federate object>)
+            h.helicsFederateGetInputByIndex(<federate object>, 0)
+(optional)  h.helicsInputGetTarget(<input object>)
+            h.helicsFederateGetPublicationByIndex(<federate object>, 0)
+(optional)  h.helicsPublicationGetName(<pub object>)
+            h.helicsFederateEnterExecutingMode(<federate object>)
+            h.helicsFederateGetTimeProperty(<federate object>, h.HELICS_PROPERTY_TIME_PERIOD)
+            h.helicsFederateRequestTime(<federate object>, <time to request>)
+            h.helicsInputGetDouble(<input object>)
+            h.helicsPublicationPublishDouble(<pub object>, <value to publish>)
+            h.helicsFederateDisconnect(<federate object>)
+            helicsFederateDestroy(<federate object>)
 
 Other edits may need to be made to the code to transition the code from
 working solo to working in a co-simulation.
