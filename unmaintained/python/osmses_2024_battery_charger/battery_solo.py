@@ -13,7 +13,6 @@ trevor.hardy@pnnl.gov
 """
 
 import matplotlib.pyplot as plt
-import helics as h
 import logging
 import numpy as np
 
