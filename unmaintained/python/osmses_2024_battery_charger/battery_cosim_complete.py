@@ -115,6 +115,9 @@ if __name__ == "__main__":
         h.helicsPublicationPublishDouble(charging_current_pub, charging_current)
 
     # *****  HELICS end co-simulation  *****
+    # Adding extra time request to clear out any pending messages to avoid
+    #   annoying errors in the broker log. Any message are tacitly disregarded.
+    h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
     h.helicsFederateDisconnect(fed)
     h.helicsFederateDestroy(fed)
 

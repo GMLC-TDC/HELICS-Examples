@@ -111,6 +111,9 @@ if __name__ == "__main__":
         charging_voltage_pub.publish(charging_voltage)
 
     # *****  HELICS end co-simulation  *****
+    # Adding extra time request to clear out any pending messages to avoid
+    #   annoying errors in the broker log. Any message are tacitly disregarded.
+    h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
     fed.disconnect()
     h.helicsFederateDestroy(fed)
 
