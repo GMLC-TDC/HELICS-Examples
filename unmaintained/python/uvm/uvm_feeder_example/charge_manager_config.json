@@ -1,0 +1,3579 @@
+{
+  "name": "ev_charge_manager",
+  "log_level": "warning",
+  "period": 300,
+  "terminate_on_error": true,
+  "uninterruptible": false,
+  "publications": [
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100060570_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080067_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e100b_d1_11cx_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080090_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079889_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203097976_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080115_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080099_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805200042463_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080114_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100038651_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080155_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079909_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079866_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079991_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080236_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203079822_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080251_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080056_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103096045_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080079_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080047_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805200040661_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100039770_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103095507_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080208_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100041445_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079920_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080064_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080070_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080180_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203079814_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080150_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203079753_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100062069_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103095651_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e100c_d1_15_d1_v1_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080258_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103095071_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100063821_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080202_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080276_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079837_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100060921_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079858_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080230_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080125_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100040436_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080141_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079971_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080145_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079995_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203079800_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080072_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e100f_d1_3_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203079779_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805200040354_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080051_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079965_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100039784_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203079732_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080107_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100039638_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080065_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080134_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100040585_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100038638_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203079727_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079968_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080205_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080012_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103104966_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080017_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103105164_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079843_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079926_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080228_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080165_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079836_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100043773_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103095428_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203079813_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079932_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079938_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080170_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080211_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100055115_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080167_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103095257_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203079744_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079999_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079903_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079925_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805200059988_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805200060752_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100040225_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203079756_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203102327_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079964_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080025_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/tran_30014_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203079760_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e100a_d1_22_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079949_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103095265_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100045354_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103097973_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103102186_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080197_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e100b_d1_29x_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100039564_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079885_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080138_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100041872_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100040251_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079864_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100040280_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100055075_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080122_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203079755_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100042603_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079917_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080110_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080059_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079916_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080173_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080185_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079929_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080330_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080262_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203079477_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080156_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/tran_93058_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100041289_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079912_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080081_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103105046_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080325_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079888_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079839_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203079772_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805200043768_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079873_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203079754_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203102364_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079940_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e100a_d1_3_d1_v3_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080037_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080328_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100050235_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203079731_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805200040351_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72905103079956_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805200060416_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080066_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080176_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100060475_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080009_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080060_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080063_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079966_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203079818_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103095325_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203079816_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203079828_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080273_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080257_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080234_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805200041661_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100040031_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079922_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079840_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805200062070_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203079831_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080038_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080094_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080068_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203079811_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080225_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079981_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203079809_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103097821_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080130_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080055_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080030_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e100d_d1_38b_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080331_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080243_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100040318_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080182_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080285_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080326_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e100b_d1_11f_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805200044068_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203079764_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805200043731_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203079480_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100063655_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079852_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100041715_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080157_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100061165_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080103_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080024_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080275_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079838_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203079733_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080198_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805100050614_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079880_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080252_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080266_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080035_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080269_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203079481_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203096338_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080281_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080224_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080091_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103080283_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805203079741_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103100333_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "ev_charge_manager/e72805103079931_tn_ev_1/maximum_charge_rate",
+      "required": true,
+      "type": "double"
+    }
+  ],
+  "subscriptions": [
+    {
+      "global": true,
+      "key": "gld/e72805100060570_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080067_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e100b_d1_11cx_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080090_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079889_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203097976_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080115_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080099_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805200042463_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080114_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100038651_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080155_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079909_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079866_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079991_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080236_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079822_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080251_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080056_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103096045_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080079_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080047_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805200040661_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100039770_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103095507_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080208_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100041445_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079920_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080064_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080070_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080180_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079814_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080150_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079753_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100062069_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103095651_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e100c_d1_15_d1_v1_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080258_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103095071_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100063821_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080202_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080276_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079837_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100060921_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079858_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080230_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080125_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100040436_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080141_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079971_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080145_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079995_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079800_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080072_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e100f_d1_3_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079779_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805200040354_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080051_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079965_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100039784_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079732_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080107_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100039638_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080065_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080134_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100040585_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100038638_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079727_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079968_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080205_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080012_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103104966_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080017_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103105164_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079843_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079926_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080228_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080165_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079836_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100043773_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103095428_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079813_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079932_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079938_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080170_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080211_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100055115_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080167_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103095257_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079744_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079999_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079903_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079925_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805200059988_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805200060752_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100040225_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079756_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203102327_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079964_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080025_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/tran_30014_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079760_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e100a_d1_22_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079949_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103095265_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100045354_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103097973_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103102186_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080197_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e100b_d1_29x_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100039564_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079885_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080138_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100041872_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100040251_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079864_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100040280_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100055075_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080122_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079755_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100042603_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079917_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080110_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080059_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079916_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080173_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080185_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079929_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080330_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080262_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079477_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080156_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/tran_93058_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100041289_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079912_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080081_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103105046_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080325_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079888_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079839_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079772_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805200043768_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079873_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079754_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203102364_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079940_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e100a_d1_3_d1_v3_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080037_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080328_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100050235_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079731_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805200040351_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72905103079956_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805200060416_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080066_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080176_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100060475_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080009_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080060_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080063_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079966_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079818_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103095325_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079816_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079828_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080273_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080257_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080234_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805200041661_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100040031_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079922_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079840_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805200062070_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079831_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080038_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080094_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080068_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079811_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080225_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079981_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079809_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103097821_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080130_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080055_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080030_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e100d_d1_38b_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080331_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080243_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100040318_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080182_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080285_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080326_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e100b_d1_11f_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805200044068_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079764_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805200043731_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079480_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100063655_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079852_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100041715_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080157_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100061165_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080103_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080024_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080275_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079838_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079733_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080198_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100050614_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079880_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080252_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080266_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080035_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080269_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079481_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203096338_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080281_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080224_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080091_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080283_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079741_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103100333_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079931_tn_ev_1/battery_SOC",
+      "type": "double"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100060570_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080067_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e100b_d1_11cx_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080090_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079889_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203097976_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080115_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080099_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805200042463_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080114_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100038651_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080155_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079909_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079866_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079991_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080236_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079822_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080251_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080056_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103096045_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080079_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080047_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805200040661_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100039770_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103095507_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080208_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100041445_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079920_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080064_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080070_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080180_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079814_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080150_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079753_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100062069_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103095651_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e100c_d1_15_d1_v1_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080258_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103095071_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100063821_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080202_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080276_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079837_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100060921_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079858_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080230_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080125_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100040436_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080141_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079971_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080145_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079995_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079800_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080072_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e100f_d1_3_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079779_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805200040354_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080051_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079965_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100039784_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079732_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080107_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100039638_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080065_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080134_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100040585_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100038638_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079727_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079968_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080205_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080012_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103104966_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080017_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103105164_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079843_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079926_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080228_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080165_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079836_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100043773_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103095428_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079813_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079932_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079938_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080170_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080211_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100055115_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080167_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103095257_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079744_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079999_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079903_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079925_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805200059988_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805200060752_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100040225_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079756_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203102327_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079964_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080025_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/tran_30014_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079760_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e100a_d1_22_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079949_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103095265_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100045354_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103097973_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103102186_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080197_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e100b_d1_29x_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100039564_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079885_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080138_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100041872_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100040251_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079864_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100040280_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100055075_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080122_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079755_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100042603_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079917_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080110_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080059_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079916_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080173_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080185_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079929_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080330_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080262_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079477_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080156_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/tran_93058_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100041289_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079912_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080081_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103105046_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080325_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079888_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079839_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079772_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805200043768_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079873_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079754_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203102364_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079940_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e100a_d1_3_d1_v3_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080037_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080328_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100050235_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079731_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805200040351_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72905103079956_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805200060416_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080066_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080176_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100060475_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080009_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080060_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080063_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079966_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079818_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103095325_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079816_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079828_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080273_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080257_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080234_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805200041661_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100040031_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079922_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079840_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805200062070_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079831_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080038_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080094_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080068_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079811_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080225_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079981_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079809_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103097821_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080130_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080055_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080030_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e100d_d1_38b_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080331_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080243_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100040318_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080182_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080285_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080326_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e100b_d1_11f_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805200044068_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079764_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805200043731_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079480_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100063655_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079852_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100041715_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080157_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100061165_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080103_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080024_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080275_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079838_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079733_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080198_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805100050614_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079880_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080252_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080266_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080035_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080269_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079481_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203096338_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080281_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080224_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080091_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103080283_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805203079741_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103100333_tn_ev_1/vehicle_location",
+      "type": "string"
+    },
+    {
+      "global": true,
+      "key": "gld/e72805103079931_tn_ev_1/vehicle_location",
+      "type": "string"
+    }
+  ]
+}
