@@ -44,23 +44,23 @@ h.helicsFederateInfoSetCoreInitString(fedinfo, fedinitstring)
 h.helicsFederateInfoSetTimeProperty(fedinfo, h.helics_property_time_delta, deltat)
 
 # Create value federate #
-vfed = h.helicsCreateCombinationFederate("TestA Federate", fedinfo)
-print("PI SENDER: Value federate created")
+cfed = h.helicsCreateCombinationFederate("TestA Federate", fedinfo)
+print("PI SENDER: Combination federate created")
 
 # Register the publication #
-pub = h.helicsFederateRegisterGlobalTypePublication(vfed, "testA", "double", "")
+pub = h.helicsFederateRegisterGlobalTypePublication(cfed, "testA", "double", "")
 print("PI SENDER: Publication registered")
 
 
-epid = h.helicsFederateRegisterGlobalEndpoint(vfed, "endpoint1", "")
+epid = h.helicsFederateRegisterGlobalEndpoint(cfed, "endpoint1", "")
 
-fid = h.helicsFederateRegisterFilter(vfed, h.helics_filter_type_delay, "filter1")
+fid = h.helicsFederateRegisterFilter(cfed, h.helics_filter_type_delay, "filter1")
 h.helicsFilterAddSourceTarget(fid, "endpoint1")
 
 h.helicsFilterSet(fid, "delay", 2.0)
 
 # Enter execution mode #
-h.helicsFederateEnterExecutingMode(vfed)
+h.helicsFederateEnterExecutingMode(cfed)
 print("PI SENDER: Entering execution mode")
 
 # This federate will be publishing deltat*pi for numsteps steps #
@@ -70,7 +70,7 @@ value = pi
 for t in range(5, 10):
     val = value
 
-    currenttime = h.helicsFederateRequestTime(vfed, t)
+    currenttime = h.helicsFederateRequestTime(cfed, t)
 
     h.helicsPublicationPublishDouble(pub, val)
     print(
@@ -78,17 +78,22 @@ for t in range(5, 10):
             val, currenttime
         )
     )
-
-    h.helicsEndpointSendEventRaw(epid, "endpoint2", str(t), t)
+    message = "timestamp=" + str(t)
+    h.helicsEndpointSendBytesToAt(epid, message, "endpoint2" , t)
+    print(
+        "PI SENDER: Sending message '{}' at time {} to PI RECEIVER".format(
+            message, currenttime
+        )
+    )
     time.sleep(1)
 
-h.helicsFederateFinalize(vfed)
+h.helicsFederateDisconnect(cfed)
 print("PI SENDER: Federate finalized")
 
 while h.helicsBrokerIsConnected(broker):
     time.sleep(1)
 
-h.helicsFederateFree(vfed)
+h.helicsFederateFree(cfed)
 h.helicsCloseLibrary()
 
 print("PI SENDER: Broker disconnected")

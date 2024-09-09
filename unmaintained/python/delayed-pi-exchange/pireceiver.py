@@ -34,17 +34,17 @@ print("PI RECEIVER: Setting Federate Info Time Delta")
 h.helicsFederateInfoSetTimeProperty(fedinfo, h.helics_property_time_delta, deltat)
 
 # Create value federate
-print("PI RECEIVER: Creating Value Federate")
-vfed = h.helicsCreateCombinationFederate("TestB Federate", fedinfo)
-print("PI RECEIVER: Value federate created")
+print("PI RECEIVER: Creating Combination Federate")
+cfed = h.helicsCreateCombinationFederate("TestB Federate", fedinfo)
+print("PI RECEIVER: Combination federate created")
 
 # Subscribe to PI SENDER's publication
-sub = h.helicsFederateRegisterSubscription(vfed, "testA", "")
+sub = h.helicsFederateRegisterSubscription(cfed, "testA", "")
 print("PI RECEIVER: Subscription registered")
 
-epid = h.helicsFederateRegisterGlobalEndpoint(vfed, "endpoint2", "")
+epid = h.helicsFederateRegisterGlobalEndpoint(cfed, "endpoint2", "")
 
-h.helicsFederateEnterExecutingMode(vfed)
+h.helicsFederateEnterExecutingMode(cfed)
 print("PI RECEIVER: Entering execution mode")
 
 value = 0.0
@@ -54,7 +54,7 @@ currenttime = -1
 
 while currenttime <= 100:
 
-    currenttime = h.helicsFederateRequestTime(vfed, 100)
+    currenttime = h.helicsFederateRequestTime(cfed, 100)
 
     value = h.helicsInputGetString(sub)
     print(
@@ -71,8 +71,8 @@ while currenttime <= 100:
         )
 
 
-h.helicsFederateFinalize(vfed)
+h.helicsFederateDisconnect(cfed)
 
-h.helicsFederateFree(vfed)
+h.helicsFederateFree(cfed)
 h.helicsCloseLibrary()
 print("PI RECEIVER: Federate finalized")
