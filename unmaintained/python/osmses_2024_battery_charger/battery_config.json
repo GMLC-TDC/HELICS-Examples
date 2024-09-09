@@ -1,0 +1,27 @@
+{
+    "name": "battery",
+    "core_type": "zmq",
+    "log_level": "warning",
+    "period": 60,
+    "uninterruptible": false,
+    "terminate_on_error": true,
+    "wait_for_current_time_update": false,
+    "publications": [
+      {
+        "global": true,
+        "key": "charging_current",
+        "type": "double",
+        "unit": "A"
+      }
+    ],
+    "subscriptions": [
+      {
+        "global": true,
+        "key": "charging_voltage",
+        "type": "double",
+        "unit": "V",
+        "default": 240
+      }
+    ]
+  }
+  
