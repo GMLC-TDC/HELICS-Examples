@@ -1,6 +1,6 @@
 {
   "master":{
-    "core_type": "test"
+    "core_type": "inproc"
   },
   "comms": [
     {

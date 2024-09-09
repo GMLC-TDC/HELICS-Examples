@@ -1,0 +1,18 @@
+{
+  "name": "translator test",
+  "broker": true,
+  "federates": [
+    {
+      "directory": ".",
+      "exec": "python -u sender_fed.py",
+      "host": "localhost",
+      "name": "sender"
+    },
+    {
+      "directory": ".",
+      "exec": "python -u receiver_fed.py",
+      "host": "localhost",
+      "name": "receiver"
+    }
+  ]
+}

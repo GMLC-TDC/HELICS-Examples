@@ -1,0 +1,127 @@
+{
+    "coreInit": "--federates=1",
+    "coreName": "Distribution Federate",
+    "coreType": "zmq",
+    "name": "DistributionSim",
+    "offset": 0.0,
+    "period": 60,
+    "timeDelta": 1.0,
+    "logfile": "output.log",
+    "log_level": "warning",
+    "publications" : [
+          {
+               "global" : true,
+               "key" : "IEEE_123_feeder_0/totalLoad",
+               "type" : "complex",
+               "unit" : "VA",
+               "info" : {
+                    "object" : "network_node",
+                    "property" : "distribution_load"
+               }
+          }
+     ],
+     "subscriptions" : [
+          {
+               "required": true,
+               "key" : "TransmissionSim/transmission_voltage",
+               "type" : "complex",
+               "unit" : "V",
+               "info" : {
+                    "object" : "network_node",
+                    "property" : "positive_sequence_voltage"
+                    }
+          }
+     ],
+     "endpoints" : [
+        {
+            "global" : true,
+            "key" : "IEEE_123_feeder_0/EV6",
+            "destination": "EV_Controller/EV6",
+            "info" : {
+                "publication_info": {
+                  "object": "EV6",
+                  "property": "constant_power_A"
+                },
+                "subscription_info": {
+                  "object": "EV6",
+                  "property": "constant_power_A"
+              }
+            }
+        },
+        {
+            "global" : true,
+            "key" : "IEEE_123_feeder_0/EV5",
+            "destination": "EV_Controller/EV5",
+            "info" : {
+                "publication_info": {
+                  "object": "EV5",
+                  "property": "constant_power_B"
+                },
+                "subscription_info": {
+                  "object": "EV5",
+                  "property": "constant_power_B"
+              }
+            }
+        },
+        {
+            "global" : true,
+            "key" : "IEEE_123_feeder_0/EV4",
+            "destination": "EV_Controller/EV4",
+            "info" : {
+                "publication_info": {
+                  "object": "EV4",
+                  "property": "constant_power_C"
+                },
+                "subscription_info": {
+                  "object": "EV4",
+                  "property": "constant_power_C"
+              }
+            }
+        },
+        {
+            "global" : true,
+            "key" : "IEEE_123_feeder_0/EV3",
+            "destination": "EV_Controller/EV3",
+            "info" : {
+                "publication_info": {
+                  "object": "EV3",
+                  "property": "constant_power_A"
+                },
+                "subscription_info": {
+                  "object": "EV3",
+                  "property": "constant_power_A"
+              }
+            }
+        },
+        {
+            "global" : true,
+            "key" : "IEEE_123_feeder_0/EV2",
+            "destination": "EV_Controller/EV2",
+            "info" : {
+                "publication_info": {
+                  "object": "EV2",
+                  "property": "constant_power_B"
+                },
+                "subscription_info": {
+                  "object": "EV2",
+                  "property": "constant_power_B"
+              }
+            }
+        },
+        {
+            "global" : true,
+            "key" : "IEEE_123_feeder_0/EV1",
+            "destination": "EV_Controller/EV1",
+            "info" : {
+                "publication_info": {
+                  "object": "EV1",
+                  "property": "constant_power_C"
+                },
+                "subscription_info": {
+                  "object": "EV1",
+                  "property": "constant_power_C"
+              }
+            }
+        }
+     ]
+}

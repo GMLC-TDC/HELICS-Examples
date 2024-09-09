@@ -1,3 +1,0 @@
-# HELICS User Guide Fundamental Topics - Comprehensive Example
-
-This example demonstrates the use of all the topics covered as fundamental topics in the HELICS User Guide in a single integrated example: value exchanges via publication/subscription, message exchange via endpoints, value federates with only value handles, message federates with only message handles, combination federates with both value and message handles, and native HELICS filters for replicating communication system effects. A full description of the example can be found in the [HELICS User Guide](**TODO add link**).

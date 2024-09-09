@@ -1,0 +1,30 @@
+{
+    "name": "Fibonnaci demo",
+    "broker": true,
+    "federates": [
+    {
+        "directory": ".",
+        "exec": "python -u fib1.py",
+        "host": "localhost",
+        "name": "fib1"
+    },
+    {
+        "directory": ".",
+        "exec": "python -u fib2.py",
+        "host": "localhost",
+        "name": "fib2"
+    },
+    {
+        "directory": ".",
+        "exec": "python -u fib3.py",
+        "host": "localhost",
+        "name": "fib3"
+    },
+    {
+        "directory": ".",
+        "exec": "python -u fib4.py",
+        "host": "localhost",
+        "name": "fib4"
+    }
+    ]
+}

@@ -16,10 +16,10 @@ This example has queries added for demonstration and diagnostic purposes.
 trevor.hardy@pnnl.gov
 """
 
+import matplotlib.pyplot as plt
 import helics as h
 import logging
 import numpy as np
-import matplotlib.pyplot as plt
 import json
 import pprint
 import time
@@ -47,9 +47,12 @@ def destroy_federate(fed):
     :param fed: Federate to be destroyed
     :return: (none)
     '''
-    status = h.helicsFederateFinalize(fed)
-    h.helicsFederateFree(fed)
-    h.helicsCloseLibrary()
+    
+        # Adding extra time request to clear out any pending messages to avoid
+    #   annoying errors in the broker log. Any message are tacitly disregarded.
+    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    status = h.helicsFederateDisconnect(fed)
+    h.helicsFederateDestroy(fed)
     logger.info('Federate finalized')
 
 
@@ -99,8 +102,9 @@ def eval_data_flow_graph(fed):
         # Assume only one federate per core, index "0". Since I built this
         #   federation I know this is true and in most federations it
         #   will also be true.
-        federates_lut[core['federates'][0]['id']] = core['federates'][0][
-            'name']
+        pp.pprint(graph)
+        federates_lut[core['federates'][0]['attributes']['id']] = core[
+            'federates'][0]['attributes']['name']
 
         # Endpoints, inputs, and publications all are considered handles
         #   BUT only endpoints and publications contain the mapping
@@ -120,8 +124,8 @@ def eval_data_flow_graph(fed):
     #   graph to log out a simplified human-readable version
     for core in graph['cores']:
         if 'inputs' in core['federates'][0]:
-            logger.debug(f'Federate {core["federates"][0]["name"]}'
-                         f' (with id {core["federates"][0]["id"]})'
+            logger.debug(f'Federate {core["federates"][0]["attributes"]["name"]}'
+                         f' (with id {core["federates"][0]["attributes"]["id"]})'
                          f' has the following subscriptions:')
             for input in core['federates'][0]['inputs']:
                 # Assume only no more than one source per input, index "0"
@@ -159,14 +163,14 @@ if __name__ == "__main__":
     sub_name = {}
     for i in range(0, sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name[i] = h.helicsSubscriptionGetKey(subid[i])
+        sub_name[i] = h.helicsSubscriptionGetTarget(subid[i])
         logger.debug(f'\tRegistered subscription---> {sub_name[i]}')
 
     pubid = {}
     pub_name = {}
     for i in range(0, pub_count):
         pubid[i] = h.helicsFederateGetPublicationByIndex(fed, i)
-        pub_name[i] = h.helicsPublicationGetKey(pubid[i])
+        pub_name[i] = h.helicsPublicationGetName(pubid[i])
         logger.debug(f'\tRegistered publication---> {pub_name[i]}')
 
     # Setting up for dynamic configuration
@@ -184,7 +188,7 @@ if __name__ == "__main__":
     # Looking at the graph to find the publications to which we need to
     #   subscribe
     for core in graph['cores']:
-        if core['federates'][0]['name'] == 'Charger':
+        if core['federates'][0]['attributes']['name'] == 'Charger':
             for pub in core['federates'][0]['publications']:
                 key = pub['key']
                 sub = h.helicsFederateRegisterSubscription(fed, key)
@@ -208,7 +212,7 @@ if __name__ == "__main__":
     sub_name = {}
     for i in range(0, sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name[i] = h.helicsSubscriptionGetKey(subid[i])
+        sub_name[i] = h.helicsSubscriptionGetTarget(subid[i])
         logger.debug(f'\tRegistered subscription---> {sub_name[i]}')
 
 
@@ -263,7 +267,7 @@ if __name__ == "__main__":
             # Get the applied charging voltage from the EV
             charging_voltage = h.helicsInputGetDouble((subid[j]))
             logger.debug(f'\tReceived voltage {charging_voltage:.2f} from input'
-                         f' {h.helicsSubscriptionGetKey(subid[j])}')
+                         f' {h.helicsSubscriptionGetTarget(subid[j])}')
 
             # EV is fully charged and a new EV is moving in
             # This is indicated by the charging removing voltage when it
@@ -311,7 +315,6 @@ if __name__ == "__main__":
     for key in soc:
         y.append(np.array(soc[key]))
 
-    plt.figure()
 
     fig, axs = plt.subplots(5, sharex=True, sharey=True)
     fig.suptitle('SOC of each EV Battery')

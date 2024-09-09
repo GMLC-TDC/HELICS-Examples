@@ -1,11 +1,12 @@
 {
   "name": "Battery",
-  "log_level": 7,
+  "log_level": "warning",
   "core_type": "zmq",
-  "period": 60.0,
-  "offset": 10.0,
+  "period": 60,
+  "offset": 10,
   "uninterruptible": false,
   "terminate_on_error": true,
+  "wait_for_current_time_update": true,
   "endpoints":[
     {
       "key":"Battery/EV1_current",

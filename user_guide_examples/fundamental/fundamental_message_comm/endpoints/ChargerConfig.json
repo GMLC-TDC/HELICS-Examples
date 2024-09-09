@@ -1,6 +1,6 @@
 {
   "name": "Charger",
-  "log_level": 7,
+  "log_level": "warning",
   "core_type": "zmq",
   "period": 60,
   "uninterruptible": false,

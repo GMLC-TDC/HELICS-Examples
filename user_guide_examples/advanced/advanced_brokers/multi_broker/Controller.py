@@ -11,12 +11,12 @@ or not (based on whether it is full).
 allison.m.campbell@pnnl.gov
 """
 
+import matplotlib.pyplot as plt
 import helics as h
 import logging
 import numpy as np
 import sys
 import time
-import matplotlib.pyplot as plt
 import pandas as pd
 
 logger = logging.getLogger(__name__)
@@ -36,9 +36,11 @@ def destroy_federate(fed):
     :param fed: Federate to be destroyed
     :return: (none)
     '''
-    status = h.helicsFederateFinalize(fed)
-    h.helicsFederateFree(fed)
-    h.helicsCloseLibrary()
+    # Adding extra time request to clear out any pending messages to avoid
+    #   annoying errors in the broker log. Any message are tacitly disregarded.
+    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    status = h.helicsFederateDisconnect(fed)
+    h.helicsFederateDestroy(fed)
     logger.info('Federate finalized')
 
 
@@ -71,13 +73,9 @@ if __name__ == "__main__":
     #   that, recalculate the control output and request a very late time
     #   again.
 
-    # There appears to be a bug related to maxtime in HELICS 2.4 that can
-    #   can be avoided by using a slightly smaller version of maxtime
-    #   (helics_time_maxtime is the largest time that HELICS can internally
-    #   represent and is an approximation for a point in time very far in
-    #   in the future).
-    fake_max_time = int(h.HELICS_TIME_MAXTIME/1000)
-    starttime = fake_max_time
+
+ 
+    starttime = h.HELICS_TIME_MAXTIME
     logger.debug(f'Requesting initial time {starttime}')
     grantedtime = h.helicsFederateRequestTime (fed, starttime)
     logger.debug(f'Granted time {grantedtime}')
@@ -98,7 +96,7 @@ if __name__ == "__main__":
             msg = h.helicsEndpointGetMessage(endid)
             currentsoc = h.helicsMessageGetString(msg)
             source = h.helicsMessageGetOriginalSource(msg)
-            logger.debug(f'Received message from endpoint {source}'
+            logger.debug(f'\tReceived message from endpoint {source}'
                          f' at time {grantedtime}'
                          f' with SOC {currentsoc}')
 
@@ -112,8 +110,8 @@ if __name__ == "__main__":
             else:
                 instructions = 0
             message = str(instructions)
-            h.helicsEndpointSendMessageRaw(endid, source, message.encode())
-            logger.debug(f'Sent message to endpoint {source}'
+            h.helicsEndpointSendBytesTo(endid, message.encode(), source)
+            logger.debug(f'\tSent message to endpoint {source}'
                          f' at time {grantedtime}'
                          f' with payload {instructions}')
 
@@ -128,8 +126,8 @@ if __name__ == "__main__":
         #   nothing else for the federate to do until/unless another
         #   message comes in. Request a time very far into the future
         #   and take a break until/unless a new message arrives.
-        logger.debug(f'Requesting time {fake_max_time}')
-        grantedtime = h.helicsFederateRequestTime (fed, fake_max_time)
+        logger.debug(f'Requesting time {h.HELICS_TIME_MAXTIME}')
+        grantedtime = h.helicsFederateRequestTime (fed, h.HELICS_TIME_MAXTIME)
         logger.info(f'Granted time: {grantedtime}')
 
     # Close out co-simulation execution cleanly now that we're done.
@@ -141,37 +139,33 @@ if __name__ == "__main__":
     for key in soc:
         y.append(np.array(soc[key]))
 
-    plt.figure()
 
     fig, axs = plt.subplots(5, sharex=True, sharey=True)
     fig.suptitle('SOC at each charging port')
 
     axs[0].plot(xaxis, y[0], color='tab:blue', linestyle='-')
     axs[0].set_yticks(np.arange(0,1.25,0.5))
-    axs[0].set(ylabel='EV1')
+    axs[0].set(ylabel='Port 1')
     axs[0].grid(True)
 
     axs[1].plot(xaxis, y[1], color='tab:blue', linestyle='-')
-    axs[1].set(ylabel='EV2')
+    axs[1].set(ylabel='Port 2')
     axs[1].grid(True)
 
     axs[2].plot(xaxis, y[2], color='tab:blue', linestyle='-')
-    axs[2].set(ylabel='EV3')
+    axs[2].set(ylabel='Port 3')
     axs[2].grid(True)
 
     axs[3].plot(xaxis, y[3], color='tab:blue', linestyle='-')
-    axs[3].set(ylabel='EV4')
+    axs[3].set(ylabel='Port 4')
     axs[3].grid(True)
 
     axs[4].plot(xaxis, y[4], color='tab:blue', linestyle='-')
-    axs[4].set(ylabel='EV5')
+    axs[4].set(ylabel='Port 5')
     axs[4].grid(True)
     plt.xlabel('time (hr)')
     #for ax in axs():
 #        ax.label_outer()
     # Saving graph to file
-    #plt.savefig('advanced_multibroker_estimated_SOCs.png', format='png')
+    plt.savefig('advanced_default_estimated_SOCs.png', format='png')
     plt.show()
-
-
-

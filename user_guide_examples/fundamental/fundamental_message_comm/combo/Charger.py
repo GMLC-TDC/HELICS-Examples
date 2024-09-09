@@ -17,10 +17,11 @@ level) and begins charging.
 allison.m.campbell@pnnl.gov, trevor.hardy@pnnl.gov
 """
 
+import matplotlib.pyplot as plt
 import helics as h
 import logging
 import numpy as np
-import matplotlib.pyplot as plt
+
 
 
 logger = logging.getLogger(__name__)
@@ -39,9 +40,12 @@ def destroy_federate(fed):
     :param fed: Federate to be destroyed
     :return: (none)
     '''
-    status = h.helicsFederateFinalize(fed)
-    h.helicsFederateFree(fed)
-    h.helicsCloseLibrary()
+
+    # Adding extra time request to clear out any pending messages to avoid
+    #   annoying errors in the broker log. Any message are tacitly disregarded.
+    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    status = h.helicsFederateDisconnect(fed)
+    h.helicsFederateDestroy(fed)
     logger.info('Federate finalized')
 
 def calc_charging_voltage(EV_list):
@@ -128,7 +132,7 @@ def estimate_SOC(charging_V, charging_A):
 
 
 if __name__ == "__main__":
-    np.random.seed(1490)
+    np.random.seed(268)
 
     ##############  Registering  federate from json  ##########################
     fed = h.helicsCreateCombinationFederateFromConfig("ChargerConfig.json")
@@ -153,16 +157,18 @@ if __name__ == "__main__":
         end_name = h.helicsEndpointGetName(endid[i])
         logger.debug(f'\tRegistered Endpoint ---> {end_name}')
 
+    charging_current = []
     subid = {}
     for i in range(0, sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name = h.helicsSubscriptionGetKey(subid[i])
+        sub_name = h.helicsSubscriptionGetTarget(subid[i])
         logger.debug(f'\tRegistered subscription---> {sub_name}')
+        charging_current.append(0)
 
     pubid = {}
     for i in range(0, pub_count):
         pubid[i] = h.helicsFederateGetPublicationByIndex(fed, i)
-        pub_name = h.helicsPublicationGetKey(pubid[i])
+        pub_name = h.helicsPublicationGetName(pubid[i])
         logger.debug(f'\tRegistered publication---> {pub_name}')
 
 
@@ -180,7 +186,7 @@ if __name__ == "__main__":
     charging_voltage = calc_charging_voltage(EVlist)
     currentsoc = {}
 
-    hours = 24*7 # one week
+    hours = 24*1 # one week
     total_interval = int(60 * 60 * hours)
     update_interval = int(h.helicsFederateGetTimeProperty(
                             fed,
@@ -220,13 +226,13 @@ if __name__ == "__main__":
             # Model the physics of the battery charging. This happens
             #   every time step whether a message comes in or not and always
             #   uses the latest value provided by the battery model.
-            charging_current = h.helicsInputGetDouble((subid[j]))
-            logger.debug(f'\tCharging current: {charging_current:.2f} from '
-                         f'input {h.helicsSubscriptionGetKey(subid[j])}')
+            charging_current[j] = h.helicsInputGetDouble((subid[j]))
+            logger.debug(f'\tCharging current: {charging_current[j]:.2f} from '
+                         f'input {h.helicsSubscriptionGetTarget(subid[j])}')
 
             # New EV is in place after removing charge from old EV,
             # as indicated by the zero current draw.
-            if charging_current == 0:
+            if charging_current[j] == 0:
                 _, _, _, newEVtype = get_new_EV(1)
                 EVlist[j] = newEVtype[0]
                 charge_V = calc_charging_voltage(newEVtype)
@@ -238,7 +244,7 @@ if __name__ == "__main__":
                              f' {charging_voltage[j]}')
             else:
                 # SOC estimation
-                currentsoc[j] = estimate_SOC(charging_voltage[j], charging_current)
+                currentsoc[j] = estimate_SOC(charging_voltage[j], charging_current[j])
                 logger.debug(f'\t EV SOC estimate: {currentsoc[j]:.4f}')
 
 
@@ -274,12 +280,14 @@ if __name__ == "__main__":
 
             # Send message to Controller with SOC every 15 minutes
             if grantedtime % 900 == 0:
-                h.helicsEndpointSendBytesTo(endid[j], "",
-                                               f'{currentsoc[j]:4f}'.encode(
-                                               ))  #
+                destination_name = str(
+                    h.helicsEndpointGetDefaultDestination(endid[j]))
+                message = f'{currentsoc[j]:4f}'
+                h.helicsEndpointSendBytes(endid[j], message.encode())
                 logger.debug(f'Sent message from endpoint {endpoint_name}'
+                             f' to destination {destination_name}'
                              f' at time {grantedtime}'
-                             f' with payload SOC {currentsoc[j]:4f}')
+                             f' with payload SOC {message}')
 
         # Calculate the total power required by all chargers. This is the
         #   primary metric of interest, to understand the power profile
@@ -287,8 +295,7 @@ if __name__ == "__main__":
         total_power = 0
         #logger.debug(f'Calculating charging power')
         for j in range(0,pub_count):
-            charging_power = charge_rate[(EVlist[j]-1)]
-            total_power += charging_power
+            total_power += (charging_voltage[j] * charging_current[j])
             #logger.debug(f'\tCharging power in kW for EV{j+1}: {charging_power}')
 
         # Data collection vectors
@@ -304,9 +311,9 @@ if __name__ == "__main__":
     #   terminals
     xaxis = np.array(time_sim)/3600
     yaxis = np.array(power)
-    plt.figure()
+
     plt.plot(xaxis, yaxis, color='tab:blue', linestyle='-')
-    plt.yticks(np.arange(0,200,10))
+    plt.yticks(np.arange(0,20000,1000))
     plt.ylabel('kW')
     plt.grid(True)
     plt.xlabel('time (hr)')

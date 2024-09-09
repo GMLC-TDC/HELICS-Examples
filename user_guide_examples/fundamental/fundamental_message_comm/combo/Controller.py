@@ -11,12 +11,13 @@ or not (based on whether it is full).
 allison.m.campbell@pnnl.gov
 """
 
+import matplotlib.pyplot as plt
 import helics as h
 import logging
 import numpy as np
 import sys
 import time
-import matplotlib.pyplot as plt
+
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
@@ -35,9 +36,12 @@ def destroy_federate(fed):
     :param fed: Federate to be destroyed
     :return: (none)
     '''
-    status = h.helicsFederateFinalize(fed)
-    h.helicsFederateFree(fed)
-    h.helicsCloseLibrary()
+
+    # Adding extra time request to clear out any pending messages to avoid
+    #   annoying errors in the broker log. Any message are tacitly disregarded.
+    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    status = h.helicsFederateDisconnect(fed)
+    h.helicsFederateDestroy(fed)
     logger.info('Federate finalized')
 
 
@@ -58,7 +62,7 @@ if __name__ == "__main__":
     h.helicsFederateEnterExecutingMode(fed)
     logger.info('Entered HELICS execution mode')
 
-    hours = 24*7 # one week
+    hours = 24*1 # one week
     total_interval = int(60 * 60 * hours)
     grantedtime = 0
 
@@ -75,8 +79,7 @@ if __name__ == "__main__":
     #   (helics_time_maxtime is the largest time that HELICS can internally
     #   represent and is an approximation for a point in time very far in
     #   in the future).
-    fake_max_time = int(h.HELICS_TIME_MAXTIME)
-    starttime = fake_max_time
+    starttime = h.HELICS_TIME_MAXTIME
     logger.debug(f'Requesting initial time {starttime}')
     grantedtime = h.helicsFederateRequestTime (fed, starttime)
     logger.debug(f'Granted time {grantedtime}')
@@ -97,7 +100,7 @@ if __name__ == "__main__":
             msg = h.helicsEndpointGetMessage(endid)
             currentsoc = h.helicsMessageGetString(msg)
             source = h.helicsMessageGetOriginalSource(msg)
-            logger.debug(f'Received message from endpoint {source}'
+            logger.debug(f'\tReceived message from endpoint {source}'
                          f' at time {grantedtime}'
                          f' with SOC {currentsoc}')
 
@@ -111,8 +114,8 @@ if __name__ == "__main__":
             else:
                 instructions = 0
             message = str(instructions)
-            h.helicsEndpointSendBytesTo(endid, source, message.encode())
-            logger.debug(f'Sent message to endpoint {source}'
+            h.helicsEndpointSendBytesTo(endid, message.encode(), source)
+            logger.debug(f'\tSent message to endpoint {source}'
                          f' at time {grantedtime}'
                          f' with payload {instructions}')
 
@@ -127,8 +130,8 @@ if __name__ == "__main__":
         #   nothing else for the federate to do until/unless another
         #   message comes in. Request a time very far into the future
         #   and take a break until/unless a new message arrives.
-        logger.debug(f'Requesting time {fake_max_time}')
-        grantedtime = h.helicsFederateRequestTime (fed, fake_max_time)
+        logger.debug(f'Requesting time {h.HELICS_TIME_MAXTIME}')
+        grantedtime = h.helicsFederateRequestTime (fed, h.HELICS_TIME_MAXTIME)
         logger.info(f'Granted time: {grantedtime}')
 
     # Close out co-simulation execution cleanly now that we're done.
@@ -140,7 +143,6 @@ if __name__ == "__main__":
     for key in soc:
         y.append(np.array(soc[key]))
 
-    plt.figure()
 
     fig, axs = plt.subplots(5, sharex=True, sharey=True)
     fig.suptitle('SOC at each charging port')

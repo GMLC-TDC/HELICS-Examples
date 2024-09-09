@@ -1,0 +1,5 @@
+# HELICS User Guide Advanced Topics - Base Example Using Pythonic API
+
+This example is the base example for many of the other examples covered in the Advanced Topics portion of the HELICS User Guide. It has been implemented using the Pythonic HELICS API instead of the [C-based API](https://github.com/GMLC-TDC/HELICS-Examples/tree/main/user_guide_examples/advanced/advanced_default). The example implements an EV charging co-simulation with value, message, and combination federates. A full description of the example can be found in the [HELICS User Guide](https://docs.helics.org/en/latest/user-guide/examples/advanced_examples/advanced_default.html).
+
+This example does not change the federate configuration JSONs or the runner JSON. It only changes (where possible) the HELICS API calls to use the Pythonic, class-oriented implementation rather than the C-based function implementation.

@@ -1,0 +1,43 @@
+{
+  "name": "fundamental_default",
+  "broker": true,
+  "log_level": "interfaces",
+  "federates": [
+    {
+      "directory": ".",
+      "exec": "python -u Charger.py 1",
+      "host": "localhost",
+      "name": "Charger"
+    },
+    {
+      "directory": ".",
+      "exec": "helics-fmi --stoptime=604800s --step=60s --name=Battery1 --flags=no_free --set soc_init=0.31;E_rate=25 SimpleBattery.fmu",
+      "host": "localhost",
+      "name": "Battery1"
+    },
+    {
+      "directory": ".",
+      "exec": "helics-fmi --stoptime=604800s --step=60s --name=Battery2 --flags=no_free --set soc_init=0.24;E_rate=25 SimpleBattery.fmu",
+      "host": "localhost",
+      "name": "Battery2"
+    },
+    {
+      "directory": ".",
+      "exec": "helics-fmi --stoptime=604800s --step=60s --name=Battery3 --flags=no_free --set soc_init=0.52;E_rate=25 SimpleBattery.fmu",
+      "host": "localhost",
+      "name": "Battery3"
+    },
+    {
+      "directory": ".",
+      "exec": "helics-fmi --stoptime=604800s --step=60s --name=Battery4 --flags=no_free --set soc_init=0.57;E_rate=100 SimpleBattery.fmu",
+      "host": "localhost",
+      "name": "Battery4"
+    },
+    {
+      "directory": ".",
+      "exec": "helics-fmi --stoptime=604800s --step=60s --name=Battery5 --flags=no_free --set soc_init=0.48;E_rate=100 SimpleBattery.fmu",
+      "host": "localhost",
+      "name": "Battery5"
+    }
+  ]
+}

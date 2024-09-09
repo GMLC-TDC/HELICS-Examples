@@ -12,10 +12,11 @@ or not (based on whether it is full).
 allison.m.campbell@pnnl.gov
 """
 
+import matplotlib.pyplot as plt
 import helics as h
 import logging
 import numpy as np
-import matplotlib.pyplot as plt
+
 
 
 logger = logging.getLogger(__name__)
@@ -34,9 +35,12 @@ def destroy_federate(fed):
     :param fed: Federate to be destroyed
     :return: (none)
     '''
-    status = h.helicsFederateFinalize(fed)
-    h.helicsFederateFree(fed)
-    h.helicsCloseLibrary()
+
+    # Adding extra time request to clear out any pending messages to avoid
+    #   annoying errors in the broker log. Any message are tacitly disregarded.
+    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    status = h.helicsFederateDisconnect(fed)
+    h.helicsFederateDestroy(fed)
     logger.info('Federate finalized')
 
 
@@ -96,15 +100,14 @@ def get_new_EV(numEVs):
 
 
 if __name__ == "__main__":
-    np.random.seed(1490)
+    np.random.seed(267)
 
     ##############  Registering  federate from json  ##########################
     fed = h.helicsCreateMessageFederateFromConfig("ChargerConfig.json")
     federate_name = h.helicsFederateGetName(fed)
     logger.info(f'Created federate {federate_name}')
-    print(f'Created federate {federate_name}')
     end_count = h.helicsFederateGetEndpointCount(fed)
-    logging.debug(f'\tNumber of endpoints: {end_count}')
+    logger.debug(f'\tNumber of endpoints: {end_count}')
 
     # Diagnostics to confirm JSON config correctly added the required
     #   endpoints
@@ -131,7 +134,7 @@ if __name__ == "__main__":
     currentsoc = {}
 
 
-    hours = 24 * 7
+    hours = 24 * 1
     total_interval = int(60 * 60 * hours)
     update_interval = int(h.helicsFederateGetTimeProperty(
                             fed,
@@ -153,9 +156,10 @@ if __name__ == "__main__":
     # Apply initial charging voltage
     for j in range(0, end_count):
         message = str(charging_voltage[j])
-        h.helicsEndpointSendBytesTo(endid[j], message, "") #
-        logger.debug(f'\tSending charging voltage of {message} '
-                     f' from {endid[j]}'
+        h.helicsEndpointSendBytes(endid[j], message)
+        logger.debug(f'\tSending charging voltage of {message}'
+                     f' from {h.helicsEndpointGetName(endid[j])}'
+                     f' to {h.helicsEndpointGetDefaultDestination(endid[j])}'
                      f' at time {grantedtime}')
 
 
@@ -181,7 +185,7 @@ if __name__ == "__main__":
                              f' endpoint {endpoint_name}'
                              f' at time {grantedtime}')
                 # Send message of voltage to Battery federate
-                h.helicsEndpointSendBytesTo(endid[j], f'{charging_voltage[j]:4f}'.encode(), "")  #
+                h.helicsEndpointSendBytes(endid[j], f'{charging_voltage[j]:4f}'.encode())  #
                 logger.debug(f'Sent message from endpoint {endpoint_name}'
                          f' at time {grantedtime}'
                          f' with voltage {charging_voltage[j]:4f}')
@@ -197,7 +201,7 @@ if __name__ == "__main__":
         total_power = 0
         for j in range(0, end_count):
             if charging_current[j] > 0: # EV is still charging
-                total_power += charge_rate[(EVlist[j] - 1)]
+                total_power += charging_voltage[j] * charging_current[j]
 
         # Data collection vectors
         time_sim.append(grantedtime)
@@ -212,9 +216,9 @@ if __name__ == "__main__":
     #   terminals
     xaxis = np.array(time_sim)/3600
     yaxis = np.array(power)
-    plt.figure()
+
     plt.plot(xaxis, yaxis, color='tab:blue', linestyle='-')
-    plt.yticks(np.arange(0,100,10))
+    plt.yticks(np.arange(0,25000,1000))
     plt.ylabel('kW')
     plt.grid(True)
     plt.xlabel('time (hr)')

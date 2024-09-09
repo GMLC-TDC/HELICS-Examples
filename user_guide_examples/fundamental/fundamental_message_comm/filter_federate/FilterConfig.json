@@ -1,11 +1,12 @@
 {
   "name": "Filter",
   "core_name": "filter_core",
-  "log_level": 1,
+  "log_level": "warning",
   "core_type": "zmq",
   "uninterruptible": false,
   "terminate_on_error": false,
   "force_logging_flush": true,
+  "event_triggered": true,
   "endpoints": [
     {
       "name": "filter/main",

@@ -1,0 +1,73 @@
+{
+  "name": "Battery",
+  "core_type": "zmq",
+  "log_level": "warning",
+  "period": 60.0,
+  "uninterruptible": false,
+  "terminate_on_error": true,
+  "wait_for_current_time_update": true,
+  "publications": [
+    {
+      "global": true,
+      "key": "Battery/EV100_output_current",
+      "type": "double",
+      "unit": "A"
+    },
+    {
+      "global": true,
+      "key": "Battery/EV200_output_current",
+      "type": "double",
+      "unit": "A"
+    },
+    {
+      "global": true,
+      "key": "Battery/EV300_output_current",
+      "type": "double",
+      "unit": "A"
+    },
+    {
+      "global": true,
+      "key": "Battery/EV400_output_current",
+      "type": "double",
+      "unit": "A"
+    },
+    {
+      "global": true,
+      "key": "Battery/EV500_output_current",
+      "type": "double",
+      "unit": "A"
+    }
+  ],
+  "inputs": [
+    {
+      "global": true,
+      "name": "Battery/EV100_input_voltage",
+      "type": "double",
+      "unit": "V"
+    },
+    {
+      "global": true,
+      "name": "Battery/EV200_input_voltage",
+      "type": "double",
+      "unit": "V"
+    },
+    {
+      "global": true,
+      "name": "Battery/EV300_input_voltage",
+      "type": "double",
+      "unit": "V"
+    },
+    {
+      "global": true,
+      "name": "Battery/EV400_input_voltage",
+      "type": "double",
+      "unit": "V"
+    },
+    {
+      "global": true,
+      "name": "Battery/EV500_input_voltage",
+      "type": "double",
+      "unit": "V"
+    }
+  ]
+}

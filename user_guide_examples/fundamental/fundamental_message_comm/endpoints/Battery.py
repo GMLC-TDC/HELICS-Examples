@@ -14,10 +14,11 @@ SOC modeled by the charger. Each battery ceases charging when its SOC reaches 10
 allison.m.campbell@pnnl.gov
 """
 
+import matplotlib.pyplot as plt
 import helics as h
 import logging
 import numpy as np
-import matplotlib.pyplot as plt
+
 
 
 logger = logging.getLogger(__name__)
@@ -37,9 +38,12 @@ def destroy_federate(fed):
     :param fed: Federate to be destroyed
     :return: (none)
     '''
-    status = h.helicsFederateFinalize(fed)
-    h.helicsFederateFree(fed)
-    h.helicsCloseLibrary()
+
+    # Adding extra time request to clear out any pending messages to avoid
+    #   annoying errors in the broker log. Any message are tacitly disregarded.
+    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    status = h.helicsFederateDisconnect(fed)
+    h.helicsFederateDestroy(fed)
     logger.info('Federate finalized')
 
 
@@ -76,10 +80,9 @@ if __name__ == "__main__":
     fed = h.helicsCreateMessageFederateFromConfig("BatteryConfig.json")
     federate_name = h.helicsFederateGetName(fed)
     logger.info(f'Created federate {federate_name}')
-    print(f'Created federate {federate_name}')
 
     end_count = h.helicsFederateGetEndpointCount(fed)
-    logging.debug(f'\tNumber of endpoints: {end_count}')
+    logger.debug(f'\tNumber of endpoints: {end_count}')
 
     # Diagnostics to confirm JSON config correctly added the required
     #   endpoints
@@ -105,7 +108,7 @@ if __name__ == "__main__":
     for i in range (0, end_count):
         current_soc[i] = (np.random.randint(0,60))/100
 
-    hours = 24 * 7
+    hours = 24 * 1
     total_interval = int(60 * 60 * hours)
     update_interval = int(h.helicsFederateGetTimeProperty(
                                 fed,
@@ -171,9 +174,9 @@ if __name__ == "__main__":
 
             # send charging current message
             # to this endpoint's default destination, ""
-            h.helicsEndpointSendBytesTo(endid[j], str(charging_current), "")  #
+            h.helicsEndpointSendBytes(endid[j], str(charging_current))  #
             logger.debug(f'Sent message {charging_current:.2f}'
-                         f'from endpoint {endpoint_name}'
+                         f' from endpoint {endpoint_name}'
                          f' at time {grantedtime}')
 
             # Store SOC for later analysis/graphing
@@ -192,8 +195,7 @@ if __name__ == "__main__":
     for key in soc:
         y.append(np.array(soc[key]))
 
-    plt.figure()
-
+    #fig = plt.figure()
     fig, axs = plt.subplots(5, sharex=True, sharey=True)
     fig.suptitle('SOC of each EV Battery')
 

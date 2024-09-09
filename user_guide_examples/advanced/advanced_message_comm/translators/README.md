@@ -1,0 +1,3 @@
+# HELICS User Guide Advanced Topics - Translator Example
+
+This example cover the use of the HELICS translator which can be defined to allow value interfaces to receive data from endpoints and vice versa. The example implements an EV charging co-simulation with value, message, and combination federates. A full description of the example can be found in the [HELICS User Guide](https://docs.helics.org/en/latest/user-guide/examples/advanced_examples/advanced_default.html).

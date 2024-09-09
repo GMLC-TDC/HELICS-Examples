@@ -27,8 +27,6 @@ import logging
 import pprint
 import os
 import sys
-
-
 import helics as h
 import random
 from operator import itemgetter
@@ -88,9 +86,8 @@ def destroy_federate(fed):
     :param fed: Federate to be destroyed
     :return: (none)
     '''
-    status = h.helicsFederateFinalize(fed)
-    h.helicsFederateFree(fed)
-    h.helicsCloseLibrary()
+    status = h.helicsFederateDisconnect(fed)
+    h.helicsFederateDestroy(fed)
     logger.info('Federate finalized')
 
 

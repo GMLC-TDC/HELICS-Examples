@@ -17,10 +17,10 @@ level) and begins charging.
 allison.m.campbell@pnnl.gov, trevor.hardy@pnnl.gov
 """
 
+import matplotlib.pyplot as plt
 import helics as h
 import logging
 import numpy as np
-import matplotlib.pyplot as plt
 import json
 
 
@@ -40,9 +40,12 @@ def destroy_federate(fed):
     :param fed: Federate to be destroyed
     :return: (none)
     '''
-    status = h.helicsFederateFinalize(fed)
-    h.helicsFederateFree(fed)
-    h.helicsCloseLibrary()
+    
+    # Adding extra time request to clear out any pending messages to avoid
+    #   annoying errors in the broker log. Any message are tacitly disregarded.
+    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    status = h.helicsFederateDisconnect(fed)
+    h.helicsFederateDestroy(fed)
     logger.info('Federate finalized')
 
 
@@ -160,13 +163,13 @@ if __name__ == "__main__":
     subid = {}
     for i in range(0, sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name = h.helicsSubscriptionGetKey(subid[i])
+        sub_name = h.helicsSubscriptionGetTarget(subid[i])
         logger.debug(f'\tRegistered subscription---> {sub_name}')
 
     pubid = {}
     for i in range(0, pub_count):
         pubid[i] = h.helicsFederateGetPublicationByIndex(fed, i)
-        pub_name = h.helicsPublicationGetKey(pubid[i])
+        pub_name = h.helicsPublicationGetName(pubid[i])
         logger.debug(f'\tRegistered publication---> {pub_name}')
 
 
@@ -197,6 +200,7 @@ if __name__ == "__main__":
     # Data collection lists
     time_sim = []
     power = []
+    charging_current = {}
 
     # Blocking call for a time request at simulation time 0
     initial_time = 60
@@ -237,13 +241,13 @@ if __name__ == "__main__":
             # Model the physics of the battery charging. This happens
             #   every time step whether a message comes in or not and always
             #   uses the latest value provided by the battery model.
-            charging_current = h.helicsInputGetDouble((subid[j]))
-            logger.debug(f'\tCharging current: {charging_current:.2f} from '
-                         f'input {h.helicsSubscriptionGetKey(subid[j])}')
+            charging_current[j] = h.helicsInputGetDouble((subid[j]))
+            logger.debug(f'\tCharging current: {charging_current[j]:.2f} from '
+                         f'input {h.helicsSubscriptionGetTarget(subid[j])}')
 
             # New EV is in place after removing charge from old EV,
             # as indicated by the zero current draw.
-            if charging_current == 0:
+            if charging_current[j] == 0:
                 _, _, _, newEVtype = get_new_EV(1)
                 EVlist[j] = newEVtype[0]
                 charge_V = calc_charging_voltage(newEVtype)
@@ -255,7 +259,7 @@ if __name__ == "__main__":
                              f' {charging_voltage[j]}')
             else:
                 # SOC estimation
-                currentsoc[j] = estimate_SOC(charging_voltage[j], charging_current)
+                currentsoc[j] = estimate_SOC(charging_voltage[j], charging_current[j])
                 logger.debug(f'\t EV SOC estimate: {currentsoc[j]:.4f}')
 
 
@@ -305,7 +309,7 @@ if __name__ == "__main__":
         #   and capacity requirements required for this charging garage.
         total_power = 0
         for j in range(0,end_count):
-            total_power += charge_rate[(EVlist[j]-1)]
+            total_power += charging_voltage[j] * charging_current[j]
 
         # Data collection vectors
         time_sim.append(grantedtime)
@@ -320,9 +324,8 @@ if __name__ == "__main__":
     #   terminals
     xaxis = np.array(time_sim)/3600
     yaxis = np.array(power)
-    plt.figure()
     plt.plot(xaxis, yaxis, color='tab:blue', linestyle='-')
-    plt.yticks(np.arange(0,200,10))
+    plt.yticks(np.arange(0,24000,1000))
     plt.ylabel('kW')
     plt.grid(True)
     plt.xlabel('time (hr)')

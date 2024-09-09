@@ -1,6 +1,6 @@
 {
   "name": "Battery",
-  "log_level": 1,
+  "log_level": "warning",
   "core_type": "zmq",
   "broker_port": "20200",
   "period": 60,

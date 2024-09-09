@@ -1,93 +1,99 @@
 {
   "name": "Charger",
-  "log_level": 7,
+  "log_level": "warning",
   "core_type": "zmq",
-  "period": 1,
+  "period": 60,
   "uninterruptible": false,
   "terminate_on_error": true,
-  "endpoints":[
+  "endpoints": [
+    {
+      "name": "Charger/EV1.soc",
+      "destination": "Controller/ep",
+      "global": true
+    },
+    {
+      "name": "Charger/EV2.soc",
+      "destination": "Controller/ep",
+      "global": true
+    },
+    {
+      "name": "Charger/EV3.soc",
+      "destination": "Controller/ep",
+      "global": true
+    },
+    {
+      "name": "Charger/EV4.soc",
+      "destination": "Controller/ep",
+      "global": true
+    },
+    {
+      "name": "Charger/EV5.soc",
+      "destination": "Controller/ep",
+      "global": true
+    }
+  ],
+  "publications":[
     {
       "key":"Charger/EV1_voltage",
-      "destination":"Battery/EV1_current",
+      "type":"double",
+      "unit":"V",
       "global": true
     },
     {
       "key":"Charger/EV2_voltage",
-      "destination":"Battery/EV2_current",
+      "type":"double",
+      "unit":"V",
       "global": true
     },
     {
       "key":"Charger/EV3_voltage",
-      "destination":"Battery/EV3_current",
+      "type":"double",
+      "unit":"V",
       "global": true
     },
     {
       "key":"Charger/EV4_voltage",
-      "destination":"Battery/EV4_current",
+      "type":"double",
+      "unit":"V",
       "global": true
     },
     {
       "key":"Charger/EV5_voltage",
-      "destination":"Battery/EV5_current",
+      "type":"double",
+      "unit":"V",
       "global": true
     }
   ],
-  "filters":
-  [
+  "subscriptions":[
     {
-      "name":"Charger_filter1",
-      "sourcetarget":"Charger/EV1_voltage",
-      "mode":"source",
-      "operation":"delay",
-      "properties":
-      {
-        "name":"delay",
-        "value":5
-      }
+      "key":"Battery/EV1_current",
+      "type":"double",
+      "unit":"A",
+      "global": true
     },
     {
-      "name":"Charger_filter2",
-      "sourcetarget":"Charger/EV2_voltage",
-      "mode":"source",
-      "operation":"delay",
-      "properties":
-      {
-        "name":"delay",
-        "value":5
-      }
+      "key":"Battery/EV2_current",
+      "type":"double",
+      "unit":"A",
+      "global": true
     },
     {
-      "name":"Charger_filter3",
-      "sourcetarget":"Charger/EV3_voltage",
-      "mode":"source",
-      "operation":"delay",
-      "properties":
-      {
-        "name":"delay",
-        "value":5
-      }
+      "key":"Battery/EV3_current",
+      "type":"double",
+      "unit":"A",
+      "global": true
     },
     {
-      "name":"Charger_filter4",
-      "sourcetarget":"Charger/EV4_voltage",
-      "mode":"source",
-      "operation":"delay",
-      "properties":
-      {
-        "name":"delay",
-        "value":5
-      }
+      "key":"Battery/EV4_current",
+      "type":"double",
+      "unit":"A",
+      "global": true
     },
     {
-      "name":"Charger_filter5",
-      "sourcetarget":"Charger/EV5_voltage",
-      "mode":"source",
-      "operation":"delay",
-      "properties":
-      {
-        "name":"delay",
-        "value":5
-      }
+      "key":"Battery/EV5_current",
+      "type":"double",
+      "unit":"A",
+      "global": true
     }
   ]
 }

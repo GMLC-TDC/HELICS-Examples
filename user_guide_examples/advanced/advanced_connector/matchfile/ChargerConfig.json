@@ -1,0 +1,73 @@
+{
+  "core_name": "Charger",
+  "core_type": "zmq",
+  "log_level": "warning",
+  "name": "Charger",
+  "period": 60,
+  "terminate_on_error": true,
+  "uninterruptible": false,
+  "publications": [
+    {
+      "global": true,
+      "key": "Charger/EV100_output_voltage",
+      "type": "double",
+      "unit": "V"
+    },
+    {
+      "global": true,
+      "key": "Charger/EV200_output_voltage",
+      "type": "double",
+      "unit": "V"
+    },
+    {
+      "global": true,
+      "key": "Charger/EV300_output_voltage",
+      "type": "double",
+      "unit": "V"
+    },
+    {
+      "global": true,
+      "key": "Charger/EV400_output_voltage",
+      "type": "double",
+      "unit": "V"
+    },
+    {
+      "global": true,
+      "key": "Charger/EV500_output_voltage",
+      "type": "double",
+      "unit": "V"
+    }
+  ],
+  "inputs": [
+    {
+      "global": true,
+      "name": "Charger/EV100_input_current",
+      "type": "double",
+      "unit": "A"
+    },
+    {
+      "global": true,
+      "name": "Charger/EV200_input_current",
+      "type": "double",
+      "unit": "A"
+    },
+    {
+      "global": true,
+      "name": "Charger/EV300_input_current",
+      "type": "double",
+      "unit": "A"
+    },
+    {
+      "global": true,
+      "name": "Charger/EV400_input_current",
+      "type": "double",
+      "unit": "A"
+    },
+    {
+      "global": true,
+      "name": "Charger/EV500_input_current",
+      "type": "double",
+      "unit": "A"
+    }
+  ]
+}
