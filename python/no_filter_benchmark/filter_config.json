@@ -1,0 +1,29 @@
+{
+  "name": "filter",
+  "core_name": "filter_core",
+  "log_level": 1,
+  "core_type": "zmq",
+  "uninterruptible": false,
+  "terminate_on_error": true,
+  "force_logging_flush": true,
+  "endpoints": [
+    {
+      "name": "filter/ep",
+      "global": true
+    }
+  ],
+  "filters": [
+    {
+      "name": "filterFed",
+      "sourcetargets": [
+                        "source_sink/ep",
+                        "echo/ep"
+                         ],
+      "operation": "reroute",
+      "properties": {
+        "name": "newdestination",
+        "value": "filter/ep"
+      }
+    }
+  ]
+}

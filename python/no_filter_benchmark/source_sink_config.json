@@ -1,0 +1,17 @@
+{
+  "name": "source_sink",
+  "core_name": "ss_core",
+  "log_level": 1,
+  "core_type": "zmq",
+  "period": 1,
+  "uninterruptible": false,
+  "force_logging_flush": true,
+  "terminate_on_error": true,
+  "endpoints": [
+    {
+      "name": "source_sink/ep",
+      "destination": "echo/ep",
+      "global": true
+    }
+  ]
+}
