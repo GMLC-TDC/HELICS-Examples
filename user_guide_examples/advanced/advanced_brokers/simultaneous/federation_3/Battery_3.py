@@ -14,10 +14,11 @@ SOC modeled by the charger
 trevor.hardy@pnnl.gov
 """
 
+import matplotlib.pyplot as plt
 import helics as h
 import logging
 import numpy as np
-import matplotlib.pyplot as plt
+
 
 
 logger = logging.getLogger(__name__)
@@ -39,9 +40,11 @@ def destroy_federate(fed):
     :param fed: Federate to be destroyed
     :return: (none)
     '''
-    status = h.helicsFederateFinalize(fed)
-    h.helicsFederateFree(fed)
-    h.helicsCloseLibrary()
+    # Adding extra time request to clear out any pending messages to avoid
+    #   annoying errors in the broker log. Any message are tacitly disregarded.
+    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    status = h.helicsFederateDisconnect(fed)
+    h.helicsFederateDestroy(fed)
     logger.info('Federate finalized')
 
 
@@ -57,7 +60,7 @@ def get_new_battery(numBattery):
 
     '''
 
-    # Probabilities of a new EV having a battery at a given capacity. 
+    # Probabilities of a new EV having a battery at a given capacity.
     #   The three random values (25,62, 100) are the kWh of the randomly
     #   selected battery.
     size_1 = 0.2
@@ -89,14 +92,14 @@ if __name__ == "__main__":
     sub_name = {}
     for i in range(0, sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name[i] = h.helicsSubscriptionGetKey(subid[i])
+        sub_name[i] = h.helicsSubscriptionGetTarget(subid[i])
         logger.debug(f'\tRegistered subscription---> {sub_name[i]}')
 
     pubid = {}
     pub_name = {}
     for i in range(0, pub_count):
         pubid[i] = h.helicsFederateGetPublicationByIndex(fed, i)
-        pub_name[i] = h.helicsPublicationGetKey(pubid[i])
+        pub_name[i] = h.helicsPublicationGetName(pubid[i])
         logger.debug(f'\tRegistered publication---> {pub_name[i]}')
 
 
@@ -147,7 +150,7 @@ if __name__ == "__main__":
             # Get the applied charging voltage from the EV
             charging_voltage = h.helicsInputGetDouble((subid[j]))
             logger.debug(f'\tReceived voltage {charging_voltage:.2f} from input'
-                         f' {h.helicsSubscriptionGetKey(subid[j])}')
+                         f' {h.helicsSubscriptionGetTarget(subid[j])}')
 
             # EV is fully charged and a new EV is moving in
             # This is indicated by the charging removing voltage when it
@@ -195,10 +198,9 @@ if __name__ == "__main__":
     for key in soc:
         y.append(np.array(soc[key]))
 
-    plt.figure()
 
     fig, axs = plt.subplots(5, sharex=True, sharey=True)
-    fig.suptitle('Federation 3: SOC of each EV Battery')
+    fig.suptitle('SOC of each EV Battery')
 
     axs[0].plot(xaxis, y[0], color='tab:blue', linestyle='-')
     axs[0].set_yticks(np.arange(0,1.25,0.5))
@@ -224,9 +226,6 @@ if __name__ == "__main__":
     #for ax in axs():
 #        ax.label_outer()
     # Saving graph to file
-    #nplt.savefig('advanced_default_battery_SOCs.png', format='png')
+    plt.savefig('advanced_default_battery_SOCs.png', format='png')
 
     plt.show()
-    
-
-    

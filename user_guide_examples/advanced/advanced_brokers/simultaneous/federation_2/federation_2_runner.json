@@ -1,8 +1,9 @@
 {
+  "name": "federation_2",
   "federates": [    
     {
       "directory": ".",
-      "exec": "helics_broker -f 3 --loglevel=1 --port=20200",
+      "exec": "helics_broker -f 3 --loglevel=warning --port=20200",
       "host": "localhost",
       "name": "broker"
     },
@@ -24,6 +25,5 @@
       "host": "localhost",
       "name": "Battery_2"
     }
-  ],
-  "name": "federation_2"
+  ]
 }

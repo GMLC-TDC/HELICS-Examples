@@ -1,0 +1,18 @@
+{
+  "name": "iterative runner",
+  "broker": true,
+  "federates": [
+    {
+      "directory": ".",
+      "exec": "python -u Charger_noitermain.py 1",
+      "host": "localhost",
+      "name": "Charger"
+    },
+    {
+      "directory": ".",
+      "exec": "python -u Battery_noitermain.py 1",
+      "host": "localhost",
+      "name": "Battery"
+    }
+  ]
+}

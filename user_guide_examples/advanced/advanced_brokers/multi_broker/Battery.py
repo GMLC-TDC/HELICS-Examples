@@ -4,7 +4,7 @@ Created on 8/31/2020
 
 This is a simple battery value federate that models the physics of an EV
 battery as it is being charged. The federate receives a voltage signal
-representing the votlage applied to the charging terminals of the battery
+representing the voltage applied to the charging terminals of the battery
 and based on its internally modeled SOC, calculates the current draw of
 the battery and sends it back to the EV federate. Note that this SOC should
 be considered the true SOC of the battery which may be different than the
@@ -14,10 +14,10 @@ SOC modeled by the charger
 trevor.hardy@pnnl.gov
 """
 
+import matplotlib.pyplot as plt
 import helics as h
 import logging
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 logger = logging.getLogger(__name__)
@@ -39,9 +39,11 @@ def destroy_federate(fed):
     :param fed: Federate to be destroyed
     :return: (none)
     '''
-    status = h.helicsFederateFinalize(fed)
-    h.helicsFederateFree(fed)
-    h.helicsCloseLibrary()
+    # Adding extra time request to clear out any pending messages to avoid
+    #   annoying errors in the broker log. Any message are tacitly disregarded.
+    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    status = h.helicsFederateDisconnect(fed)
+    h.helicsFederateDestroy(fed)
     logger.info('Federate finalized')
 
 
@@ -57,7 +59,7 @@ def get_new_battery(numBattery):
 
     '''
 
-    # Probabilities of a new EV having a battery at a given capacity. 
+    # Probabilities of a new EV having a battery at a given capacity.
     #   The three random values (25,62, 100) are the kWh of the randomly
     #   selected battery.
     size_1 = 0.2
@@ -89,14 +91,14 @@ if __name__ == "__main__":
     sub_name = {}
     for i in range(0, sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name[i] = h.helicsSubscriptionGetKey(subid[i])
+        sub_name[i] = h.helicsSubscriptionGetTarget(subid[i])
         logger.debug(f'\tRegistered subscription---> {sub_name[i]}')
 
     pubid = {}
     pub_name = {}
     for i in range(0, pub_count):
         pubid[i] = h.helicsFederateGetPublicationByIndex(fed, i)
-        pub_name[i] = h.helicsPublicationGetKey(pubid[i])
+        pub_name[i] = h.helicsPublicationGetName(pubid[i])
         logger.debug(f'\tRegistered publication---> {pub_name[i]}')
 
 
@@ -147,7 +149,7 @@ if __name__ == "__main__":
             # Get the applied charging voltage from the EV
             charging_voltage = h.helicsInputGetDouble((subid[j]))
             logger.debug(f'\tReceived voltage {charging_voltage:.2f} from input'
-                         f' {h.helicsSubscriptionGetKey(subid[j])}')
+                         f' {h.helicsSubscriptionGetTarget(subid[j])}')
 
             # EV is fully charged and a new EV is moving in
             # This is indicated by the charging removing voltage when it
@@ -195,34 +197,34 @@ if __name__ == "__main__":
     for key in soc:
         y.append(np.array(soc[key]))
 
-    plt.figure()
 
     fig, axs = plt.subplots(5, sharex=True, sharey=True)
     fig.suptitle('SOC of each EV Battery')
 
     axs[0].plot(xaxis, y[0], color='tab:blue', linestyle='-')
     axs[0].set_yticks(np.arange(0,1.25,0.5))
-    axs[0].set(ylabel='Batt1')
+    axs[0].set(ylabel='Batt at\nport 1')
     axs[0].grid(True)
 
     axs[1].plot(xaxis, y[1], color='tab:blue', linestyle='-')
-    axs[1].set(ylabel='Batt2')
+    axs[1].set(ylabel='Batt a\nport 2')
     axs[1].grid(True)
 
     axs[2].plot(xaxis, y[2], color='tab:blue', linestyle='-')
-    axs[2].set(ylabel='Batt3')
+    axs[2].set(ylabel='Batt at\nport 3')
     axs[2].grid(True)
 
     axs[3].plot(xaxis, y[3], color='tab:blue', linestyle='-')
-    axs[3].set(ylabel='Batt4')
+    axs[3].set(ylabel='Batt at\nport 4')
     axs[3].grid(True)
 
     axs[4].plot(xaxis, y[4], color='tab:blue', linestyle='-')
-    axs[4].set(ylabel='Batt5')
+    axs[4].set(ylabel='Batt at\nport 5')
     axs[4].grid(True)
     plt.xlabel('time (hr)')
     #for ax in axs():
 #        ax.label_outer()
     # Saving graph to file
-    #plt.savefig('advanced_multibroker_battery_SOCs.png', format='png')
+    plt.savefig('advanced_default_battery_SOCs.png', format='png')
+
     plt.show()

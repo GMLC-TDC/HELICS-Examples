@@ -1,12 +1,12 @@
 {
   "name": "Battery",
-  "loglevel": 1,
-  "coreType": "zmq",
+  "log_level": "warning",
+  "core_type": "zmq",
   "period": 60,
   "uninterruptible": false,
   "terminate_on_error": true,
   "wait_for_current_time_update": true,
-  "brokerPort": 23500,
+  "broker_port": 23500,
   "publications":[
     {
       "key":"Battery/EV1_current",

@@ -1,18 +1,18 @@
 {
   "master":{
-    "coreType": "test"
+    "core_type": "inproc"
   },
   "comms": [
     {
-      "coreType": "zmq",
+      "core_type": "zmq",
       "port": 23500
     },
     {
-      "coreType": "tcp",
+      "core_type": "tcp",
       "port": 23700
     },
     {
-      "coreType": "udp",
+      "core_type": "udp",
       "port": 23900
     }
   ]

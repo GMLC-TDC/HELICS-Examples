@@ -1,8 +1,8 @@
 {
   "name": "Battery",
-  "loglevel": 1,
-  "coreType": "zmq",
-  "brokerPort": "20300",
+  "log_level": "warning",
+  "core_type": "zmq",
+  "broker_port": "20300",
   "period": 60,
   "uninterruptible": false,
   "terminate_on_error": true,

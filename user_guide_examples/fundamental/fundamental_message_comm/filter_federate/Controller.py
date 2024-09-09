@@ -11,12 +11,12 @@ or not (based on whether it is full).
 allison.m.campbell@pnnl.gov
 """
 
+import matplotlib.pyplot as plt
 import helics as h
 import logging
 import numpy as np
 import sys
 import time
-import matplotlib.pyplot as plt
 import pandas as pd
 
 logger = logging.getLogger(__name__)
@@ -36,9 +36,12 @@ def destroy_federate(fed):
     :param fed: Federate to be destroyed
     :return: (none)
     '''
-    status = h.helicsFederateFinalize(fed)
-    h.helicsFederateFree(fed)
-    h.helicsCloseLibrary()
+    
+    # Adding extra time request to clear out any pending messages to avoid
+    #   annoying errors in the broker log. Any message are tacitly disregarded.
+    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    status = h.helicsFederateDisconnect(fed)
+    h.helicsFederateDestroy(fed)
     logger.info('Federate finalized')
 
 
@@ -71,20 +74,27 @@ if __name__ == "__main__":
     #   that, recalculate the control output and request a very late time
     #   again.
 
-    # There appears to be a bug related to maxtime in HELICS 2.4 that can
-    #   can be avoided by using a slightly smaller version of maxtime
-    #   (helics_time_maxtime is the largest time that HELICS can internally
-    #   represent and is an approximation for a point in time very far in
-    #   in the future).
-    fake_max_time = int(h.HELICS_TIME_MAXTIME/1000)
-    starttime = fake_max_time
+
+    starttime = h.HELICS_TIME_MAXTIME
+    # starttime = 60
     logger.debug(f'Requesting initial time {starttime}')
     grantedtime = h.helicsFederateRequestTime (fed, starttime)
     logger.debug(f'Granted time {grantedtime}')
 
 
-    time_sim = {}
-    soc = {}
+    time_sim = [0]
+    
+    # Cheating by hard-coding the endpoint names from which the SOC data is
+    #   received. This allows us to store the last SOC value and use it in the
+    #   when recording SOCs when producing output graphs even if a message 
+    #   to the Controller gets dropped due to the filter.
+    # This could be handled dynamically by querying the federation and figuring
+    #   out the endpoint names.
+    soc = {"Charger/EV1.soc":[0], 
+            "Charger/EV2.soc":[0], 
+            "Charger/EV3.soc":[0], 
+            "Charger/EV4.soc":[0], 
+            "Charger/EV5.soc":[0]}
 
     while grantedtime < total_interval:
 
@@ -112,50 +122,58 @@ if __name__ == "__main__":
             else:
                 instructions = 0
             message = str(instructions)
-            h.helicsEndpointSendMessageRaw(endid, source, message.encode())
+            h.helicsEndpointSendBytesTo(endid, message.encode(), source)
             logger.debug(f'Sent message to endpoint {source}'
                          f' at time {grantedtime}'
                          f' with payload {instructions}')
 
             # Store SOC for later analysis/graphing
-            if source not in soc:
-                soc[source] = []
             soc[source].append(float(currentsoc))
-            
-            if source not in time_sim:
-                time_sim[source] = []
-            time_sim[source].append(grantedtime)
+
+        time_sim.append(grantedtime)
+        
+        
+        # If an SOC entry is missing it was caught by the filter. We manually
+        #   add in the most recent SOC value to make sure the time and SOC data
+        #   vectors are the same length when graphing.
+        time_length = len(time_sim)
+        for idx, (key, data) in enumerate(soc.items()):
+            data_length = len(data)    
+            if data_length < time_length:
+                last_soc = data[-1]
+                soc[key].append(last_soc)
+                logger.debug(f'\tMissing data for {key} due to filtering.'
+                            f' Copying last SOC for time period ' 
+                            f'{grantedtime}.')
 
         # Since we've dealt with all the messages that are queued, there's
         #   nothing else for the federate to do until/unless another
         #   message comes in. Request a time very far into the future
         #   and take a break until/unless a new message arrives.
-        logger.debug(f'Requesting time {fake_max_time}')
-        grantedtime = h.helicsFederateRequestTime (fed, fake_max_time)
+        logger.debug(f'Requesting time {h.HELICS_TIME_MAXTIME}\n')
+        #logger.debug(f'Requesting time {grantedtime + 60}\n')
+        grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+        #grantedtime = h.helicsFederateRequestTime(fed, grantedtime + 60)
         logger.info(f'Granted time: {grantedtime}')
 
     # Close out co-simulation execution cleanly now that we're done.
     destroy_federate(fed)
 
     # Printing out final results graphs for comparison/diagnostic purposes.
-    xaxis = []
-    for key in time_sim:
-        xaxis.append(np.array(time_sim[key])/3600)
     
+    # Trimming initial value of zero which is only needed if the first message 
+    #   gets filtered out and we need to copy previous data. It is dummy data
+    #   anyway and shouldn't be plotted.
+    del time_sim[0]
+    for idx, (key, data) in enumerate(soc.items()):
+        del data[0]
+    
+    xaxis = np.array(time_sim)/3600
     y = []
     for key in soc:
         y.append(np.array(soc[key]))
-    
-    # Data logging diagnostics/debugging
-    #logger.debug(f'Number of time steps with collected data: {len(time_sim)}')
-    #logger.debug(f'Number of data points for EV 1 with collected data: {len(soc["Charger/EV1.soc"])}')
-    #logger.debug(f'Number of data points for EV 2 with collected data: {len(soc["Charger/EV2.soc"])}')
-    #logger.debug(f'Number of data points for EV 3 with collected data: {len(soc["Charger/EV3.soc"])}')
-    #logger.debug(f'Number of data points for EV 4 with collected data: {len(soc["Charger/EV4.soc"])}')
-    #logger.debug(f'Number of data points for EV 5 with collected data: {len(soc["Charger/EV5.soc"])}')
 
 
-    plt.figure()
 
     fig, axs = plt.subplots(5, sharex=True, sharey=True)
     fig.suptitle('SOC at each charging port')

@@ -1,8 +1,8 @@
 {
   "name": "Charger",
-  "loglevel": 1,
-  "coreType": "zmq",
-  "brokerPort": "20200",
+  "log_level": "warning",
+  "core_type": "zmq",
+  "broker_port": "20200",
   "period": 60,
   "uninterruptible": false,
   "terminate_on_error": true,

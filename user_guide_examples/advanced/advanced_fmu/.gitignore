@@ -1,0 +1,9 @@
+# don't commit the unziped fmu
+SimpleBattery/*
+
+# do commit the modelica model of the version
+# can be opened with, e.g., OpenModelica Connection Editor (https://openmodelica.org/)
+!SimpleBattery.mo
+
+# loca batch file used to add helics-fmi to path
+env.bat

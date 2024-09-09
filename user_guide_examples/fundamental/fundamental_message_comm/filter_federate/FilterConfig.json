@@ -6,6 +6,7 @@
   "uninterruptible": true,
   "terminate_on_error": false,
   "force_logging_flush": true,
+  "event_triggered": true,
   "endpoints": [
     {
       "name": "filter/main",
@@ -14,44 +15,15 @@
   ],
   "filters": [
     {
-      "name": "fromEV1.soc",
-      "sourcetargets": "Charger/EV1.soc",
-      "operation": "reroute",
-      "properties": {
-        "name": "newdestination",
-        "value": "filter/main"
-      }
-    },
-    {
-      "name": "fromEV2.soc",
-      "sourcetargets": "Charger/EV2.soc",
-      "operation": "reroute",
-      "properties": {
-        "name": "newdestination",
-        "value": "filter/main"
-      }
-    },
-    {
-      "name": "fromEV3.soc",
-      "sourcetargets": "Charger/EV3.soc",
-      "operation": "reroute",
-      "properties": {
-        "name": "newdestination",
-        "value": "filter/main"
-      }
-    },
-    {
-      "name": "fromEV4.soc",
-      "sourcetargets": "Charger/EV4.soc",
-      "operation": "reroute",
-      "properties": {
-        "name": "newdestination",
-        "value": "filter/main"
-      }
-    },
-    {
-      "name": "fromEV5.soc",
-      "sourcetargets": "Charger/EV5.soc",
+      "name": "filterFed",
+      "sourcetargets": [
+                        "Charger/EV1.soc",
+                         "Charger/EV2.soc", 
+                         "Charger/EV3.soc", 
+                         "Charger/EV4.soc",
+                         "Charger/EV5.soc",
+                         "Controller/ep"
+                         ],
       "operation": "reroute",
       "properties": {
         "name": "newdestination",

@@ -1,0 +1,19 @@
+{
+  "name": "Controller_and_Charger",
+  "federates": [
+    {
+      "directory": ".",
+      "exec": "python3 -u Charger.py",
+      "host": "localhost",
+      "name": "Charger",
+      "loglevel": 1
+    },
+    {
+      "directory": ".",
+      "exec": "python3 -u Controller.py",
+      "host": "localhost",
+      "name": "Controller",
+      "loglevel": 1
+    }
+  ]
+}

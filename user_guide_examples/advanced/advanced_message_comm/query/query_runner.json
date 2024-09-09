@@ -1,11 +1,7 @@
 {
+  "name": "query",
+  "broker":  true,
   "federates": [    
-    {
-      "directory": ".",
-      "exec": "helics_broker -f 3 --loglevel=1",
-      "host": "localhost",
-      "name": "broker"
-    },
     {
       "directory": ".",
       "exec": "python -u Charger.py",
@@ -24,6 +20,5 @@
       "host": "localhost",
       "name": "Battery"
     }
-  ],
-  "name": "query"
+  ]
 }

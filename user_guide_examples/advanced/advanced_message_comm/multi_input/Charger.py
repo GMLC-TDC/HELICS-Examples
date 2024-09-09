@@ -21,10 +21,10 @@ distinct charging points each with their own meter.)
 trevor.hardy@pnnl.gov
 """
 
+import matplotlib.pyplot as plt
 import helics as h
 import logging
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 logger = logging.getLogger(__name__)
@@ -43,9 +43,12 @@ def destroy_federate(fed):
     :param fed: Federate to be destroyed
     :return: (none)
     '''
-    status = h.helicsFederateFinalize(fed)
-    h.helicsFederateFree(fed)
-    h.helicsCloseLibrary()
+    
+    # Adding extra time request to clear out any pending messages to avoid
+    #   annoying errors in the broker log. Any message are tacitly disregarded.
+    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    status = h.helicsFederateDisconnect(fed)
+    h.helicsFederateDestroy(fed)
     logger.info('Federate finalized')
 
 
@@ -112,7 +115,7 @@ if __name__ == "__main__":
     pubid = {}
     for i in range(0, pub_count):
         pubid[i] = h.helicsFederateGetPublicationByIndex(fed, i)
-        pub_name = h.helicsPublicationGetKey(pubid[i])
+        pub_name = h.helicsPublicationGetName(pubid[i])
         logger.debug(f'\tRegistered publication---> {pub_name}')
 
 
@@ -190,7 +193,6 @@ if __name__ == "__main__":
     #   terminals
     xaxis = np.array(time_sim)/3600
     yaxis = np.array(power)
-    plt.figure()
     plt.plot(xaxis, yaxis, color='tab:blue', linestyle='-')
     plt.yticks(np.arange(0,8000,500))
     plt.ylabel('kW')

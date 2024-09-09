@@ -1,0 +1,35 @@
+{
+    "coreInit": "--federates=1",
+    "coreName": "Distribution Federate",
+    "coreType": "zmq",
+    "name": "DistributionSim",
+    "offset": 0.0,
+    "period": 60,
+    "timeDelta": 1.0,
+    "logfile": "output.log",
+    "log_level": "warning",
+    "publications" : [
+          {
+               "global" : true,
+               "key" : "IEEE_123_feeder_0/totalLoad",
+               "type" : "complex",
+               "unit" : "VA",
+               "info" : {
+                    "object" : "network_node",
+                    "property" : "distribution_load"
+               }
+          }
+    ],
+    "subscriptions" : [
+          {
+               "required": true,
+               "key" : "TransmissionSim/transmission_voltage",
+               "type" : "complex",
+               "unit" : "V",
+               "info" : {
+                    "object" : "network_node",
+                    "property" : "positive_sequence_voltage"
+                    }
+          }
+    ]
+}

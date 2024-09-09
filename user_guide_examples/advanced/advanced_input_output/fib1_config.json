@@ -1,0 +1,8 @@
+{
+  "name": "fib1",
+  "core_name": "fib1_core",
+  "log_level": "warning",
+  "core_type": "zmq",
+  "uninterruptible": false,
+  "wait_for_current_time_update": false,
+}

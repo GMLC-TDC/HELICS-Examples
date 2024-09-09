@@ -1,1 +1,0 @@
-Working example of how to construct a broker hierarchy. This example contradicts the [existing documentation on broker hierarchies](https://docs.helics.org/en/helics3userguide/user-guide/advanced_topics/broker_hierarchies.html). Specifically, this example will not work without the `--port=xxxxx` in the broker `exec` string. Said documentation will need to be updated.

@@ -6,6 +6,7 @@
   "timedelta": 1,
   "uninterruptible": false,
   "terminate_on_error": true,
+  "force_logging_flush": true,
   "endpoints": [
     {
       "name": "Controller/ep",

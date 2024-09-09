@@ -11,12 +11,12 @@ or not (based on whether it is full).
 allison.m.campbell@pnnl.gov
 """
 
+import matplotlib.pyplot as plt
 import helics as h
 import logging
 import numpy as np
 import sys
 import time
-import matplotlib.pyplot as plt
 import pandas as pd
 
 logger = logging.getLogger(__name__)
@@ -36,9 +36,12 @@ def destroy_federate(fed):
     :param fed: Federate to be destroyed
     :return: (none)
     '''
-    status = h.helicsFederateFinalize(fed)
-    h.helicsFederateFree(fed)
-    h.helicsCloseLibrary()
+    
+    # Adding extra time request to clear out any pending messages to avoid
+    #   annoying errors in the broker log. Any message are tacitly disregarded.
+    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    status = h.helicsFederateDisconnect(fed)
+    h.helicsFederateDestroy(fed)
     logger.info('Federate finalized')
 
 
@@ -71,13 +74,8 @@ if __name__ == "__main__":
     #   that, recalculate the control output and request a very late time
     #   again.
 
-    # There appears to be a bug related to maxtime in HELICS 2.4 that can
-    #   can be avoided by using a slightly smaller version of maxtime
-    #   (helics_time_maxtime is the largest time that HELICS can internally
-    #   represent and is an approximation for a point in time very far in
-    #   in the future).
-    fake_max_time = int(h.HELICS_TIME_MAXTIME/1000)
-    starttime = fake_max_time
+
+    starttime = h.HELICS_TIME_MAXTIME
     logger.debug(f'Requesting initial time {starttime}')
     grantedtime = h.helicsFederateRequestTime (fed, starttime)
     logger.debug(f'Granted time {grantedtime}')
@@ -122,14 +120,18 @@ if __name__ == "__main__":
                 soc[source] = []
             soc[source].append(float(currentsoc))
 
-        time_sim.append(grantedtime)
+            if len(time_sim) > 0:
+                if time_sim[-1] != grantedtime:
+                    time_sim.append(grantedtime)
+            else:
+                time_sim.append(grantedtime)
 
         # Since we've dealt with all the messages that are queued, there's
         #   nothing else for the federate to do until/unless another
         #   message comes in. Request a time very far into the future
         #   and take a break until/unless a new message arrives.
-        logger.debug(f'Requesting time {fake_max_time}')
-        grantedtime = h.helicsFederateRequestTime (fed, fake_max_time)
+        logger.debug(f'Requesting time {h.HELICS_TIME_MAXTIME}')
+        grantedtime = h.helicsFederateRequestTime (fed, h.HELICS_TIME_MAXTIME)
         logger.info(f'Granted time: {grantedtime}')
 
     # Close out co-simulation execution cleanly now that we're done.
@@ -141,7 +143,6 @@ if __name__ == "__main__":
     for key in soc:
         y.append(np.array(soc[key]))
 
-    plt.figure()
 
     fig, axs = plt.subplots(5, sharex=True, sharey=True)
     fig.suptitle('SOC at each charging port')

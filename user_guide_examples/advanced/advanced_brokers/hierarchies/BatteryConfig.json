@@ -1,8 +1,8 @@
 {
   "name": "Battery",
-  "loglevel": 1,
-  "coreType": "zmq",
-  "brokerAddress": "tcp://127.0.0.1:25300",
+  "log_level": "warning",
+  "core_type": "zmq",
+  "broker_address": "tcp://127.0.0.1:25300",
   "period": 60,
   "uninterruptible": false,
   "terminate_on_error": true,
