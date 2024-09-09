@@ -1,0 +1,15 @@
+{
+  "coreInit": "--federates=1",
+  "coreName": "sender Federate",
+  "coreType": "zmq",
+  "name": "sender",
+  "offset": 0.0,
+  "period": 0.1,
+  "publications": [
+    {
+      "global": true,
+      "name": "data"
+    }
+  ],
+  "timeDelta": 0.1
+}

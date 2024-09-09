@@ -1,0 +1,11 @@
+{
+  "name": "main_broker",
+  "federates": [    
+    {
+      "directory": ".",
+      "exec": "helics_broker --sub_brokers=2 --loglevel=warning --timeout='30s' --port=25200",
+      "host": "localhost",
+      "name": "brokerA"
+    }
+  ]
+}

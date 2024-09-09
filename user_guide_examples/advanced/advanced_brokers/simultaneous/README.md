@@ -1,0 +1,3 @@
+# HELICS User Guide Advanced Topics - Parallel Simultaneous Co-simulations
+
+This example demonstrates how to configure federations so that they can run in parallel on one compute node without interfering with each other. A full description of the example can be found in the [HELICS User Guide](https://docs.helics.org/en/latest/user-guide/examples/advanced_examples/advanced_brokers_simultaneous.html).

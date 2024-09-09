@@ -1,0 +1,18 @@
+{
+  "name": "Battery",
+  "federates": [
+    {
+      "directory": ".",
+      "exec": "helics_broker -f 1 --loglevel=warning --timeout='30s' --port=25300 --broker_address=tcp://127.0.0.1:25200",
+      "host": "localhost",
+      "name": "brokerB"
+    },
+    {
+      "directory": ".",
+      "exec": "python -u Battery.py",
+      "host": "localhost",
+      "name": "Battery",
+      "loglevel": 1
+    }
+  ]
+}

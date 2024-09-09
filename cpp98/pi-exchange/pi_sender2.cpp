@@ -1,39 +1,36 @@
 /*
-Copyright © 2017-2018,
-Battelle Memorial Institute; Lawrence Livermore National Security, LLC; Alliance for Sustainable Energy, LLC
-All rights reserved. See LICENSE file and DISCLAIMER for more details.
+Copyright (c) 2017-2019,
+Battelle Memorial Institute; Lawrence Livermore National Security, LLC; Alliance for Sustainable Energy, LLC.  See the top-level NOTICE for
+additional details. All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
 */
-static char help[] = "Example to demonstrate the usage of HELICS C Interface with two federates.\n\
+static char help[] = "Example to demonstrate the usage of HELICS Cpp98 Interface with two federates.\n\
             This example implements a loose-coupling protocol to exchange values between two federates. \n\
             Here, a ZMQ broker is created and a value federate. The value federate can both.\n\
             publish and subscribe. This federate publishes a value and waits for the value \n\
             published by the other federate. Once the value has arrived, it publishes its next value \n\n";
 
-#include <stdio.h>
-#include <cpp98/ValueFederate.hpp>
-#include <cpp98/Broker.hpp>
-#include <cpp98/helics.hpp> // helicsVersionString
-#ifdef _MSC_VER
-#include <windows.h>
-#else
-#include <unistd.h>
-#endif
+#include <cstdio>
+#include <helics/cpp98/ValueFederate.hpp>
+#include <helics/cpp98/Broker.hpp>
+#include <helics/cpp98/helics.hpp> // helicsVersionString
+
 
 int main(int /*argc*/,char ** /*argv*/)
 {
-  std::string    initstring="2 --name=mainbroker";
+  std::string    initstring="-f 2 --name=mainbroker";
   std::string    fedinitstring="--federates=1";
   double         deltat=0.01;
-  helics98::Publication pub;
- helics98::Subscription sub;
+  helicscpp::Publication pub;
+ helicscpp::Input sub;
 
-  std::string helicsversion = helics98::getHelicsVersionString();
+  std::string helicsversion = helicscpp::getHelicsVersionString();
 
   printf("PI SENDER: Helics version = %s\n",helicsversion.c_str());
   printf("%s",help);
 
   /* Create broker */
-  helics98::Broker broker("zmq","",initstring);
+  helicscpp::Broker broker("zmq","",initstring);
 
   if(broker.isConnected()) {
     printf("PI SENDER: Broker created and connected\n");
@@ -42,10 +39,10 @@ int main(int /*argc*/,char ** /*argv*/)
   /* Create Federate Info object that describes the federate properties
    * Sets federate name and core type from string
    */
-  helics98::FederateInfo fi("TestA Federate", "zmq");
+  helicscpp::FederateInfo fi( "zmq");
 
   /* Federate init string */
-  fi.setCoreInitString(fedinitstring);
+  fi.setCoreInit(fedinitstring);
 
   /* Set the message interval (timedelta) for federate. Note that
      HELICS minimum message time interval is 1 ns and by default
@@ -53,11 +50,12 @@ int main(int /*argc*/,char ** /*argv*/)
      setTimedelta routine is a multiplier for the default timedelta.
   */
   /* Set one second message interval */
-  fi.setTimeDelta(deltat);
-  fi.setLoggingLevel(1);
+  fi.setProperty(helics_property_time_delta, deltat);
+  fi.setProperty(helics_property_int_log_level, helics_log_level_warning);
+
 
   /* Create value federate */
-  helics98::ValueFederate* vfed = new helics98::ValueFederate(fi);
+  helicscpp::ValueFederate* vfed = new helicscpp::ValueFederate("TestA Federate", fi);
   printf("PI SENDER: Value federate created\n");
 
   /* Register the publication */
@@ -71,17 +69,17 @@ int main(int /*argc*/,char ** /*argv*/)
   /* Register the subscription */
 
   /* Enter initialization state */
-  vfed->enterInitializationMode(); // can throw helics98::InvalidStateTransition exception
+  vfed->enterInitializingMode(); // can throw helicscpp::InvalidStateTransition exception
   printf("PI SENDER: Entered initialization state\n");
 
   /* Enter execution state */
-  vfed->enterExecutionMode(); // can throw helics98::InvalidStateTransition exception
+  vfed->enterExecutingMode(); // can throw helicscpp::InvalidStateTransition exception
   printf("PI SENDER: Entered execution state\n");
 
   /* This federate will be publishing deltat*pi for numsteps steps */
   //double this_time = 0.0;
   double pi = 22.0/7.0;
-  helics_time_t currenttime=0.0;
+  helics_time currenttime=0.0;
 
   while(currenttime < 0.2) {
     double value = currenttime*pi;
@@ -105,13 +103,8 @@ int main(int /*argc*/,char ** /*argv*/)
 
   // Destructor must be called before closing the library
   delete vfed;
-  while(broker.isConnected()) {
-#ifdef _MSC_VER
-	  Sleep(50);
-#else
-    usleep(50000); /* Sleep for 1 millisecond */
-#endif
-  }
+  broker.waitForDisconnect();
+ 
   printf("PI SENDER: Broker disconnected\n");
   helicsCloseLibrary();
   printf("PI SENDER: Library closed\n");

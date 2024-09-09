@@ -1,0 +1,3 @@
+# this is a comment
+REGEX:Charger/EV(?<ev_num>\d*)_output_voltage, REGEX:Battery/EV(?<ev_num>)_input_voltage, from_to
+REGEX:Charger/EV(?<ev_num>\d*)_input_current, REGEX:Battery/EV(?<ev_num>)_output_current, from_to

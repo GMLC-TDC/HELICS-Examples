@@ -1,25 +1,25 @@
 /*
-
-Copyright © 2017-2018,
-Battelle Memorial Institute; Lawrence Livermore National Security, LLC; Alliance for Sustainable Energy, LLC
-All rights reserved. See LICENSE file and DISCLAIMER for more details.
+Copyright (c) 2017-2019,
+Battelle Memorial Institute; Lawrence Livermore National Security, LLC; Alliance for Sustainable Energy, LLC.  See the top-level NOTICE for
+additional details. All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
 */
 static char help[] = " PI RECEIVER: Simple program to demonstrate the usage of HELICS C Interface.\n\
             This example creates a value federate subscribing to the publication \n\
             registered by PI SENDER.\n\n";
 
-#include <stdio.h>
-#include <cpp98/ValueFederate.hpp>
-#include <cpp98/helics.hpp>
+#include <cstdio>
+#include <helics/cpp98/ValueFederate.hpp>
+#include <helics/cpp98/helics.hpp>
 
 int main(int /*argc*/,char ** /*argv*/)
 {
   std::string    fedinitstring="--federates=1";
   double         deltat=0.01;
-  helics98::Subscription sub;
+  helicscpp::Input sub;
 
 
-  std::string helicsversion = helics98::getHelicsVersionString();
+  std::string helicsversion = helicscpp::getHelicsVersionString();
 
   printf("PI RECEIVER: Helics version = %s\n",helicsversion.c_str());
   printf("%s",help);
@@ -27,10 +27,10 @@ int main(int /*argc*/,char ** /*argv*/)
   /* Create Federate Info object that describes the federate properties
    * Set federate name and core type from string
    */
-  helics98::FederateInfo fi("TestB Federate", "zmq");
+  helicscpp::FederateInfo fi( "zmq");
 
   /* Federate init string */
-  fi.setCoreInitString(fedinitstring);
+  fi.setCoreInit(fedinitstring);
 
   /* Set the message interval (timedelta) for federate. Note that
      HELICS minimum message time interval is 1 ns and by default
@@ -38,11 +38,11 @@ int main(int /*argc*/,char ** /*argv*/)
      setTimedelta routine is a multiplier for the default timedelta.
   */
   /* Set one second message interval */
-  fi.setTimeDelta(deltat);
-  fi.setLoggingLevel(1);
+  fi.setProperty(helics_property_time_delta, deltat);
+  fi.setProperty(helics_property_int_log_level, helics_log_level_warning);
 
   /* Create value federate */
-  helics98::ValueFederate* vfed = new helics98::ValueFederate(fi);
+  helicscpp::ValueFederate* vfed = new helicscpp::ValueFederate("TestB Federate", fi);
   printf("PI RECEIVER: Value federate created\n");
 
   /* Subscribe to PI SENDER's publication */
@@ -50,14 +50,14 @@ int main(int /*argc*/,char ** /*argv*/)
   printf("PI RECEIVER: Subscription registered\n");
 
   /* Enter initialization state */
-  vfed->enterInitializationMode(); // can throw helics98::InvalidStateTransition exception
+  vfed->enterInitializingMode(); // can throw helicscpp::InvalidStateTransition exception
   printf("PI RECEIVER: Entered initialization state\n");
 
   /* Enter execution state */
-  vfed->enterExecutionMode(); // can throw helics98::InvalidStateTransition exception
+  vfed->enterExecutingMode(); // can throw helicscpp::InvalidStateTransition exception
   printf("PI RECEIVER: Entered execution state\n");
 
-  helics_time_t currenttime=0.0;
+  helics_time currenttime=0.0;
   double        value = 0.0;
 
   while(currenttime < 0.20) {

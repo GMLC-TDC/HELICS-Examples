@@ -1,0 +1,24 @@
+{
+  "name": "fundamental_combo",
+  "broker": true,
+  "federates": [
+    {
+      "directory": ".",
+      "exec": "python -u Charger.py",
+      "host": "localhost",
+      "name": "Charger"
+    },
+    {
+      "directory": ".",
+      "exec": "python -u Controller.py",
+      "host": "localhost",
+      "name": "Controller"
+    },
+    {
+      "directory": ".",
+      "exec": "python -u Battery.py",
+      "host": "localhost",
+      "name": "Battery"
+    }
+  ]
+}

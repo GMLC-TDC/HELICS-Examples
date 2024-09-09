@@ -1,0 +1,24 @@
+{
+    "broker": true,
+    "federates":[
+        {
+            "directory":".",
+            "exec":"python 1abc_Transmission_simulator.py -c 1b",
+            "host":"localhost",
+            "name":"1b_Transmission"
+        },
+        {
+            "directory":".",
+            "exec":"python 1bc_EV_Controller.py -c 1b",
+            "host":"localhost",
+            "name":"1b_Controller"
+        },
+        {
+            "directory":".",
+            "exec":"gridlabd.sh 1b_IEEE_123_feeder.glm",
+            "host":"localhost",
+            "name":"1b_GridLABD"
+        }
+    ],
+    "name":"1b-T-D-Cosimulation-HELICSRunner"
+}

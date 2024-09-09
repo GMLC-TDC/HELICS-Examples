@@ -1,0 +1,29 @@
+{
+  "name": "federation_3",
+  "federates": [    
+    {
+      "directory": ".",
+      "exec": "helics_broker -f 3 --loglevel=warning --port=20300",
+      "host": "localhost",
+      "name": "broker"
+    },
+    {
+      "directory": ".",
+      "exec": "python -u Charger_3.py",
+      "host": "localhost",
+      "name": "Charger_3"
+    },
+    {
+      "directory": ".",
+      "exec": "python -u Controller_3.py",
+      "host": "localhost",
+      "name": "Controller_3"
+    },
+    {
+      "directory": ".",
+      "exec": "python -u Battery_3.py",
+      "host": "localhost",
+      "name": "Battery_3"
+    }
+  ]
+}

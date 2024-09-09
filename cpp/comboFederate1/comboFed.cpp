@@ -1,112 +1,99 @@
 /*
-Copyright © 2017-2018,
-Battelle Memorial Institute; Lawrence Livermore National Security, LLC; Alliance for Sustainable Energy, LLC
-All rights reserved. See LICENSE file and DISCLAIMER for more details.
+Copyright (c) 2017-2019,
+Battelle Memorial Institute; Lawrence Livermore National Security, LLC; Alliance for Sustainable Energy, LLC.  See
+the top-level NOTICE for additional details. All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
 */
 #include "helics/application_api/CombinationFederate.hpp"
-#include <iostream>
-#include <thread>
-#include "helics/core/BrokerFactory.hpp"
-#include "helics/common/argParser.h"
+#include "helics/apps/BrokerApp.hpp"
+#include "helics/core/helicsCLI11.hpp"
+#include "helics/core/helics_definitions.hpp"
 
-static const helics::ArgDescriptors InfoArgs{
-    {"startbroker","start a broker with the specified arguments"},
-    {"target,t", "name of the target federate"},
-    {"valuetarget","name of the value federate to target"},
-    {"messgetarget","name of the message federate to target"},
-    {"endpoint,e", "name of the target endpoint"},
-    {"source,s", "name of the source endpoint"}
-    //name is captured in the argument processor for federateInfo
-};
+#include <iostream>
 
 int main (int argc, char *argv[])
 {
-    helics::FederateInfo fi("fed");
-    helics::variable_map vm;
-    auto parseResult = argumentParser(argc, argv, vm, InfoArgs);
-    fi.loadInfoFromArgs(argc, argv);
-    if (parseResult != 0)
+    helics::helicsCLI11App app ("Combination Fed", "ComboFed");
+    std::string targetEndpoint = "endpoint";
+    std::string vtarget = "fed";
+    std::string mtarget = "fed";
+    std::string myendpoint = "endpoint";
+    helics::apps::BrokerApp brk;
+    std::string brokerArgs = "";
+
+    app.add_option_function<std::string> (
+      "--target,-t",
+      [&vtarget, &mtarget] (const std::string &name) {
+          vtarget = name;
+          mtarget = name;
+      },
+      "name of the federate to target");
+    app.add_option ("--valuetarget", vtarget, "name of the value federate to target", true);
+    app.add_option ("--messagetarget", mtarget, "name of the message federate to target", true);
+    app.add_option ("--endpoint,-e", targetEndpoint, "name of the target endpoint", true);
+    app.add_option ("--source,-e", myendpoint, "name of the source endpoint", true);
+    app.add_option ("--startbroker", brokerArgs, "start a broker with the specified arguments");
+
+    auto ret = app.helics_parse (argc, argv);
+
+    helics::FederateInfo fi;
+    if (ret == helics::helicsCLI11App::parse_output::help_call)
     {
+        fi.loadInfoFromArgs ("--help");
         return 0;
     }
+    else if (ret != helics::helicsCLI11App::parse_output::ok)
+    {
+        return -1;
+    }
+    fi.defName = "fed";
+    fi.loadInfoFromArgs (app.remainArgs ());
 
-	std::string vtarget = "fed";
-    std::string mtarget = "fed";
-	if (vm.count("target") > 0)
-	{
-		mtarget= vm["target"].as<std::string>();
-        vtarget = mtarget;
-	}
-    if (vm.count("valuetarget") > 0)
-    {
-        vtarget = vm["valuetarget"].as<std::string>();
-    }
-    if (vm.count("messagetarget") > 0)
-    {
-        mtarget = vm["messagetarget"].as<std::string>();
-    }
-    std::string targetEndpoint = "endpoint";
-    if (vm.count("endpoint") > 0) {
-        targetEndpoint = vm["endpoint"].as<std::string>();
-    }
     std::string etarget = mtarget + "/" + targetEndpoint;
-    std::string myendpoint = "endpoint";
-    if (vm.count("source") > 0)
+
+    fi.setProperty (helics::defs::properties::log_level, 5);
+    if (app["--startbroker"]->count () > 0)
     {
-        myendpoint = vm["source"].as<std::string>();
+        brk = helics::apps::BrokerApp (fi.coreType, brokerArgs);
     }
 
-    fi.logLevel = 5;
-    std::shared_ptr<helics::Broker> brk;
-    if (vm.count("startbroker") > 0)
-    {
-        brk = helics::BrokerFactory::create(fi.coreType, vm["startbroker"].as<std::string>());
-    }
+    auto cFed = std::make_unique<helics::CombinationFederate> (std::string{}, fi);
+    auto name = cFed->getName ();
+    std::cout << " registering endpoint '" << myendpoint << "' for " << name << '\n';
 
-    auto cFed = std::make_unique<helics::CombinationFederate> (fi);
-    auto name = cFed->getName();
-	std::cout << " registering endpoint '" << myendpoint << "' for " << name<<'\n';
+    // this line actually creates an endpoint
+    auto &id = cFed->registerEndpoint (myendpoint);
 
-    //this line actually creates an endpoint
-    auto id = cFed->registerEndpoint(myendpoint);
+    auto &pubid = cFed->registerPublication ("pub", "double");
 
-    auto pubid = cFed->registerPublication("pub", "double");
-
-    auto subid = cFed->registerOptionalSubscription(vtarget + "/pub", "double");
+    auto &subid = cFed->registerSubscription (vtarget + "/pub", "double");
     std::cout << "entering init State\n";
-    cFed->enterInitializationState ();
+    cFed->enterInitializingMode ();
     std::cout << "entered init State\n";
-    cFed->enterExecutionState ();
+    cFed->enterExecutingMode ();
     std::cout << "entered exec State\n";
-    for (int i=1; i<10; ++i) {
-		std::string message = "message sent from "+name+" to "+etarget+" at time " + std::to_string(i);
-		cFed->sendMessage(id, etarget, message.data(), message.size());
-        cFed->publish(pubid, i);
+    for (int i = 1; i < 10; ++i)
+    {
+        std::string message = "message sent from " + name + " to " + etarget + " at time " + std::to_string (i);
+        cFed->sendMessage (id, etarget, message.data (), message.size ());
+        cFed->publish (pubid, i);
         std::cout << message << std::endl;
         auto newTime = cFed->requestTime (i);
-		std::cout << "processed time " << static_cast<double> (newTime) << "\n";
-		while (cFed->hasMessage(id))
-		{
-			auto nmessage = cFed->getMessage(id);
-			std::cout << "received message from " << nmessage->source << " at " << static_cast<double>(nmessage->time) << " ::" << nmessage->data.to_string() << '\n';
-		}
-        
-        if (cFed->isUpdated(subid))
+        std::cout << "processed time " << static_cast<double> (newTime) << "\n";
+        while (cFed->hasMessage (id))
         {
-            auto val = cFed->getValue<double>(subid);
-            std::cout << "received updated value of "<<val<<" at " << newTime << " from " << cFed->getSubscriptionKey(subid) << '\n';
+            auto nmessage = cFed->getMessage (id);
+            std::cout << "received message from " << nmessage->source << " at "
+                      << static_cast<double> (nmessage->time) << " ::" << nmessage->data.to_string () << '\n';
         }
 
+        if (cFed->isUpdated (subid))
+        {
+            auto val = cFed->getDouble (subid);
+            std::cout << "received updated value of " << val << " at " << newTime << " from "
+                      << cFed->getTarget (subid) << '\n';
+        }
     }
     cFed->finalize ();
-    if (brk)
-    {
-        while (brk->isConnected())
-        {
-            std::this_thread::yield();
-        }
-        brk = nullptr;
-    }
     return 0;
 }
-

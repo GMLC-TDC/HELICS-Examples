@@ -1,71 +1,79 @@
 /*
-Copyright © 2017-2018,
-Battelle Memorial Institute; Lawrence Livermore National Security, LLC; Alliance for Sustainable Energy, LLC
-All rights reserved. See LICENSE file and DISCLAIMER for more details.
+Copyright (c) 2017-2019,
+Battelle Memorial Institute; Lawrence Livermore National Security, LLC; Alliance for Sustainable Energy, LLC.  See
+the top-level NOTICE for additional details. All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
 */
 
 /* include the HELICS header for value Federates*/
-#include <ValueFederate.h>
+#include <helics/shared_api_library/ValueFederate.h>
 #include <stdio.h>
 
 int main() {
-  helics_federate_info_t fedinfo; /* an information object used to pass information to a federate*/
+  helics_federate_info fedinfo; /* an information object used to pass information to a federate*/
   const char*    fedinitstring="--federates=1"; /* tell the core to expect only 1 federate*/
   helics_federate vfed; /* object representing the actual federate*/
   helics_publication pub; /* an object representing a publication*/
-  helics_time_t currenttime = 0.0; /* the current time of the simulation*/
-  helics_status  status;/* the result code from a call to the helics Library*/
+  helics_time currenttime = 0.0; /* the current time of the simulation*/
+  helics_error  err=helicsErrorInitialize();/* the result code from a call to the helics Library*/
   /** create an info structure to define some parameters used in federate creation*/
-  fedinfo = helicsFederateInfoCreate();
-  /** set the federate name*/
-  helicsFederateInfoSetFederateName(fedinfo, "hello_world_sender");
+  fedinfo = helicsCreateFederateInfo();
+
   /** set the core type to use
   can be "test", "ipc", "udp", "tcp", "zmq", "mpi"
   not all are available on all platforms
   and should be set to match the broker and receiver
   zmq is the default*/
-  helicsFederateInfoSetCoreTypeFromString(fedinfo,"zmq");
-  helicsFederateInfoSetCoreInitString(fedinfo,fedinitstring);
-  /** set the period of the federate to 1.0*/
-  helicsFederateInfoSetPeriod(fedinfo, 1.0);
+  helicsFederateInfoSetCoreTypeFromString(fedinfo,"zmq",&err);
+  helicsFederateInfoSetCoreInitString(fedinfo,fedinitstring,&err);
+  /** set the period of the federate to 1.0 get the period using the getPropertyIndex function with a string
+  if could also be set directly using the enumeration helics_property_time_period*/
+  helicsFederateInfoSetTimeProperty(fedinfo,helicsGetPropertyIndex("period"), 1.0,&err);
 
-  /** create the core using the informational structure*/
-  vfed = helicsCreateValueFederate(fedinfo);
-  if (vfed == NULL) /*check to make sure the federate was created*/
+  /** create the value federate using the informational structure*/
+  vfed = helicsCreateValueFederate("hello_world_sender",fedinfo,&err);
+
+  /** free the federateInfo structure when no longer needed*/
+  helicsFederateInfoFree(fedinfo);
+  if (err.error_code != helics_ok) /*check to make sure the federate was created*/
   {
       return (-2);
   }
   /** register a publication interface on vFed, with a global Name of "hello"
   of a type "string", with no units*/
-  pub = helicsFederateRegisterGlobalPublication(vfed, "hello", "string", "");
-  if (pub == NULL)
+  pub = helicsFederateRegisterGlobalPublication(vfed, "hello", helics_data_type_string, "",&err);
+  if (err.error_code != helics_ok) /*check to make sure the publication was created*/
   {
       return (-3);
   }
   /** transition the federate to execution mode
   * the helicsFederateEnterInitializationMode is not necessary if there is nothing to do in the initialization mode
   */
-  status=helicsFederateEnterInitializationMode(vfed);
-  if (status == helics_error)
+  helicsFederateEnterInitializingMode(vfed,&err);
+  if (err.error_code != helics_ok)
   {
-      fprintf(stderr, "HELICS failed to enter initialization mode\n");
+      fprintf(stderr, "HELICS failed to enter initialization mode:%s\n",err.message);
   }
-  status=helicsFederateEnterExecutionMode(vfed);
-  if (status == helics_error)
+  helicsFederateEnterExecutingMode(vfed,&err);
+  if (err.error_code != helics_ok)
   {
-      fprintf(stderr, "HELICS failed to enter initialization mode\n");
+      fprintf(stderr, "HELICS failed to enter initialization mode:%s\n",err.message);
   }
   /** the federate is now at time 0*/
-  /** publish the the Hello World string this will show up at the next time step of an subscribing federates*/
-  helicsPublicationPublishString(pub, "Hello, World");
+  /** publish the Hello World string this will show up at the next time step of an subscribing federates*/
+  helicsPublicationPublishString(pub, "Hello, World",&err);
   /** request that helics grant the federate a time of 1.0*/
-  status=helicsFederateRequestTime(vfed, 1.0, &currenttime);
-  if (status == helics_error)
+  currenttime=helicsFederateRequestTime(vfed, 1.0, &err);
+  if (err.error_code!=helics_ok)
   {
-      fprintf(stderr, "HELICS request time failed\n");
+      fprintf(stderr, "HELICS request time failed:%s\n",err.message);
+  }
+  else
+  {
+      fprintf(stdout, "HELICS granted time:%f\n", currenttime);
   }
   /** finalize the federate*/
-  helicsFederateFinalize(vfed);
+  helicsFederateFinalize(vfed,&err);
   /** free the memory allocated to the federate*/
   helicsFederateFree(vfed);
   /** close the helics library*/

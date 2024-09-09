@@ -1,25 +1,27 @@
 /*
-Copyright © 2017-2018,
-Battelle Memorial Institute; Lawrence Livermore National Security, LLC; Alliance for Sustainable Energy, LLC
-All rights reserved. See LICENSE file and DISCLAIMER for more details.
+Copyright (c) 2017-2019,
+Battelle Memorial Institute; Lawrence Livermore National Security, LLC; Alliance for Sustainable Energy, LLC.  See
+the top-level NOTICE for additional details. All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
 */
 static char help[] = " PI RECEIVER: Simple program to demonstrate the usage of HELICS C Interface.\n\
             This example creates a value federate subscribing to the publication \n\
             registered by PI SENDER.\n\n";
 
-#include <ValueFederate.h>
+#include <helics/shared_api_library/ValueFederate.h>
 #include <stdio.h>
 
 int main ()
 {
-    helics_federate_info_t fedinfo;
+    helics_federate_info fedinfo;
     const char *helicsversion;
-    helics_status status;
+
     const char *fedinitstring = "--federates=1";
     double deltat = 0.01;
     helics_federate vfed;
-    helics_subscription sub;
-    helics_time_t currenttime = 0.0;
+    helics_input sub;
+    helics_time currenttime = 0.0;
+    helics_error err= helicsErrorInitialize();
     double value = 0.0;
 
     helicsversion = helicsGetVersion ();
@@ -28,16 +30,13 @@ int main ()
     printf ("%s", help);
 
     /* Create Federate Info object that describes the federate properties */
-    fedinfo = helicsFederateInfoCreate ();
-
-    /* Set Federate name */
-    helicsFederateInfoSetFederateName (fedinfo, "TestB Federate");
+    fedinfo = helicsCreateFederateInfo ();
 
     /* Set core type from string */
-    helicsFederateInfoSetCoreTypeFromString (fedinfo, "zmq");
+    helicsFederateInfoSetCoreTypeFromString (fedinfo, "zmq",&err);
 
     /* Federate init string */
-    helicsFederateInfoSetCoreInitString (fedinfo, fedinitstring);
+    helicsFederateInfoSetCoreInitString (fedinfo, fedinitstring,&err);
 
     /* Set the message interval (timedelta) for federate. Note that
        HELICS minimum message time interval is 1 ns and by default
@@ -45,50 +44,59 @@ int main ()
        setTimedelta routine is a multiplier for the default timedelta.
     */
     /* Set one second message interval */
-    helicsFederateInfoSetTimeDelta (fedinfo, deltat);
+    helicsFederateInfoSetTimeProperty(fedinfo, helics_property_time_period, deltat, &err);
 
-    helicsFederateInfoSetLoggingLevel (fedinfo, 1);
+    helicsFederateInfoSetIntegerProperty(fedinfo, helics_property_int_log_level,1,&err);
 
     /* Create value federate */
-    vfed = helicsCreateValueFederate (fedinfo);
+    vfed = helicsCreateValueFederate ("TestB Federate",fedinfo,&err);
     printf ("PI RECEIVER: Value federate created\n");
 
+    /* Free the federateInfo structure */
+    helicsFederateInfoFree(fedinfo);
+
     /* Subscribe to PI SENDER's publication */
-    sub = helicsFederateRegisterSubscription (vfed, "testA", "double", "");
+    sub = helicsFederateRegisterSubscription (vfed, "testA", "",&err);
     printf ("PI RECEIVER: Subscription registered\n");
 
     /* Enter initialization mode */
-    if ((status = helicsFederateEnterInitializationMode (vfed)) == helics_ok)
+    helicsFederateEnterInitializingMode(vfed, &err);
+    if (err.error_code == helics_ok)
     {
         printf ("PI RECEIVER: Entered initialization mode\n");
     }
     else
     {
-        return (-3);
+        printf("PI RECEIVER: Failed to Entered initialization mode: %s\n",err.message);
+        return (err.error_code);
     }
 
     /* Enter execution mode */
-    if ((status = helicsFederateEnterExecutionMode (vfed)) == helics_ok)
+    helicsFederateEnterExecutingMode(vfed, &err);
+    if (err.error_code == helics_ok)
     {
         printf ("PI RECEIVER: Entered execution mode\n");
     }
-
+    else
+    {
+        printf("PI RECEIVER: Failed to Entered execution mode: %s\n", err.message);
+        return (err.error_code);
+    }
     while (currenttime < 0.20)
     {
         int isupdated;
-        helicsFederateRequestTime (vfed, currenttime, &currenttime);
+        currenttime=helicsFederateRequestTime (vfed, currenttime, &err);
 
-        isupdated = helicsSubscriptionIsUpdated (sub);
-        if (isupdated)
+        isupdated = helicsInputIsUpdated (sub);
+        if (isupdated!=helics_false)
         {
             /* NOTE: The value sent by sender at time t is received by receiver at time t+deltat */
-            helicsSubscriptionGetDouble (sub, &value);
+            value=helicsInputGetDouble (sub, &err);
             printf ("PI RECEIVER: Received value = %4.3f at time %3.2f from PI SENDER\n", value, currenttime);
         }
     }
-    helicsFederateFinalize (vfed);
+    helicsFederateDestroy (vfed);
     printf ("PI RECEIVER: Federate finalized\n");
-    helicsFederateFree (vfed);
     helicsCloseLibrary ();
     return (0);
 }

@@ -1,0 +1,18 @@
+{
+  "name": "demo",
+  "broker": true,
+  "federates": [
+    {
+      "directory": ".",
+      "exec": "python -u charger_demo.py",
+      "host": "localhost",
+      "name": "Charger"
+    },
+    {
+      "directory": ".",
+      "exec": "python -u battery_demo.py",
+      "host": "localhost",
+      "name": "Battery"
+    }
+  ]
+}

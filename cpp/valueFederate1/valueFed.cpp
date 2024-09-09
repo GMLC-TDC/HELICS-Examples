@@ -1,77 +1,70 @@
 /*
-Copyright © 2017-2018,
-Battelle Memorial Institute; Lawrence Livermore National Security, LLC; Alliance for Sustainable Energy, LLC
-All rights reserved. See LICENSE file and DISCLAIMER for more details.
+Copyright (c) 2017-2019,
+Battelle Memorial Institute; Lawrence Livermore National Security, LLC; Alliance for Sustainable Energy, LLC.  See
+the top-level NOTICE for additional details. All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
 */
-#include "helics/application_api/ValueFederate.hpp"
-#include <thread>
-#include <iostream>
-#include "helics/core/BrokerFactory.hpp"
-#include "helics/common/argParser.h"
+#include "helics/ValueFederates.hpp"
+#include "helics/apps/BrokerApp.hpp"
+#include "helics/core/helicsCLI11.hpp"
+#include "helics/core/helics_definitions.hpp"
 
-static const helics::ArgDescriptors InfoArgs{
-    { "startbroker","start a broker with the specified arguments" },
-    { "valuetarget", "name of the target federate, same as target" },
-    { "target,t", "name of the target federate" }
-};
+#include <iostream>
 
 int main (int argc, const char * const *argv)
 {
-    helics::FederateInfo fi("fed");
-    helics::variable_map vm;
-    auto parseResult = argumentParser(argc, argv, vm, InfoArgs);
-    fi.loadInfoFromArgs(argc, argv);
-    if (parseResult != 0)
+    helics::helicsCLI11App app ("Value Fed", "ValueFed");
+    std::string target = "fed";
+    helics::apps::BrokerApp brk;
+    std::string brokerArgs = "";
+
+    app.add_option ("--valuetarget,--target,t", target, "name of the target federate", true);
+    app.add_option ("--startbroker", brokerArgs, "start a broker with the specified arguments");
+
+    auto ret = app.helics_parse (argc, argv);
+
+    helics::FederateInfo fi;
+    if (ret == helics::helicsCLI11App::parse_output::help_call)
     {
+        fi.loadInfoFromArgs ("--help");
         return 0;
     }
-
-	fi.logLevel = 5;
-    std::shared_ptr<helics::Broker> brk;
-    if (vm.count("startbroker") > 0)
+    else if (ret != helics::helicsCLI11App::parse_output::ok)
     {
-        brk = helics::BrokerFactory::create(fi.coreType, vm["startbroker"].as<std::string>());
+        return -1;
+    }
+    fi.defName = "fed";
+    fi.loadInfoFromArgs (app.remainArgs ());
+
+    fi.setProperty(helics::defs::properties::log_level, 5);
+    if (app["--startbroker"]->count () > 0)
+    {
+        brk = helics::apps::BrokerApp (fi.coreType, brokerArgs);
     }
 
-    std::string target = "fed";
-    if (vm.count("target") > 0)
-    {
-        target = vm["target"].as<std::string>();
-    }
-    if (vm.count("valuetarget") > 0)
-    {
-        target = vm["valuetarget"].as<std::string>();
-    }
-    auto vFed = std::make_unique<helics::ValueFederate> (fi);
+    auto vFed = std::make_unique<helics::ValueFederate> (std::string{},fi);
 
-    auto id = vFed->registerPublication ("pub", "double");
+    auto &pub = vFed->registerPublication ("pub", "double");
 
-    auto subid = vFed->registerOptionalSubscription(target + "/pub","double");
-    std::cout << "entering init State\n";
-    vFed->enterInitializationState ();
-    std::cout << "entered init State\n";
-    vFed->enterExecutionState ();
-    std::cout << "entered exec State\n";
+    auto &sub = vFed->registerSubscription(target + "/pub", "double");
+    //TODO:: add optional property
+    std::cout << "entering init Mode\n";
+    vFed->enterInitializingMode ();
+    std::cout << "entered init Mode\n";
+    vFed->enterExecutingMode ();
+    std::cout << "entered exec Mode\n";
     for (int i=1; i<10; ++i) {
-        vFed->publish(id, i);
+        pub.publish(i);
         auto newTime = vFed->requestTime (i);
-        if (vFed->isUpdated(subid))
+        if (sub.isUpdated())
         {
-            auto val = vFed->getValue<double>(subid);
-            std::cout << "received updated value of " << val << " at "<< newTime << " from " << vFed->getSubscriptionKey(subid) << '\n';
+            auto val = sub.getValue<double>();
+            std::cout << "received updated value of " << val << " at "<< newTime << " from " << vFed->getTarget(sub) << '\n';
         }
-        
+
         std::cout << "processed time " << static_cast<double> (newTime) << "\n";
     }
     vFed->finalize ();
-    if (brk)
-    {
-        while (brk->isConnected())
-        {
-            std::this_thread::yield();
-        }
-        brk = nullptr;
-    }
     return 0;
 }
 

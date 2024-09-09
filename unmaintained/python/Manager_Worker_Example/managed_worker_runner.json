@@ -1,0 +1,24 @@
+{
+  "name": "fundamental_default",
+  "broker": false,
+  "federates": [
+  {
+      "directory": ".",
+      "exec": "helics_broker -f6",
+      "host": "localhost",
+      "name": "broker"
+    },
+    {
+      "directory": ".",
+      "exec": "python -u manager.py",
+      "host": "localhost",
+      "name": "manager"
+    },
+    {
+      "directory": ".",
+      "exec": "python -u worker.py",
+      "host": "localhost",
+      "name": "worker"
+    }
+  ]
+}

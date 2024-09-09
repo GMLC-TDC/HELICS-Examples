@@ -1,0 +1,26 @@
+{
+  "name": "BatteryLate",
+  "core_name": "battery_core_late",
+  "log_level": "warning",
+  "core_type": "zmq",
+  "period": 60,
+  "uninterruptible": false,
+  "terminate_on_error": true,
+  "wait_for_current_time_update": false,
+  "publications":[
+    {
+      "key":"BatteryLate/EV5_current",
+      "type":"double",
+      "unit":"A",
+      "global": true
+    }
+  ],
+  "subscriptions":[
+    {
+      "key":"Charger/EV5_voltage",
+      "type":"double",
+      "unit":"V",
+      "global": true
+    }
+  ]
+}

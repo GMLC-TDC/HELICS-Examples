@@ -1,93 +1,82 @@
 /*
-Copyright © 2017-2018,
-Battelle Memorial Institute; Lawrence Livermore National Security, LLC; Alliance for Sustainable Energy, LLC
-All rights reserved. See LICENSE file and DISCLAIMER for more details.
+Copyright (c) 2017-2019,
+Battelle Memorial Institute; Lawrence Livermore National Security, LLC; Alliance for Sustainable Energy, LLC.  See
+the top-level NOTICE for additional details. All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
 */
-#include "helics/application_api/Endpoints.hpp"
-#include <iostream>
-#include <thread>
-#include "helics/core/BrokerFactory.hpp"
-#include "helics/common/argParser.h"
+#include "helics/MessageFederates.hpp"
+#include "helics/apps/BrokerApp.hpp"
+#include "helics/core/helicsCLI11.hpp"
+#include "helics/core/helics_definitions.hpp"
 
-static const helics::ArgDescriptors InfoArgs{
-    {"startbroker","start a broker with the specified arguments"},
-    {"target,t", "name of the target federate"},
-    {"endpoint,e", "name of the target endpoint"},
-    {"source,s", "name of the source endpoint"}
-    //name is captured in the argument processor for federateInfo
-};
+#include <iostream>
 
 int main (int argc, char *argv[])
 {
-    helics::FederateInfo fi("fed");
-    helics::variable_map vm;
-    auto parseResult = argumentParser(argc, argv, vm, InfoArgs);
-    fi.loadInfoFromArgs(argc, argv);
-    if (parseResult != 0)
+    helics::helicsCLI11App app ("Message Fed Obj", "MessageFedObj");
+    std::string targetFederate = "fed";
+    std::string targetEndpoint = "endpoint";
+    std::string myendpoint = "endpoint";
+    helics::apps::BrokerApp brk;
+    std::string brokerArgs = "";
+
+    app.add_option ("--messagetarget,--target,-t", targetFederate, "name of the target federate");
+    app.add_option ("--endpoint,-e", targetEndpoint, "name of the target endpoint");
+    app.add_option ("--source,-s", myendpoint, "name of the source endpoint");
+    app.add_option ("--startbroker", brokerArgs, "start a broker with the specified arguments");
+
+    auto ret = app.helics_parse (argc, argv);
+
+    helics::FederateInfo fi;
+    if (ret == helics::helicsCLI11App::parse_output::help_call)
     {
+        fi.loadInfoFromArgs ("--help");
         return 0;
     }
-
-	std::string targetfederate = "fed";
-	if (vm.count("target") > 0)
-	{
-		targetfederate = vm["target"].as<std::string>();
-	}
-    std::string targetEndpoint = "endpoint";
-    if (vm.count("endpoint") > 0) {
-        targetEndpoint = vm["endpoint"].as<std::string>();
-    }
-    std::string target = targetfederate + "/" + targetEndpoint;
-    std::string myendpoint = "endpoint";
-    if (vm.count("source") > 0)
+    else if (ret == helics::helicsCLI11App::parse_output::ok)
     {
-        myendpoint = vm["source"].as<std::string>();
+        return -1;
     }
+    fi.defName = "fed";
+    fi.loadInfoFromArgs (app.remainArgs ());
 
-    fi.logLevel = 5;
-    std::shared_ptr<helics::Broker> brk;
-    if (vm.count("startbroker") > 0)
+    std::string target = targetFederate + "/" + targetEndpoint;
+
+    fi.setProperty(helics::defs::properties::log_level, 5);
+    if (app["--startbroker"]->count () > 0)
     {
-        brk = helics::BrokerFactory::create(fi.coreType, vm["startbroker"].as<std::string>());
+        brk = helics::apps::BrokerApp (fi.coreType, brokerArgs);
     }
 
-    auto mFed = std::make_unique<helics::MessageFederate> (fi);
+    auto mFed = std::make_unique<helics::MessageFederate> (std::string{},fi);
     auto name = mFed->getName();
-	std::cout << " registering endpoint '" << myendpoint << "' for " << name<<'\n';
+    std::cout << " registering endpoint '" << myendpoint << "' for " << name<<'\n';
 
     // create the endpoint using the Endpoint object interface
     helics::Endpoint endpoint(mFed.get(), myendpoint);
 
 
     std::cout << "entering init State\n";
-    mFed->enterInitializationState ();
+    mFed->enterInitializingMode ();
     std::cout << "entered init State\n";
-    mFed->enterExecutionState ();
+    mFed->enterExecutingMode ();
     std::cout << "entered exec State\n";
-    // set a defined target for the endpoint so it doesn't have to specfied on every call
-    endpoint.setTargetDestination(target);
+    // set a defined target for the endpoint so it doesn't have to specified on every call
+    endpoint.setDefaultDestination(target);
     for (int i=1; i<10; ++i) {
-		std::string message = "message sent from "+name+" to "+target+" at time " + std::to_string(i);
-		endpoint.send(message.data(), message.size());
+        std::string message = "message sent from "+name+" to "+target+" at time " + std::to_string(i);
+        endpoint.send(message.data(), message.size());
         std::cout << message << std::endl;
         auto newTime = mFed->requestTime (i);
-		std::cout << "processed time " << static_cast<double> (newTime) << "\n";
-		while (endpoint.hasMessage())
-		{
-			auto nmessage = endpoint.getMessage();
-			std::cout << "received message from " << nmessage->source << " at " << static_cast<double>(nmessage->time) << " ::" << nmessage->data.to_string() << '\n';
-		}
+        std::cout << "processed time " << static_cast<double> (newTime) << "\n";
+        while (endpoint.hasMessage())
+        {
+            auto nmessage = endpoint.getMessage();
+            std::cout << "received message from " << nmessage->source << " at " << static_cast<double>(nmessage->time) << " ::" << nmessage->data.to_string() << '\n';
+        }
 
     }
     mFed->finalize ();
-    if (brk)
-    {
-        while (brk->isConnected())
-        {
-            std::this_thread::yield();
-        }
-        brk = nullptr;
-    }
     return 0;
 }
 

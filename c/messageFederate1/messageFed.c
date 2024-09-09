@@ -1,9 +1,10 @@
 /*
-Copyright © 2017-2018,
-Battelle Memorial Institute; Lawrence Livermore National Security, LLC; Alliance for Sustainable Energy, LLC
-All rights reserved. See LICENSE file and DISCLAIMER for more details.
+Copyright (c) 2017-2019,
+Battelle Memorial Institute; Lawrence Livermore National Security, LLC; Alliance for Sustainable Energy, LLC.  See
+the top-level NOTICE for additional details. All rights reserved.
+SPDX-License-Identifier: BSD-3-Clause
 */
-#include <MessageFederate.h>
+#include <helics/shared_api_library/MessageFederate.h>
 #include <stdio.h>
 #include <string.h>
 #ifdef _MSC_VER
@@ -28,20 +29,21 @@ static const char defSourceEndpoint[] = "endpoint";
 
 int main (int argc, char *argv[])
 {
-    helics_federate_info_t fedinfo = helicsFederateInfoCreate();
-	const char *target = defTarget;
+    helics_federate_info fedinfo = helicsCreateFederateInfo();
+    const char *target = defTarget;
     const char *endpoint = defTargetEndpoint;
     const char *source = defSourceEndpoint;
     char *targetEndpoint = NULL;
     int ii;
     helics_federate mFed = NULL;
     helics_endpoint ept = NULL;
-    char str[255];
+    const char *str=NULL;
     char message[1024];
-    helics_time_t newTime;
+    helics_time newTime;
+    helics_error err = helicsErrorInitialize();
     for (ii = 1; ii < argc; ++ii)
     {
-        
+
         if (strcmp(argv[ii], "--target")==0)
         {
             target=argv[ii + 1];
@@ -65,47 +67,46 @@ int main (int argc, char *argv[])
             printf(" --help, -? display help\n");
             return 0;
         }
-      
+
     }
-	
-    helicsFederateInfoSetFederateName(fedinfo, "fed");
-    helicsFederateInfoLoadFromArgs(fedinfo, argc, (const char * const*)argv);
-    
-    mFed = helicsCreateMessageFederate(fedinfo);
+
+    helicsFederateInfoLoadFromArgs(fedinfo, argc, (const char * const*)argv,&err);
+
+    mFed = helicsCreateMessageFederate("fed",fedinfo,&err);
 
     targetEndpoint = (char *)malloc(strlen(target) + 2 + strlen(endpoint));
     strcpy(targetEndpoint, target);
     strcat(targetEndpoint, "/");
     strcat(targetEndpoint, endpoint);
 
-    helicsFederateGetName(mFed, str, 255);
+    str=helicsFederateGetName(mFed);
     printf("registering endpoint %s for %s\n", source, str);
     /*this line actually creates an endpoint */
-    ept = helicsFederateRegisterEndpoint(mFed, source, "");
+    ept = helicsFederateRegisterEndpoint(mFed, source, "",&err);
 
     printf("entering init Mode\n");
-    helicsFederateEnterInitializationMode(mFed);
+    helicsFederateEnterInitializingMode(mFed,&err);
     printf("entered init Mode\n");
-    helicsFederateEnterExecutionMode(mFed);
+    helicsFederateEnterExecutingMode(mFed,&err);
     printf("entered execution Mode\n");
     for (ii=1; ii<10; ++ii) {
         snprintf(message,1024, "message sent from %s to %s at time %d", str, targetEndpoint, ii);
-        helicsEndpointSendMessageRaw(ept, targetEndpoint, message, (int)(strlen(message)));
-		
+        helicsEndpointSendMessageRaw(ept, targetEndpoint, message, (int)(strlen(message)),&err);
+
         printf(" %s \n", message);
-        helicsFederateRequestTime(mFed, (helics_time_t)ii, &newTime);
+        newTime=helicsFederateRequestTime(mFed, (helics_time)ii, &err);
 
         printf("granted time %f\n", newTime);
-		while (helicsEndpointHasMessage(ept)==helics_true)
-		{
-			message_t nmessage = helicsEndpointGetMessage(ept);
+        while (helicsEndpointHasMessage(ept)==helics_true)
+        {
+            helics_message nmessage = helicsEndpointGetMessage(ept);
             printf("received message from %s at %f ::%s\n", nmessage.source, nmessage.time, nmessage.data);
-		}
+        }
 
     }
     printf("finalizing federate\n");
-    helicsFederateFinalize(mFed);
-   
+    helicsFederateDestroy(mFed);
+
     return 0;
 }
 
