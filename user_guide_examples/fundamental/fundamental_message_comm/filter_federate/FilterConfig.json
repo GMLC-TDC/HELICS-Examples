@@ -1,0 +1,34 @@
+{
+  "name": "Filter",
+  "core_name": "filter_core",
+  "log_level": "warning",
+  "core_type": "zmq",
+  "uninterruptible": false,
+  "terminate_on_error": false,
+  "force_logging_flush": true,
+  "event_triggered": true,
+  "endpoints": [
+    {
+      "name": "filter/main",
+      "global": true
+    }
+  ],
+  "filters": [
+    {
+      "name": "filterFed",
+      "sourcetargets": [
+                        "Charger/EV1.soc",
+                         "Charger/EV2.soc", 
+                         "Charger/EV3.soc", 
+                         "Charger/EV4.soc",
+                         "Charger/EV5.soc",
+                         "Controller/ep"
+                         ],
+      "operation": "reroute",
+      "properties": {
+        "name": "newdestination",
+        "value": "filter/main"
+      }
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+	"coreInit": "--federates=1",
+	"coreName": "EVController Federate",
+	"coreType": "zmq",
+	"name": "EVControllerSim",
+	"offset": 0.0,
+	"period": 300,
+	"timeDelta": 1.0,
+	"logfile": "output.log",
+	"log_level": "warning",
+	"endpoints": [
+		{
+			"key": "EV_Controller/EV6",
+			"destination": "IEEE_123_feeder_0/EV6",
+			"global": true,
+			"type": "string",
+			"info": "This is the endpoint which sends CIM attribute commands to the GridLAB-D simulator."
+		},
+		{
+			"key": "EV_Controller/EV5",
+			"destination": "IEEE_123_feeder_0/EV5",
+			"global": true,
+			"type": "string",
+			"info": "This is the endpoint which sends CIM attribute commands to the GridLAB-D simulator."
+		},
+		{
+			"key": "EV_Controller/EV4",
+			"destination": "IEEE_123_feeder_0/EV4",
+			"global": true,
+			"type": "string",
+			"info": "This is the endpoint which sends CIM attribute commands to the GridLAB-D simulator."
+		},
+		{
+			"key": "EV_Controller/EV3",
+			"destination": "IEEE_123_feeder_0/EV3",
+			"global": true,
+			"type": "string",
+			"info": "This is the endpoint which sends CIM attribute commands to the GridLAB-D simulator."
+		},
+		{
+			"key": "EV_Controller/EV2",
+			"destination": "IEEE_123_feeder_0/EV2",
+			"global": true,
+			"type": "string",
+			"info": "This is the endpoint which sends CIM attribute commands to the GridLAB-D simulator."
+		},
+		{
+			"key": "EV_Controller/EV1",
+			"destination": "IEEE_123_feeder_0/EV1",
+			"global": true,
+			"type": "string",
+			"info": "This is the endpoint which sends CIM attribute commands to the GridLAB-D simulator."
+		}
+	],
+	"filters": [
+		{
+			"name": "EVfilters",
+			"sourcetargets": [
+				"EV_Controller/EV6",
+				"EV_Controller/EV5",
+				"EV_Controller/EV4",
+				"EV_Controller/EV3",
+				"EV_Controller/EV2",
+				"EV_Controller/EV1"
+			],
+			"mode": "source",
+			"operation": "delay",
+			"properties": {
+				"name": "delay",
+				"value": 3600
+			}
+		}
+	],
+	"subscriptions": [
+		{
+			"key": "IEEE_123_feeder_0/totalLoad",
+			"type": "complex",
+			"required": true
+		}
+	]
+}

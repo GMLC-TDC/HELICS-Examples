@@ -1,0 +1,73 @@
+{
+  "name": "Battery",
+  "core_type": "zmq",
+  "log_level": "warning",
+  "period": 60,
+  "uninterruptible": false,
+  "terminate_on_error": true,
+  "wait_for_current_time_update": true,
+  "publications": [
+    {
+      "global": true,
+      "key": "Battery/EV1_current",
+      "type": "double",
+      "unit": "A"
+    },
+    {
+      "global": true,
+      "key": "Battery/EV2_current",
+      "type": "double",
+      "unit": "A"
+    },
+    {
+      "global": true,
+      "key": "Battery/EV3_current",
+      "type": "double",
+      "unit": "A"
+    },
+    {
+      "global": true,
+      "key": "Battery/EV4_current",
+      "type": "double",
+      "unit": "A"
+    },
+    {
+      "global": true,
+      "key": "Battery/EV5_current",
+      "type": "double",
+      "unit": "A"
+    }
+  ],
+  "subscriptions": [
+    {
+      "global": true,
+      "key": "Charger/EV1_voltage",
+      "type": "double",
+      "unit": "V"
+    },
+    {
+      "global": true,
+      "key": "Charger/EV2_voltage",
+      "type": "double",
+      "unit": "V"
+    },
+    {
+      "global": true,
+      "key": "Charger/EV3_voltage",
+      "type": "double",
+      "unit": "V"
+    },
+    {
+      "global": true,
+      "key": "Charger/EV4_voltage",
+      "type": "double",
+      "unit": "V"
+    },
+    {
+      "global": true,
+      "key": "Charger/EV5_voltage",
+      "type": "double",
+      "unit": "V"
+    }
+  ]
+}

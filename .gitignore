@@ -12,6 +12,8 @@ docs/html
 docs/xml
 docs/latex
 
+*.png
+
 #=============================================================================
 # Generic ignores
 #=============================================================================
@@ -251,3 +253,7 @@ tags
 
 ### MATLAB ###
 *.mex*
+python/BLOSEM_tutorial/.idea
+.DS_Store
+HELICS_translators.env
+HELICS_endpoint_subscriber_fix.env

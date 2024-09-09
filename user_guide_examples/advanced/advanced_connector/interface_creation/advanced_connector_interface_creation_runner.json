@@ -1,0 +1,24 @@
+{
+  "name": "advanced connector direct matchfile",
+  "broker": true,
+  "federates": [
+    {
+      "directory": ".",
+      "exec": "python -u Charger.py 1",
+      "host": "localhost",
+      "name": "Charger"
+    },
+    {
+      "directory": ".",
+      "exec": "python -u Battery.py 1",
+      "host": "localhost",
+      "name": "Battery"
+    },
+    {
+      "directory": ".",
+      "exec": "helics_connector direct_matchfile.txt",
+      "host": "localhost",
+      "name": "helics_connector"
+    }
+  ]
+}

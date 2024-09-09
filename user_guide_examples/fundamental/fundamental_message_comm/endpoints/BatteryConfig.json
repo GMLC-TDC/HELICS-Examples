@@ -1,0 +1,37 @@
+{
+  "name": "Battery",
+  "log_level": "warning",
+  "core_type": "zmq",
+  "period": 60,
+  "offset": 10,
+  "uninterruptible": false,
+  "terminate_on_error": true,
+  "wait_for_current_time_update": true,
+  "endpoints":[
+    {
+      "key":"Battery/EV1_current",
+      "destination":"Charger/EV1_voltage",
+      "global": true
+    },
+    {
+      "key":"Battery/EV2_current",
+      "destination":"Charger/EV2_voltage",
+      "global": true
+    },
+    {
+      "key":"Battery/EV3_current",
+      "destination":"Charger/EV3_voltage",
+      "global": true
+    },
+    {
+      "key":"Battery/EV4_current",
+      "destination":"Charger/EV4_voltage",
+      "global": true
+    },
+    {
+      "key":"Battery/EV5_current",
+      "destination":"Charger/EV5_voltage",
+      "global": true
+    }
+  ]
+}
