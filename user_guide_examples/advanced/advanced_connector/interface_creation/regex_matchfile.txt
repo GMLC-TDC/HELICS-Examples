@@ -1,0 +1,2 @@
+Charger/EV(?<ev_num>\d)_output_voltage, Battery/EV(?<ev_num>\d)_input_voltage, "from_to"
+Charger/EV(?<ev_num>\d)_input_current, Battery/EV(?<ev_num>\d)_output_current, "to_from"

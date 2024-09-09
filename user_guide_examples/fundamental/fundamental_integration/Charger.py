@@ -49,8 +49,7 @@ def destroy_federate(fed):
     #   annoying errors in the broker log. Any message are tacitly disregarded.
     grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
     status = h.helicsFederateDisconnect(fed)
-    h.helicsFederateFree(fed)
-    h.helicsCloseLibrary()
+    h.helicsFederateDestroy(fed)
     logger.info('Federate finalized')
 
 def create_combo_federate(fedinitstring,name,period):
@@ -184,7 +183,7 @@ if __name__ == "__main__":
     endid = {}
     for i in range(0,end_count):
         # "name":"Charger/EV1.so",
-        end_name = f'Charger/EV{i+1}.so'
+        end_name = f'Charger/EV{i+1}.soc'
         endid[i] = h.helicsFederateRegisterGlobalEndpoint(fed, end_name, 'double')
         dest_name = f'Controller/ep'
         h.helicsEndpointSetDefaultDestination(endid[i], dest_name)
@@ -236,7 +235,7 @@ if __name__ == "__main__":
 
 
 
-    hours = 24*1 # one week
+    hours = 24*7 # one week
     total_interval = int(60 * 60 * hours)
     update_interval = int(h.helicsFederateGetTimeProperty(
                             fed,
@@ -317,7 +316,9 @@ if __name__ == "__main__":
             if h.helicsEndpointHasMessage(endid[j]):
                 msg = h.helicsEndpointGetMessage(endid[j])
                 instructions = h.helicsMessageGetString(msg)
+                source = h.helicsMessageGetOriginalSource(msg)
                 logger.debug(f'\tReceived message at endpoint {endpoint_name}'
+                             f' from source {source}'
                              f' at time {grantedtime}'
                              f' with command {instructions}')
 
@@ -346,7 +347,7 @@ if __name__ == "__main__":
                 destination_name = str(
                     h.helicsEndpointGetDefaultDestination(endid[j]))
                 message = f'{currentsoc[j]:4f}'
-                h.helicsEndpointSendBytesTo(endid[j], message.encode(), '')
+                h.helicsEndpointSendBytes(endid[j], message.encode())
                 logger.debug(f'Sent message from endpoint {endpoint_name}'
                              f' to destination {destination_name}'
                              f' at time {grantedtime}'
@@ -376,7 +377,7 @@ if __name__ == "__main__":
     yaxis = np.array(power)
     
     plt.plot(xaxis, yaxis, color='tab:blue', linestyle='-')
-    plt.yticks(np.arange(0,13000,1000))
+    plt.yticks(np.arange(0,25000,1000))
     plt.ylabel('kW')
     plt.grid(True)
     plt.xlabel('time (hr)')

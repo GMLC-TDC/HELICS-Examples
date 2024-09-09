@@ -43,8 +43,7 @@ def destroy_federate(fed):
     #   annoying errors in the broker log. Any message are tacitly disregarded.
     grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
     status = h.helicsFederateDisconnect(fed)
-    h.helicsFederateFree(fed)
-    h.helicsCloseLibrary()
+    h.helicsFederateDestroy(fed)
     logger.info('Federate finalized')
 
 
@@ -175,7 +174,7 @@ if __name__ == "__main__":
 
             # send charging current message
             # to this endpoint's default destination, ""
-            h.helicsEndpointSendBytesTo(endid[j], str(charging_current), "")  #
+            h.helicsEndpointSendBytes(endid[j], str(charging_current))  #
             logger.debug(f'Sent message {charging_current:.2f}'
                          f' from endpoint {endpoint_name}'
                          f' at time {grantedtime}')

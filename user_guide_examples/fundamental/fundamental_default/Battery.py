@@ -42,8 +42,7 @@ def destroy_federate(fed):
     #   annoying errors in the broker log. Any message are tacitly disregarded.
     grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
     status = h.helicsFederateDisconnect(fed)
-    h.helicsFederateFree(fed)
-    h.helicsCloseLibrary()
+    h.helicsFederateDestroy(fed)
     logger.info("Federate finalized")
 
 
@@ -114,6 +113,11 @@ if __name__ == "__main__":
     current_soc = {}
     for i in range(0, pub_count):
         current_soc[i] = (np.random.randint(0, 60)) / 100
+
+    # log initialized battery conditions
+    logger.info("Initialized Battery State:")
+    for i in range(0, pub_count):
+        logger.info(f"\tBattery {i+1}: soc = {current_soc[i]:.4f}, Rating = {batt_list[i]} kWh")
 
     hours = 24 * 7
     total_interval = int(60 * 60 * hours)

@@ -52,8 +52,7 @@ def destroy_federate(fed):
     #   annoying errors in the broker log. Any message are tacitly disregarded.
     grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
     status = h.helicsFederateDisconnect(fed)
-    h.helicsFederateFree(fed)
-    h.helicsCloseLibrary()
+    h.helicsFederateDestroy(fed)
     logger.info('Federate finalized')
 
 
@@ -103,8 +102,9 @@ def eval_data_flow_graph(fed):
         # Assume only one federate per core, index "0". Since I built this
         #   federation I know this is true and in most federations it
         #   will also be true.
-        federates_lut[core['federates'][0]['id']] = core['federates'][0][
-            'name']
+        pp.pprint(graph)
+        federates_lut[core['federates'][0]['attributes']['id']] = core[
+            'federates'][0]['attributes']['name']
 
         # Endpoints, inputs, and publications all are considered handles
         #   BUT only endpoints and publications contain the mapping
@@ -124,8 +124,8 @@ def eval_data_flow_graph(fed):
     #   graph to log out a simplified human-readable version
     for core in graph['cores']:
         if 'inputs' in core['federates'][0]:
-            logger.debug(f'Federate {core["federates"][0]["name"]}'
-                         f' (with id {core["federates"][0]["id"]})'
+            logger.debug(f'Federate {core["federates"][0]["attributes"]["name"]}'
+                         f' (with id {core["federates"][0]["attributes"]["id"]})'
                          f' has the following subscriptions:')
             for input in core['federates'][0]['inputs']:
                 # Assume only no more than one source per input, index "0"
@@ -188,7 +188,7 @@ if __name__ == "__main__":
     # Looking at the graph to find the publications to which we need to
     #   subscribe
     for core in graph['cores']:
-        if core['federates'][0]['name'] == 'Charger':
+        if core['federates'][0]['attributes']['name'] == 'Charger':
             for pub in core['federates'][0]['publications']:
                 key = pub['key']
                 sub = h.helicsFederateRegisterSubscription(fed, key)
