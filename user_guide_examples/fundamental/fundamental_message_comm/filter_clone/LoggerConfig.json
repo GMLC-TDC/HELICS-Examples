@@ -1,0 +1,24 @@
+{
+  "name": "Logger",
+  "log_level": "warning",
+  "core_type": "zmq",
+  "time_delta": 1,
+  "uninterruptible": false,
+  "terminate_on_error": true,
+  "endpoints": [
+    {
+      "name": "Logger/ep",
+      "global": true
+    }
+  ],
+  "filters":
+  [
+    {
+      "name":"cloning_filter",
+      "destination_target":"Controller/ep",
+      "delivery": "Logger/ep",
+      "cloning": true,
+      "operation":"clone"
+    }
+  ]
+}
