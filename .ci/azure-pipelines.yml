@@ -3,9 +3,9 @@ jobs:
   strategy:
     matrix:
       Linux:
-        imageName: "ubuntu-16.04"
+        imageName: "ubuntu-22.04"
       macOS:
-        imageName: "macos-10.14"
+        imageName: "macos-13"
       Windows:
         imageName: "windows-2019"
   pool:
