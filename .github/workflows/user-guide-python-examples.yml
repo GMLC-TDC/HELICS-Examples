@@ -41,6 +41,7 @@ jobs:
     - name: Install latest HELICS PyPI release with CLI
       run: pip install helics[cli]
     - name: Run user guide examples
+      timeout-minutes: 2
       run: |
         ./run_fundamental_user_guide_examples.sh
         ./run_advanced_user_guide_examples.sh
