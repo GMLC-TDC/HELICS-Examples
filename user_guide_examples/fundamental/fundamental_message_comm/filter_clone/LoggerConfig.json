@@ -17,8 +17,7 @@
       "name":"cloning_filter",
       "destination_target":"Controller/ep",
       "delivery": "Logger/ep",
-      "cloning": true,
-      "operation":"clone"
+      "cloning": true
     }
   ]
 }
