@@ -25,13 +25,14 @@ import numpy as np
 import sys
 import time
 import pandas as pd
+import argparse
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.DEBUG)
 
 
-def destroy_federate(fed):
+def destroy_federate(fed, max_time):
 	'''
 	As part of ending a HELICS co-simulation it is good housekeeping to
 	formally destroy a federate. Doing so informs the rest of the
@@ -45,7 +46,10 @@ def destroy_federate(fed):
 	'''
 	# Adding extra time request to clear out any pending messages to avoid
 	#	annoying errors in the broker log. Any message are tacitly disregarded.
-	grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+	if max_time:
+		grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+	else: 
+		granted_time = h.helicsFederateRequestTime(fed, 99999999)
 	status = h.helicsFederateDisconnect(fed)
 	h.helicsFederateFree(fed)
 	h.helicsCloseLibrary()
@@ -53,6 +57,16 @@ def destroy_federate(fed):
 
 
 if __name__ == "__main__":
+	logging.basicConfig(level=logging.DEBUG)
+	parser = argparse.ArgumentParser(description="")
+	parser.add_argument('-m', '--max_time',
+                        help="flag to only create a graph of the historic data"
+                                "(no data collection)",
+                        action=argparse.BooleanOptionalAction)
+	args = parser.parse_args()
+
+
+
 	np.random.seed(1490)
 	
 	##############	Registering	 federate from json	 ##########################
@@ -88,12 +102,6 @@ if __name__ == "__main__":
 	
 
 
-
-
-	
-	
-
-
 	##############	Entering Execution Mode	 ##################################
 	h.helicsFederateEnterExecutingMode(fed)
 	logger.info('Entered HELICS execution mode')
@@ -122,10 +130,14 @@ if __name__ == "__main__":
 	# Bug related to inconsistent interpretation of HELICS_TIME_MAXTIME
 	# (maybe just in PyHELICS?) has us temporarily changing the terminal
 	# condition for this example
-	# starttime = h.HELICS_TIME_MAXTIME
-	starttime = 300
+
+	if args.max_time:
+		logger.debug('MAXTIME flag set')
+		starttime = h.HELICS_TIME_MAXTIME
+	else:
+		starttime = 300
 	logger.debug(f'Requesting initial time {starttime}')
-	grantedtime = h.helicsFederateRequestTime (fed, starttime)
+	grantedtime = h.helicsFederateRequestTime(fed, starttime)
 	logger.debug(f'Granted time {grantedtime}')
 
 
@@ -184,17 +196,19 @@ if __name__ == "__main__":
 		#	nothing else for the federate to do until/unless another
 		#	message comes in. Request a time very far into the future
 		#	and take a break until/unless a new message arrives.
-		# logger.debug(f'Requesting time {total_interval}')
-		# grantedtime = h.helicsFederateRequestTime(fed, total_interval)
-		logger.debug(f'Requesting next time')
-		grantedtime = h.helicsFederateRequestNextStep(fed)
-		logger.info(f'Granted time: {grantedtime}')
+		if args.max_time:
+			logger.debug(f'Requesting time HELICS_TIME_MAXTIME')
+			grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+		else:
+			logger.debug(f'Requesting next time')
+			grantedtime = h.helicsFederateRequestNextStep(fed)
+			logger.info(f'Granted time: {grantedtime}')
 
 	# Close out co-simulation execution cleanly now that we're done.
-	destroy_federate(fed)
+	destroy_federate(fed, args.max_time)
 
 
-
+	
 	# Printing out final results graphs for comparison/diagnostic purposes.
 	xaxis = np.array(time_sim)/3600
 	y = []

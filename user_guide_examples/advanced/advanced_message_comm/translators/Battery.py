@@ -18,6 +18,7 @@ import matplotlib.pyplot as plt
 import helics as h
 import logging
 import numpy as np
+import argparse
 
 
 logger = logging.getLogger(__name__)
@@ -27,7 +28,7 @@ logger.setLevel(logging.DEBUG)
 
 
 
-def destroy_federate(fed):
+def destroy_federate(fed, max_time):
     '''
     As part of ending a HELICS co-simulation it is good housekeeping to
     formally destroy a federate. Doing so informs the rest of the
@@ -41,7 +42,10 @@ def destroy_federate(fed):
     '''
     # Adding extra time request to clear out any pending messages to avoid
     #   annoying errors in the broker log. Any message are tacitly disregarded.
-    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    if max_time:
+        grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    else:
+        granted_time = h.helicsFederateRequestTime(fed, 99999999)
     status = h.helicsFederateDisconnect(fed)
     h.helicsFederateFree(fed)
     h.helicsCloseLibrary()
@@ -73,6 +77,14 @@ def get_new_battery(numBattery):
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
+    parser = argparse.ArgumentParser(description="")
+    parser.add_argument('-m', '--max_time',
+                        help="flag to only create a graph of the historic data"
+                                "(no data collection)",
+                        action=argparse.BooleanOptionalAction)
+    args = parser.parse_args()
+
     np.random.seed(2608)
 
     ##########  Registering  federate and configuring from JSON################
@@ -191,7 +203,7 @@ if __name__ == "__main__":
 
 
     # Cleaning up HELICS stuff once we've finished the co-simulation.
-    destroy_federate(fed)
+    destroy_federate(fed, args.max_time)
     # Printing out final results graphs for comparison/diagnostic purposes.
     xaxis = np.array(time_sim)/3600
     y = []

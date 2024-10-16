@@ -12,6 +12,7 @@ import helics as h
 import logging
 import numpy as np
 import pprint 
+import argparse
 
 sim_max_time = 10
 
@@ -25,7 +26,7 @@ logger.setLevel(logging.DEBUG)
 
 
 
-def destroy_federate(fed):
+def destroy_federate(fed, max_time):
     """
     As part of ending a HELICS co-simulation it is good housekeeping to
     formally destroy a federate. Doing so informs the rest of the
@@ -40,15 +41,27 @@ def destroy_federate(fed):
     
     # Adding extra time request to clear out any pending messages to avoid
     #   annoying errors in the broker log. Any message are tacitly disregarded.
-    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    if max_time:
+        granted_time = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    else:
+        granted_time = h.helicsFederateRequestTime(fed, 99999999)
     status = h.helicsFederateDisconnect(fed)
     h.helicsFederateDestroy(fed)
     logger.info("Federate finalized")
  
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
+    parser = argparse.ArgumentParser(description="")
+    parser.add_argument('-m', '--max_time',
+                        help="flag to only create a graph of the historic data"
+                                "(no data collection)",
+                        action=argparse.BooleanOptionalAction)
+    args = parser.parse_args()
     
-    
+    if args.max_time:
+        logger.debug("max_time flag set")
+
     fedinfo = h.helicsCreateFederateInfo()
     fedinfo.core_type = "zmq"
     fedinfo.core_init = "-f 1"
@@ -73,7 +86,7 @@ if __name__ == "__main__":
         logger.debug(f"Granted time: {granted_time}")
         out_value = granted_time + 0.314159
         senderFed.get_publication_by_name("value_out_1").publish(out_value)
-        logger.debug(f"\tsent value {out_value} as a double")
+        logger.debug(f"\tpublished value {out_value} as a double")
         #logger.debug(f"\treceived value {sub.double}")
         
-    destroy_federate(senderFed)
+    destroy_federate(senderFed, args.max_time)

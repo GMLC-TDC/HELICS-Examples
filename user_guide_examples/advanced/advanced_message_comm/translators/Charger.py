@@ -21,13 +21,14 @@ import matplotlib.pyplot as plt
 import helics as h
 import logging
 import numpy as np
+import argparse
 
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.DEBUG)
 
-def destroy_federate(fed):
+def destroy_federate(fed, max_time):
     '''
     As part of ending a HELICS co-simulation it is good housekeeping to
     formally destroy a federate. Doing so informs the rest of the
@@ -42,7 +43,10 @@ def destroy_federate(fed):
     
     # Adding extra time request to clear out any pending messages to avoid
     #   annoying errors in the broker log. Any message are tacitly disregarded.
-    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    if max_time:
+        grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    else: 
+        granted_time = h.helicsFederateRequestTime(fed, 99999999)
     status = h.helicsFederateDisconnect(fed)
     h.helicsFederateDestroy(fed)
     logger.info('Federate finalized')
@@ -135,6 +139,14 @@ def estimate_SOC(charging_V, charging_A):
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
+    parser = argparse.ArgumentParser(description="")
+    parser.add_argument('-m', '--max_time',
+                        help="flag to only create a graph of the historic data"
+                                "(no data collection)",
+                        action=argparse.BooleanOptionalAction)
+    args = parser.parse_args()
+    
     np.random.seed(1490)
 
     ##############  Registering  federate from json  ##########################
@@ -172,7 +184,24 @@ if __name__ == "__main__":
         logger.debug(f'\tRegistered publication---> {pub_name}')
 
 
-    ##############  Entering Execution Mode  ##################################
+    ##############  Entering Initializing Mode  ##############################
+    # Sending out an initial SOC of zero so that the translator has something
+    # to work on at t=0.
+    logger.debug('Entering initializing mode')
+    h.helicsFederateEnterInitializingMode(fed)
+    for j in range(end_count):
+        endpoint_name = h.helicsEndpointGetName(endid[j])
+        destination_name = str(h.helicsEndpointGetDefaultDestination(endid[j]))
+        message = '0'
+        h.helicsEndpointSendBytes(endid[j], message.encode())  #
+        logger.debug(f'\tSent message from endpoint {endpoint_name}'
+                        f' to destination {destination_name}'
+                        f' at initializing time'
+                        f' with payload SOC {message}')
+
+
+
+    ##############  Entering Executing Mode  ##################################
     h.helicsFederateEnterExecutingMode(fed)
     logger.info('Entered HELICS execution mode')
 
@@ -249,7 +278,7 @@ if __name__ == "__main__":
             else:
                 # SOC estimation
                 currentsoc[j] = estimate_SOC(charging_voltage[j], charging_current[j])
-                logger.debug(f'\t EV SOC estimate: {currentsoc[j]:.4f}')
+                logger.debug(f'\tEV SOC estimate: {currentsoc[j]:.4f}')
 
 
 
@@ -312,7 +341,7 @@ if __name__ == "__main__":
 
 
     # Cleaning up HELICS stuff once we've finished the co-simulation.
-    destroy_federate(fed)
+    destroy_federate(fed, args.max_time)
 
     # Output graph showing the charging profile for each of the charging
     #   terminals

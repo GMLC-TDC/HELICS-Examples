@@ -13,6 +13,7 @@ import logging
 import numpy as np
 import json
 import pprint 
+import argparse
 
 sim_max_time = 11 # To make sure the last message is receeived
 
@@ -23,7 +24,7 @@ logger.setLevel(logging.DEBUG)
 
 
 
-def destroy_federate(fed):
+def destroy_federate(fed, max_time):
     """
     As part of ending a HELICS co-simulation it is good housekeeping to
     formally destroy a federate. Doing so informs the rest of the
@@ -38,19 +39,31 @@ def destroy_federate(fed):
     
     # Adding extra time request to clear out any pending messages to avoid
     #   annoying errors in the broker log. Any message are tacitly disregarded.
-    granted_time = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    if max_time:
+        granted_time = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    else:
+        granted_time = h.helicsFederateRequestTime(fed, 99999999)
     status = h.helicsFederateDisconnect(fed)
     h.helicsFederateDestroy(fed)
     logger.info("Federate finalized")
  
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
+    parser = argparse.ArgumentParser(description="")
+    parser.add_argument('-m', '--max_time',
+                        help="flag to only create a graph of the historic data"
+                                "(no data collection)",
+                        action=argparse.BooleanOptionalAction)
+    args = parser.parse_args()
     
-    
+    if args.max_time:
+        logger.debug("max_time flag set")
     fedinfo = h.helicsCreateFederateInfo()
     fedinfo.core_type = "zmq"
     fedinfo.core_init = "-f 1"
     fedinfo.property[h.HELICS_PROPERTY_INT_LOG_LEVEL] = h.HELICS_LOG_LEVEL_ERROR
+    fedinfo.flag[h.HELICS_FLAG_WAIT_FOR_CURRENT_TIME_UPDATE] = True
     receiverFed = h.helicsCreateCombinationFederate("receiverFed", fedinfo)
     
     # ep = receiverFed.register_global_endpoint("endpoint")
@@ -81,12 +94,12 @@ if __name__ == "__main__":
     granted_time = 0
     
     while granted_time < sim_max_time:
-        request_time = int(granted_time + 1)
+        if args.max_time:
+            request_time = h.HELICS_TIME_MAXTIME
+        else:
+            request_time = int(granted_time + 1)
         logger.debug(f"Requested time: {request_time}")
-        # Pick one timing strategy from the lines below
         granted_time = receiverFed.request_time(request_time) # Traditional
-        # granted_time = receiverFed.request_time(h.HELICS_TIME_MAXTIME) # controller-style
-        
         logger.debug(f"Granted time: {granted_time}")
         # logger.debug(f"\tlast published value: {sub.double}")
         msgDict = {"type": "double", "value": 0}
@@ -103,4 +116,4 @@ if __name__ == "__main__":
 #         ep.send_data(out_msg)
 #         logger.debug(f"\tnew sent message: {jsonStr}\n")
         
-    destroy_federate(receiverFed)
+    destroy_federate(receiverFed, args.max_time)
