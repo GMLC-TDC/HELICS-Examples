@@ -1,0 +1,43 @@
+{
+    "name": "fundamental timing",
+    "broker": true,
+    "federates": [    
+      {
+        "directory": ".",
+        "exec": "python -u timing_fed.py --fednum 1",
+        "host": "localhost",
+        "name": "fed1"
+      },
+      {
+        "directory": ".",
+        "exec": "python -u timing_fed.py --fednum 2",
+        "host": "localhost",
+        "name": "fed2"
+      },
+      {
+        "directory": ".",
+        "exec": "python -u timing_fed.py --fednum 3",
+        "host": "localhost",
+        "name": "fed3"
+      },
+      {
+        "directory": ".",
+        "exec": "python -u timing_fed.py --fednum 4",
+        "host": "localhost",
+        "name": "fed4"
+      },
+      {
+        "directory": ".",
+        "exec": "python -u timing_fed.py --fednum 5",
+        "host": "localhost",
+        "name": "fed5"
+      },
+      {
+        "directory": ".",
+        "exec": "python -u timing_fed.py --fednum 6",
+        "host": "localhost",
+        "name": "fed6"
+      }
+    ]
+  }
+  
