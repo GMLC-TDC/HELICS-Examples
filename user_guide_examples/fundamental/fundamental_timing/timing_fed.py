@@ -137,22 +137,30 @@ if __name__ == "__main__":
         # large times and need the publication to wake them up earlier.        
         pub.publish(grant_time)
 
-        # Dummy execution time as specified in the timing config file
-        sleep_time = config[str(fednum)]["execution time"][str(int(grant_time))]
-        logger.debug(f"Sleeping for {sleep_time} seconds")
-        time.sleep(sleep_time)
+        try:
+            # Dummy execution time as specified in the timing config file
+            sleep_time = config[str(fednum)]["execution time"][str(int(grant_time))]
+            done = False
+        except:
+            # If the requested time is not in the timing config JSON, this 
+            # federate is done
+            done = True
+            grant_time = 100000
+        if not done:
+            logger.debug(f"Sleeping for {sleep_time} seconds")
+            time.sleep(sleep_time)
         
-        if config[str(fednum)]["max time request"]:
-            request_time = 100000
-        else:
-            request_time = grant_time + period
-        request_wall_clock_time = time.monotonic() - reference_time
-        timing_log.append({"grant time": grant_time, 
-                        "grant wall clock time": grant_wall_clock_time,
-                        "request time": request_time,
-                        "request wall clock time": request_wall_clock_time})
-        grant_time = fed.request_time(timing_log[-1]["request time"])
-        grant_wall_clock_time = time.monotonic() - reference_time
+            if config[str(fednum)]["max time request"]:
+                request_time = 100000
+            else:
+                request_time = grant_time + period
+            request_wall_clock_time = time.monotonic() - reference_time
+            timing_log.append({"grant time": grant_time, 
+                            "grant wall clock time": grant_wall_clock_time,
+                            "request time": request_time,
+                            "request wall clock time": request_wall_clock_time})
+            grant_time = fed.request_time(timing_log[-1]["request time"])
+            grant_wall_clock_time = time.monotonic() - reference_time
 
     # Cleaning up HELICS stuff once we've finished the co-simulation.
     destroy_federate(fed)
