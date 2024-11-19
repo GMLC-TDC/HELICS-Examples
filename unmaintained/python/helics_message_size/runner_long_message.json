@@ -1,0 +1,18 @@
+{
+    "name": "Long message test",
+    "broker": true,
+    "federates": [
+      {
+        "directory": ".",
+        "exec": "python -u long_message_sender.py",
+        "host": "localhost",
+        "name": "long_message_sender"
+      },
+      {
+        "directory": ".",
+        "exec": "python -u long_message_receiver.py",
+        "host": "localhost",
+        "name": "long_message_receiver"
+      }
+    ]
+  }
