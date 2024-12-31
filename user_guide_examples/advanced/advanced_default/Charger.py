@@ -25,7 +25,7 @@ import numpy as np
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 def destroy_federate(fed):
     '''
@@ -163,7 +163,7 @@ if __name__ == "__main__":
     subid = {}
     for i in range(0, sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name = h.helicsSubscriptionGetTarget(subid[i])
+        sub_name = h.helicsInputGetTarget(subid[i])
         logger.debug(f'\tRegistered subscription---> {sub_name}')
 
     pubid = {}
@@ -233,7 +233,7 @@ if __name__ == "__main__":
             #   uses the latest value provided by the battery model.
             charging_current[j] = h.helicsInputGetDouble((subid[j]))
             logger.debug(f'\tCharging current: {charging_current[j]:.2f} from '
-                         f'input {h.helicsSubscriptionGetTarget(subid[j])}')
+                         f'input {h.helicsInputGetTarget(subid[j])}')
 
             # New EV is in place after removing charge from old EV,
             # as indicated by the zero current draw.
@@ -327,4 +327,4 @@ if __name__ == "__main__":
     plt.title('Instantaneous Power Draw from 5 EVs')
     # Saving graph to file
     plt.savefig('advanced_default_charging_power.png', format='png')
-    plt.show()
+    #plt.show()

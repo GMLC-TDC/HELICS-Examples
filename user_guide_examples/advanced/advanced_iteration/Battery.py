@@ -109,7 +109,7 @@ if __name__ == "__main__":
     subid = {}
     for i in range(0, sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name = h.helicsSubscriptionGetTarget(subid[i])
+        sub_name = h.helicsInputGetTarget(subid[i])
         logger.debug(f"\tRegistered subscription---> {sub_name}")
 
     pubid = {}

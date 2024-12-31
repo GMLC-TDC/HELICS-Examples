@@ -115,7 +115,7 @@ if __name__ == "__main__":
     subid = {}
     for i in range(0, sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name = h.helicsSubscriptionGetTarget(subid[i])
+        sub_name = h.helicsInputGetTarget(subid[i])
         logger.debug(f"\tRegistered subscription---> {sub_name}")
 
     pubid = {}
@@ -177,7 +177,7 @@ if __name__ == "__main__":
             #   uses the latest value provided by the battery model.
             charging_current[j] = h.helicsInputGetDouble((subid[j]))
             logger.debug(f"\tCharging current: {charging_current[j]:.2f} from"
-                        f" input {h.helicsSubscriptionGetTarget(subid[j])}")
+                        f" input {h.helicsInputGetTarget(subid[j])}")
 
             # Publish updated charging voltage
             h.helicsPublicationPublishDouble(pubid[j], charging_voltage[j])

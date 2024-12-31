@@ -84,7 +84,7 @@ if __name__ == "__main__":
     subs = {}
     for i in range(0, sub_count):
         sub_obj = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name = h.helicsSubscriptionGetTarget(sub_obj)
+        sub_name = h.helicsInputGetTarget(sub_obj)
         subs[i] = {"sub obj": sub_obj, "sub name": sub_name}
         logger.debug(f"\tRegistered subscription---> {sub_name} as sub index {i}")
 

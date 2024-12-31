@@ -56,7 +56,7 @@ if __name__ == "__main__":
     for i in range(0, subkeys_count):
         subid["m{}".format(i)] = h.helicsFederateGetInputByIndex(fed, i)
         h.helicsInputSetDefaultComplex(subid["m{}".format(i)], 0, 0)
-        sub_key = h.helicsSubscriptionGetTarget(subid["m{}".format(i)])
+        sub_key = h.helicsInputGetTarget(subid["m{}".format(i)])
         logger.info("{}: Registered Subscription ---> {}".format(federate_name, sub_key))
 
     ######################   Entering Execution Mode  ##########################################################

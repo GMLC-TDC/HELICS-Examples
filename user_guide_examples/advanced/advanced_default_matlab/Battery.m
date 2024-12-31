@@ -36,7 +36,7 @@ try
     sub_name = {};
     for i=1:sub_count
         subid{i} = helics.helicsFederateGetInputByIndex(fed, i-1);
-        sub_name{i} = helics.helicsSubscriptionGetTarget(subid{i});
+        sub_name{i} = helics.helicsInputGetTarget(subid{i});
         fprintf(fid,'\tRegistered subscription---> %s\n', sub_name{i});
     end
 
@@ -89,7 +89,7 @@ try
 
             % Get the applied charging voltage from the EV
             charging_voltage = helics.helicsInputGetDouble(subid{j});
-            fprintf(fid,'\tReceived voltage %0.2f from input %s\n', charging_voltage, helics.helicsSubscriptionGetTarget(subid{j}));
+            fprintf(fid,'\tReceived voltage %0.2f from input %s\n', charging_voltage, helics.helicsInputGetTarget(subid{j}));
 
             % EV is fully charged and a new EV is moving in
             % This is indicated by the charging removing voltage when it

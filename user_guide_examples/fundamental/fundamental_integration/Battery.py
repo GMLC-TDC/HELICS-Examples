@@ -171,7 +171,7 @@ if __name__ == "__main__":
             # Get the applied charging voltage from the EV
             charging_voltage = h.helicsInputGetDouble((subid[j]))
             logger.debug(f'\tReceived voltage {charging_voltage:.2f} from input'
-                         f' {h.helicsSubscriptionGetTarget(subid[j])}')
+                         f' {h.helicsInputGetTarget(subid[j])}')
 
             # EV is fully charged and a new EV is moving in
             # This is indicated by the charging removing voltage when it
