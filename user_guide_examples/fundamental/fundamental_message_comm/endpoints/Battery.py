@@ -80,7 +80,7 @@ if __name__ == "__main__":
     h.helicsFederateEnterExecutingMode(fed)
     logger.info("Entered HELICS execution mode")
 
-    hours = 24 * 1  # one day
+    hours = 24 * float(args.days)
     total_interval = int(60 * 60 * hours)
     update_interval = int(
         h.helicsFederateGetTimeProperty(fed, h.HELICS_PROPERTY_TIME_PERIOD)
@@ -156,7 +156,7 @@ if __name__ == "__main__":
             else:
                 logger.debug(
                     f"\tNo messages at endpoint {endpoint_name} "
-                    f"recieved at "
+                    f"received at "
                     f"time {grantedtime}"
                 )
 

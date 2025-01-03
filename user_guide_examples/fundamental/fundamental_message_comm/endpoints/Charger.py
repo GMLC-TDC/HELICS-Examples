@@ -116,7 +116,7 @@ if __name__ == "__main__":
     charging_voltage = calc_charging_voltage(EVlist)
     currentsoc = {}
 
-    hours = 24 * 1  # one day
+    hours = 24 * float(args.days)
     total_interval = int(60 * 60 * hours)
     update_interval = int(
         h.helicsFederateGetTimeProperty(fed, h.helics_property_time_period)
@@ -181,7 +181,7 @@ if __name__ == "__main__":
             else:
                 logger.debug(
                     f"\tNo messages at endpoint {endpoint_name} "
-                    f"recieved at "
+                    f"received at "
                     f"time {grantedtime}"
                 )
 

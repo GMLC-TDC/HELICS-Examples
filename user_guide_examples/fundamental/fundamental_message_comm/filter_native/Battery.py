@@ -8,7 +8,7 @@ representing the voltage applied to the charging terminals of the battery
 and based on its internally modeled SOC, calculates the current draw of
 the battery and sends it back to the EV federate. Note that this SOC should
 be considered the true SOC of the battery which may be different than the
-SOC modeled by the charger
+SOC modeled by the charger.
 
 @author: Trevor Hardy
 trevor.hardy@pnnl.gov
@@ -28,7 +28,7 @@ logger.setLevel(logging.DEBUG)
 
 def get_new_battery(numBattery):
     """
-    Using hard-coded probabilities, a distribution of battery of
+    Using hard-coded probabilities, a distribution of batteries of
     fixed battery sizes are generated. The number of batteries is a user
     provided parameter.
 
@@ -59,7 +59,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     np.random.seed(args.random_seed)
-    np.random.seed(2622)
 
     ##########  Registering  federate and configuring from JSON################
     fed = h.helicsCreateValueFederateFromConfig("BatteryConfig.json")
@@ -76,20 +75,21 @@ if __name__ == "__main__":
     subid = {}
     for i in range(sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name = h.helicsSubscriptionGetTarget(subid[i])
+        sub_name = h.helicsInputGetTarget(subid[i])
         logger.debug(f"\tRegistered subscription---> {sub_name}")
 
     pubid = {}
+    pub_name = {}
     for i in range(pub_count):
         pubid[i] = h.helicsFederateGetPublicationByIndex(fed, i)
-        pub_name = h.helicsPublicationGetName(pubid[i])
-        logger.debug(f"\tRegistered publication---> {pub_name}")
+        pub_name[i] = h.helicsPublicationGetName(pubid[i])
+        logger.debug(f"\tRegistered publication---> {pub_name[i]}")
 
     ##############  Entering Execution Mode  ##################################
     h.helicsFederateEnterExecutingMode(fed)
     logger.info("Entered HELICS execution mode")
 
-    hours = 24 * 1  # one day
+    hours = 24 * float(args.days)
     total_interval = int(60 * 60 * hours)
     update_interval = int(
         h.helicsFederateGetTimeProperty(fed, h.HELICS_PROPERTY_TIME_PERIOD)
@@ -108,9 +108,15 @@ if __name__ == "__main__":
     for i in range(pub_count):
         current_soc[i] = (np.random.randint(0, 60)) / 100
 
+    # log initialized battery conditions
+    logger.info("Initialized Battery State:")
+    for i in range(pub_count):
+        logger.info(
+            f"\tBattery {i+1}: soc = {current_soc[i]:.4f}, Rating = {batt_list[i]} kWh"
+        )
+
     # Data collection lists
     time_sim = []
-    current = []
     soc = {}
 
     # As long as granted time is in the time range to be simulated...
@@ -128,8 +134,8 @@ if __name__ == "__main__":
             # Get the applied charging voltage from the EV
             charging_voltage = h.helicsInputGetDouble((subid[j]))
             logger.debug(
-                f"\tReceived voltage {charging_voltage:.2f} from input"
-                f" {h.helicsSubscriptionGetTarget(subid[j])}"
+                f"\tReceived voltage {charging_voltage:.2f} from input "
+                f"{h.helicsInputGetTarget(subid[j])}"
             )
 
             # EV is fully charged and a new EV is moving in
@@ -166,7 +172,6 @@ if __name__ == "__main__":
 
         # Data collection vectors
         time_sim.append(grantedtime)
-        current.append(charging_current)
 
     # Cleaning up HELICS stuff once we've finished the co-simulation.
     fed.disconnect()
@@ -200,8 +205,6 @@ if __name__ == "__main__":
     axs[4].set(ylabel="Batt at\nport 5")
     axs[4].grid(True)
     plt.xlabel("time (hr)")
-    # for ax in axs():
-    #        ax.label_outer()
     # Saving graph to file
     plt.savefig("fundamental_filter_native_battery_SOCs.png", format="png")
     if args.show_plots:

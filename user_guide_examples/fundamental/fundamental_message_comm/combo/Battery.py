@@ -8,7 +8,7 @@ representing the voltage applied to the charging terminals of the battery
 and based on its internally modeled SOC, calculates the current draw of
 the battery and sends it back to the EV federate. Note that this SOC should
 be considered the true SOC of the battery which may be different than the
-SOC modeled by the charger
+SOC modeled by the charger.
 
 @author: Trevor Hardy
 trevor.hardy@pnnl.gov
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     subid = {}
     for i in range(sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name = h.helicsSubscriptionGetTarget(subid[i])
+        sub_name = h.helicsInputGetTarget(subid[i])
         logger.debug(f"\tRegistered subscription---> {sub_name}")
 
     pubid = {}
@@ -83,13 +83,13 @@ if __name__ == "__main__":
     for i in range(pub_count):
         pubid[i] = h.helicsFederateGetPublicationByIndex(fed, i)
         pub_name[i] = h.helicsPublicationGetName(pubid[i])
-        logger.debug(f"\tRegistered publication---> {pub_name}")
+        logger.debug(f"\tRegistered publication---> {pub_name[i]}")
 
     ##############  Entering Execution Mode  ##################################
     h.helicsFederateEnterExecutingMode(fed)
     logger.info("Entered HELICS execution mode")
 
-    hours = 24 * 1  # one day
+    hours = 24 * float(args.days)
     total_interval = int(60 * 60 * hours)
     update_interval = int(
         h.helicsFederateGetTimeProperty(fed, h.HELICS_PROPERTY_TIME_PERIOD)
@@ -135,7 +135,7 @@ if __name__ == "__main__":
             charging_voltage = h.helicsInputGetDouble((subid[j]))
             logger.debug(
                 f"\tReceived voltage {charging_voltage:.2f} from input "
-                f"{h.helicsSubscriptionGetTarget(subid[j])}"
+                f"{h.helicsInputGetTarget(subid[j])}"
             )
 
             # EV is fully charged and a new EV is moving in
@@ -207,6 +207,5 @@ if __name__ == "__main__":
     plt.xlabel("time (hr)")
     # Saving graph to file
     plt.savefig("fundamental_combo_battery_SOCs.png", format="png")
-
     if args.show_plots:
         plt.show()

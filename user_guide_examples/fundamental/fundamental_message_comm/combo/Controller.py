@@ -16,9 +16,6 @@ import matplotlib.pyplot as plt
 import helics as h
 import logging
 import numpy as np
-import sys
-import time
-
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
@@ -27,7 +24,7 @@ logger.setLevel(logging.DEBUG)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Demo HELICS Federate")
-    parser.add_argument("-d", "--days", nargs="?", default=268)
+    parser.add_argument("-d", "--days", nargs="?", default=1)
     parser.add_argument("-p", "--show_plots", nargs="?", default=True)
     args = parser.parse_args()
 
@@ -46,7 +43,7 @@ if __name__ == "__main__":
     h.helicsFederateEnterExecutingMode(fed)
     logger.info("Entered HELICS execution mode")
 
-    hours = 24 * args.days  # one day
+    hours = 24 * float(args.days)
     total_interval = int(60 * 60 * hours)
     grantedtime = 0
 

@@ -16,9 +16,6 @@ import matplotlib.pyplot as plt
 import helics as h
 import logging
 import numpy as np
-import sys
-import time
-import pandas as pd
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
@@ -46,7 +43,7 @@ if __name__ == "__main__":
     h.helicsFederateEnterExecutingMode(fed)
     logger.info("Entered HELICS execution mode")
 
-    hours = 24 * 1  # one day
+    hours = 24 * float(args.days)
     total_interval = int(60 * 60 * hours)
     grantedtime = 0
 
@@ -164,23 +161,23 @@ if __name__ == "__main__":
 
     axs[0].plot(xaxis, y[0], color="tab:blue", linestyle="-")
     axs[0].set_yticks(np.arange(0, 1.25, 0.5))
-    axs[0].set(ylabel="EV1")
+    axs[0].set(ylabel="Port 1")
     axs[0].grid(True)
 
     axs[1].plot(xaxis, y[1], color="tab:blue", linestyle="-")
-    axs[1].set(ylabel="EV2")
+    axs[1].set(ylabel="Port 2")
     axs[1].grid(True)
 
     axs[2].plot(xaxis, y[2], color="tab:blue", linestyle="-")
-    axs[2].set(ylabel="EV3")
+    axs[2].set(ylabel="Port 3")
     axs[2].grid(True)
 
     axs[3].plot(xaxis, y[3], color="tab:blue", linestyle="-")
-    axs[3].set(ylabel="EV4")
+    axs[3].set(ylabel="Port 4")
     axs[3].grid(True)
 
     axs[4].plot(xaxis, y[4], color="tab:blue", linestyle="-")
-    axs[4].set(ylabel="EV5")
+    axs[4].set(ylabel="Port 5")
     axs[4].grid(True)
     plt.xlabel("time (hr)")
     # for ax in axs():

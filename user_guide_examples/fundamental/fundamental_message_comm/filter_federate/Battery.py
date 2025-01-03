@@ -75,20 +75,21 @@ if __name__ == "__main__":
     subid = {}
     for i in range(sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name = h.helicsSubscriptionGetTarget(subid[i])
+        sub_name = h.helicsInputGetTarget(subid[i])
         logger.debug(f"\tRegistered subscription---> {sub_name}")
 
     pubid = {}
+    pub_name = {}
     for i in range(pub_count):
         pubid[i] = h.helicsFederateGetPublicationByIndex(fed, i)
-        pub_name = h.helicsPublicationGetName(pubid[i])
-        logger.debug(f"\tRegistered publication---> {pub_name}")
+        pub_name[i] = h.helicsPublicationGetName(pubid[i])
+        logger.debug(f"\tRegistered publication---> {pub_name[i]}")
 
     ##############  Entering Execution Mode  ##################################
     h.helicsFederateEnterExecutingMode(fed)
     logger.info("Entered HELICS execution mode")
 
-    hours = 24 * 1  # one day
+    hours = 24 * float(args.days)
     total_interval = int(60 * 60 * hours)
     update_interval = int(
         h.helicsFederateGetTimeProperty(fed, h.HELICS_PROPERTY_TIME_PERIOD)
@@ -107,9 +108,15 @@ if __name__ == "__main__":
     for i in range(pub_count):
         current_soc[i] = (np.random.randint(0, 60)) / 100
 
+    # log initialized battery conditions
+    logger.info("Initialized Battery State:")
+    for i in range(pub_count):
+        logger.info(
+            f"\tBattery {i+1}: soc = {current_soc[i]:.4f}, Rating = {batt_list[i]} kWh"
+        )
+
     # Data collection lists
     time_sim = []
-    current = []
     soc = {}
 
     # As long as granted time is in the time range to be simulated...
@@ -127,8 +134,8 @@ if __name__ == "__main__":
             # Get the applied charging voltage from the EV
             charging_voltage = h.helicsInputGetDouble((subid[j]))
             logger.debug(
-                f"\tReceived voltage {charging_voltage:.2f} from input"
-                f" {h.helicsSubscriptionGetTarget(subid[j])}"
+                f"\tReceived voltage {charging_voltage:.2f} from input "
+                f"{h.helicsInputGetTarget(subid[j])}"
             )
 
             # EV is fully charged and a new EV is moving in
@@ -165,7 +172,6 @@ if __name__ == "__main__":
 
         # Data collection vectors
         time_sim.append(grantedtime)
-        current.append(charging_current)
 
     # Cleaning up HELICS stuff once we've finished the co-simulation.
     fed.disconnect()

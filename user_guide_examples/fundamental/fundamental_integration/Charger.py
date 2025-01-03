@@ -219,7 +219,7 @@ if __name__ == "__main__":
     # Definition of charging power level (in kW) for level 1, 2, 3 chargers
     charge_rate = [1.8, 7.2, 50]
 
-    hours = 24 * 1  # one day
+    hours = 24 * float(args.days)
     total_interval = int(60 * 60 * hours)
     update_interval = int(
         h.helicsFederateGetTimeProperty(fed, h.HELICS_PROPERTY_TIME_PERIOD)
@@ -274,7 +274,7 @@ if __name__ == "__main__":
             charging_current[j] = h.helicsInputGetDouble((subid[j]))
             logger.debug(
                 f"\tCharging current: {charging_current[j]:.2f} from "
-                f"input {h.helicsSubscriptionGetTarget(subid[j])}"
+                f"input {h.helicsInputGetTarget(subid[j])}"
             )
 
             # New EV is in place after removing charge from old EV,
@@ -319,7 +319,7 @@ if __name__ == "__main__":
             else:
                 logger.debug(
                     f"\tNo messages at endpoint {endpoint_name} "
-                    f"recieved at "
+                    f"received at "
                     f"time {grantedtime}"
                 )
 

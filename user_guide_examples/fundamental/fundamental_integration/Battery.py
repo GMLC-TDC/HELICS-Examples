@@ -121,7 +121,7 @@ if __name__ == "__main__":
     h.helicsFederateEnterExecutingMode(fed)
     logger.info("Entered HELICS execution mode")
 
-    hours = 24 * 1  # one day
+    hours = 24 * float(args.days)
     total_interval = int(60 * 60 * hours)
     update_interval = int(
         h.helicsFederateGetTimeProperty(fed, h.HELICS_PROPERTY_TIME_PERIOD)
@@ -167,7 +167,7 @@ if __name__ == "__main__":
             charging_voltage = h.helicsInputGetDouble((subid[j]))
             logger.debug(
                 f"\tReceived voltage {charging_voltage:.2f} from input "
-                f"{h.helicsSubscriptionGetTarget(subid[j])}"
+                f"{h.helicsInputGetTarget(subid[j])}"
             )
 
             # EV is fully charged and a new EV is moving in

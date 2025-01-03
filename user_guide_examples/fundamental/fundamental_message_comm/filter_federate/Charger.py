@@ -22,7 +22,7 @@ import matplotlib.pyplot as plt
 import helics as h
 import logging
 import numpy as np
-import time
+
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
@@ -121,18 +121,17 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     np.random.seed(args.random_seed)
-    np.random.seed(1490)
 
     ##############  Registering  federate from json  ##########################
     fed = h.helicsCreateCombinationFederateFromConfig("ChargerConfig.json")
     federate_name = h.helicsFederateGetName(fed)
     logger.info(f"Created federate {federate_name}")
     end_count = h.helicsFederateGetEndpointCount(fed)
-    logger.debug(f"\tNumber of endpoints: {end_count}")
+    logger.info(f"\tNumber of endpoints: {end_count}")
     sub_count = h.helicsFederateGetInputCount(fed)
-    logger.debug(f"\tNumber of subscriptions: {sub_count}")
+    logger.info(f"\tNumber of subscriptions: {sub_count}")
     pub_count = h.helicsFederateGetPublicationCount(fed)
-    logger.debug(f"\tNumber of publications: {pub_count}")
+    logger.info(f"\tNumber of publications: {pub_count}")
 
     # Diagnostics to confirm JSON config correctly added the required
     #   endpoints, publications, and subscriptions.
@@ -141,11 +140,14 @@ if __name__ == "__main__":
         endid[i] = h.helicsFederateGetEndpointByIndex(fed, i)
         end_name = h.helicsEndpointGetName(endid[i])
         logger.debug(f"\tRegistered Endpoint ---> {end_name}")
+
+    charging_current = []
     subid = {}
     for i in range(sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name = h.helicsSubscriptionGetTarget(subid[i])
+        sub_name = h.helicsInputGetTarget(subid[i])
         logger.debug(f"\tRegistered subscription---> {sub_name}")
+        charging_current.append(0)
 
     pubid = {}
     for i in range(pub_count):
@@ -167,7 +169,7 @@ if __name__ == "__main__":
     charging_voltage = calc_charging_voltage(EVlist)
     currentsoc = {}
 
-    hours = 24 * 1  # one day
+    hours = 24 * float(args.days)
     total_interval = int(60 * 60 * hours)
     update_interval = int(
         h.helicsFederateGetTimeProperty(fed, h.HELICS_PROPERTY_TIME_PERIOD)
@@ -210,20 +212,20 @@ if __name__ == "__main__":
         grantedtime = h.helicsFederateRequestTime(fed, requested_time)
         logger.debug(f"Granted time {grantedtime}")
 
-        for j in range(end_count):
-            logger.debug(f"EV {j+1} time {grantedtime}")
+        for j in range(pub_count):
+            logger.debug(f"EV {j + 1} time {grantedtime}")
             # Model the physics of the battery charging. This happens
             #   every time step whether a message comes in or not and always
             #   uses the latest value provided by the battery model.
-            charging_current = h.helicsInputGetDouble((subid[j]))
+            charging_current[j] = h.helicsInputGetDouble((subid[j]))
             logger.debug(
-                f"\tCharging current: {charging_current:.2f} from "
-                f"input {h.helicsSubscriptionGetTarget(subid[j])}"
+                f"\tCharging current: {charging_current[j]:.2f} from "
+                f"input {h.helicsInputGetTarget(subid[j])}"
             )
 
             # New EV is in place after removing charge from old EV,
             # as indicated by the zero current draw.
-            if charging_current == 0:
+            if charging_current[j] == 0:
                 _, _, _, newEVtype = get_new_EV(1)
                 EVlist[j] = newEVtype[0]
                 charge_V = calc_charging_voltage(newEVtype)
@@ -234,7 +236,7 @@ if __name__ == "__main__":
                 logger.debug(f"\tNew EV, charging voltage:" f" {charging_voltage[j]}")
             else:
                 # SOC estimation
-                currentsoc[j] = estimate_SOC(charging_voltage[j], charging_current)
+                currentsoc[j] = estimate_SOC(charging_voltage[j], charging_current[j])
                 logger.debug(f"\tEV SOC estimate: {currentsoc[j]:.4f}")
 
             # Check for messages from EV Controller
@@ -255,13 +257,13 @@ if __name__ == "__main__":
                 # The default state is charging (1) so we only need to
                 #   do something if the controller says to stop
                 if int(instructions) == 0:
-                    # Stop charing this EV
+                    # Stop charging this EV
                     charging_voltage[j] = 0
                     logger.info(f"\tEV full; removing charging voltage")
             else:
                 logger.debug(
                     f"\tNo messages at endpoint {endpoint_name} "
-                    f"recieved at "
+                    f"received at "
                     f"time {grantedtime}"
                 )
 
@@ -275,21 +277,22 @@ if __name__ == "__main__":
             # Send message to Controller with SOC every 15 minutes
             if grantedtime % 900 == 0:
                 destination_name = str(h.helicsEndpointGetDefaultDestination(endid[j]))
-                h.helicsEndpointSendMessageRaw(
-                    endid[j], "", f"{currentsoc[j]:4f}".encode()
-                )  #
+                message = f"{currentsoc[j]:4f}"
+                h.helicsEndpointSendBytes(endid[j], message.encode())
                 logger.debug(
-                    f"\tSent message from endpoint {endpoint_name}"
+                    f"Sent message from endpoint {endpoint_name}"
+                    f" to destination {destination_name}"
                     f" at time {grantedtime}"
-                    f" with payload SOC {currentsoc[j]:4f}"
+                    f" with payload SOC {message}"
                 )
 
         # Calculate the total power required by all chargers. This is the
         #   primary metric of interest, to understand the power profile
         #   and capacity requirements required for this charging garage.
         total_power = 0
-        for j in range(end_count):
-            total_power += charge_rate[(EVlist[j] - 1)]
+        for j in range(pub_count):
+            total_power += charging_voltage[j] * charging_current[j]
+            # total_power += charge_rate[(EVlist[j] - 1)]
 
         # Data collection vectors
         time_sim.append(grantedtime)
@@ -303,7 +306,7 @@ if __name__ == "__main__":
     xaxis = np.array(time_sim) / 3600
     yaxis = np.array(power)
     plt.plot(xaxis, yaxis, color="tab:blue", linestyle="-")
-    plt.yticks(np.arange(0, 200, 10))
+    plt.yticks(np.arange(0, 20000, 1000))
     plt.ylabel("kW")
     plt.grid(True)
     plt.xlabel("time (hr)")

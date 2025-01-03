@@ -60,7 +60,7 @@ if __name__ == "__main__":
 
     np.random.seed(args.random_seed)
 
-    ##########  Registering  federate and configuring from JSON################
+    ##########  Registering  federate and configuring from JSON ################
     fed = h.helicsCreateValueFederateFromConfig("BatteryConfig.json")
     federate_name = h.helicsFederateGetName(fed)
     logger.info(f"Created federate {federate_name}")
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     subid = {}
     for i in range(sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name = h.helicsSubscriptionGetTarget(subid[i])
+        sub_name = h.helicsInputGetTarget(subid[i])
         logger.debug(f"\tRegistered subscription---> {sub_name}")
 
     pubid = {}
@@ -89,7 +89,7 @@ if __name__ == "__main__":
     h.helicsFederateEnterExecutingMode(fed)
     logger.info("Entered HELICS execution mode")
 
-    hours = 24 * args.days  # one day
+    hours = 24 * float(args.days)
     total_interval = int(60 * 60 * hours)
     update_interval = int(
         h.helicsFederateGetTimeProperty(fed, h.HELICS_PROPERTY_TIME_PERIOD)
@@ -138,7 +138,7 @@ if __name__ == "__main__":
             charging_voltage = h.helicsInputGetDouble((subid[j]))
             logger.debug(
                 f"\tReceived voltage {charging_voltage:.2f} from input "
-                f"{h.helicsSubscriptionGetTarget(subid[j])}"
+                f"{h.helicsInputGetTarget(subid[j])}"
             )
 
             # Calculate charging current and update SOC

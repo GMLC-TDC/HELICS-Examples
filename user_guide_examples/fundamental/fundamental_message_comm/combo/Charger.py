@@ -67,6 +67,7 @@ def calc_charging_voltage(EV_list):
     :return: charging_voltage: List of charging voltages corresponding
             to the charging power.
     """
+
     charging_voltage = []
     # Ignoring the difference between AC and DC voltages for this application
     charge_voltages = [120, 240, 630]
@@ -115,7 +116,7 @@ def estimate_SOC(charging_V, charging_A):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Demo HELICS Federate")
     parser.add_argument("-r", "--random_seed", nargs="?", default=268)
-    parser.add_argument("-d", "--days", nargs="?", default=268)
+    parser.add_argument("-d", "--days", nargs="?", default=1)
     parser.add_argument("-p", "--show_plots", nargs="?", default=True)
     args = parser.parse_args()
 
@@ -144,7 +145,7 @@ if __name__ == "__main__":
     subid = {}
     for i in range(sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name = h.helicsSubscriptionGetTarget(subid[i])
+        sub_name = h.helicsInputGetTarget(subid[i])
         logger.debug(f"\tRegistered subscription---> {sub_name}")
         charging_current.append(0)
 
@@ -168,7 +169,7 @@ if __name__ == "__main__":
     charging_voltage = calc_charging_voltage(EVlist)
     currentsoc = {}
 
-    hours = 24 * 1  # one day
+    hours = 24 * float(args.days)
     total_interval = int(60 * 60 * hours)
     update_interval = int(
         h.helicsFederateGetTimeProperty(fed, h.HELICS_PROPERTY_TIME_PERIOD)
@@ -211,7 +212,7 @@ if __name__ == "__main__":
             charging_current[j] = h.helicsInputGetDouble((subid[j]))
             logger.debug(
                 f"\tCharging current: {charging_current[j]:.2f} from "
-                f"input {h.helicsSubscriptionGetTarget(subid[j])}"
+                f"input {h.helicsInputGetTarget(subid[j])}"
             )
 
             # New EV is in place after removing charge from old EV,
@@ -223,12 +224,12 @@ if __name__ == "__main__":
                 charging_voltage[j] = charge_V[0]
 
                 currentsoc[j] = 0  # Initial SOC estimate
-                logger.debug(f"\t New EV, SOC estimate: {currentsoc[j]:.4f}")
-                logger.debug(f"\t New EV, charging voltage:" f" {charging_voltage[j]}")
+                logger.debug(f"\tNew EV, SOC estimate: {currentsoc[j]:.4f}")
+                logger.debug(f"\tNew EV, charging voltage:" f" {charging_voltage[j]}")
             else:
                 # SOC estimation
                 currentsoc[j] = estimate_SOC(charging_voltage[j], charging_current[j])
-                logger.debug(f"\t EV SOC estimate: {currentsoc[j]:.4f}")
+                logger.debug(f"\tEV SOC estimate: {currentsoc[j]:.4f}")
 
             # Check for messages from EV Controller
             endpoint_name = h.helicsEndpointGetName(endid[j])
@@ -254,7 +255,7 @@ if __name__ == "__main__":
             else:
                 logger.debug(
                     f"\tNo messages at endpoint {endpoint_name} "
-                    f"recieved at "
+                    f"received at "
                     f"time {grantedtime}"
                 )
 
@@ -283,7 +284,6 @@ if __name__ == "__main__":
         total_power = 0
         for j in range(pub_count):
             total_power += charging_voltage[j] * charging_current[j]
-            # logger.debug(f'\tCharging power in kW for EV{j+1}: {charging_power}')
 
         # Data collection vectors
         time_sim.append(grantedtime)
@@ -291,6 +291,7 @@ if __name__ == "__main__":
 
     # Cleaning up HELICS stuff once we've finished the co-simulation.
     fed.disconnect()
+
     # Output graph showing the charging profile for each of the charging
     #   terminals
     xaxis = np.array(time_sim) / 3600

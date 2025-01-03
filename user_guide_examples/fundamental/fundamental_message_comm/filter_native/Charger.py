@@ -29,6 +29,33 @@ logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.DEBUG)
 
 
+def get_new_EV(numEVs):
+    """
+    Using hard-coded probabilities, a distribution of EVs with support
+    for specific charging levels are generated. The number of EVs
+    generated is defined by the user.
+
+    :param numEVs: Number of EVs
+    :return
+        numLvL1: Number of new EVs that will charge at level 1
+        numLvL2: Number of new EVs that will charge at level 2
+        numLvL3: Number of new EVs that will charge at level 3
+        listOfEVs: List of all EVs (and their charging levels) generated
+
+    """
+
+    # Probabilities of a new EV charging at the specified level.
+    lvl1 = 0.05
+    lvl2 = 0.6
+    lvl3 = 0.35
+    listOfEVs = np.random.choice([1, 2, 3], numEVs, p=[lvl1, lvl2, lvl3]).tolist()
+    numLvl1 = listOfEVs.count(1)
+    numLvl2 = listOfEVs.count(2)
+    numLvl3 = listOfEVs.count(3)
+
+    return numLvl1, numLvl2, numLvl3, listOfEVs
+
+
 def calc_charging_voltage(EV_list):
     """
     This function uses the pre-defined charging powers and maps them to
@@ -55,33 +82,6 @@ def calc_charging_voltage(EV_list):
             charging_voltage.append(0)
 
     return charging_voltage
-
-
-def get_new_EV(numEVs):
-    """
-    Using hard-coded probabilities, a distribution of EVs with support
-    for specific charging levels are generated. The number of EVs
-    generated is defined by the user.
-
-    :param numEVs: Number of EVs
-    :return
-        numLvL1: Number of new EVs that will charge at level 1
-        numLvL2: Number of new EVs that will charge at level 2
-        numLvL3: Number of new EVs that will charge at level 3
-        listOfEVs: List of all EVs (and their charging levels) generated
-
-    """
-
-    # Probabilities of a new EV charging at the specified level.
-    lvl1 = 0.05
-    lvl2 = 0.6
-    lvl3 = 0.35
-    listOfEVs = np.random.choice([1, 2, 3], numEVs, p=[lvl1, lvl2, lvl3]).tolist()
-    numLvl1 = listOfEVs.count(1)
-    numLvl2 = listOfEVs.count(2)
-    numLvl3 = listOfEVs.count(3)
-
-    return numLvl1, numLvl2, numLvl3, listOfEVs
 
 
 def estimate_SOC(charging_V, charging_A):
@@ -145,7 +145,7 @@ if __name__ == "__main__":
     subid = {}
     for i in range(sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name = h.helicsSubscriptionGetTarget(subid[i])
+        sub_name = h.helicsInputGetTarget(subid[i])
         logger.debug(f"\tRegistered subscription---> {sub_name}")
         charging_current.append(0)
 
@@ -169,7 +169,7 @@ if __name__ == "__main__":
     charging_voltage = calc_charging_voltage(EVlist)
     currentsoc = {}
 
-    hours = 24 * 1  # one day
+    hours = 24 * float(args.days)
     total_interval = int(60 * 60 * hours)
     update_interval = int(
         h.helicsFederateGetTimeProperty(fed, h.HELICS_PROPERTY_TIME_PERIOD)
@@ -204,15 +204,15 @@ if __name__ == "__main__":
         grantedtime = h.helicsFederateRequestTime(fed, requested_time)
         logger.debug(f"Granted time {grantedtime}")
 
-        for j in range(end_count):
-            logger.debug(f"EV {j+1} time {grantedtime}")
+        for j in range(pub_count):
+            logger.debug(f"EV {j + 1} time {grantedtime}")
             # Model the physics of the battery charging. This happens
             #   every time step whether a message comes in or not and always
             #   uses the latest value provided by the battery model.
             charging_current[j] = h.helicsInputGetDouble((subid[j]))
             logger.debug(
                 f"\tCharging current: {charging_current[j]:.2f} from "
-                f"input {h.helicsSubscriptionGetTarget(subid[j])}"
+                f"input {h.helicsInputGetTarget(subid[j])}"
             )
 
             # New EV is in place after removing charge from old EV,
@@ -224,12 +224,12 @@ if __name__ == "__main__":
                 charging_voltage[j] = charge_V[0]
 
                 currentsoc[j] = 0  # Initial SOC estimate
-                logger.debug(f"\t New EV, SOC estimate: {currentsoc[j]:.4f}")
-                logger.debug(f"\t New EV, charging voltage:" f" {charging_voltage[j]}")
+                logger.debug(f"\tNew EV, SOC estimate: {currentsoc[j]:.4f}")
+                logger.debug(f"\tNew EV, charging voltage:" f" {charging_voltage[j]}")
             else:
                 # SOC estimation
                 currentsoc[j] = estimate_SOC(charging_voltage[j], charging_current[j])
-                logger.debug(f"\t EV SOC estimate: {currentsoc[j]:.4f}")
+                logger.debug(f"\tEV SOC estimate: {currentsoc[j]:.4f}")
 
             # Check for messages from EV Controller
             endpoint_name = h.helicsEndpointGetName(endid[j])
@@ -255,7 +255,7 @@ if __name__ == "__main__":
             else:
                 logger.debug(
                     f"\tNo messages at endpoint {endpoint_name} "
-                    f"recieved at "
+                    f"received at "
                     f"time {grantedtime}"
                 )
 
@@ -282,10 +282,8 @@ if __name__ == "__main__":
         #   primary metric of interest, to understand the power profile
         #   and capacity requirements required for this charging garage.
         total_power = 0
-        # logger.debug(f'Calculating charging power')
         for j in range(pub_count):
             total_power += charging_voltage[j] * charging_current[j]
-            # logger.debug(f'\tCharging power in kW for EV{j+1}: {charging_power}')
 
         # Data collection vectors
         time_sim.append(grantedtime)
@@ -298,7 +296,6 @@ if __name__ == "__main__":
     #   terminals
     xaxis = np.array(time_sim) / 3600
     yaxis = np.array(power)
-
     plt.plot(xaxis, yaxis, color="tab:blue", linestyle="-")
     plt.yticks(np.arange(0, 20000, 1000))
     plt.ylabel("kW")

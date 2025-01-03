@@ -102,7 +102,7 @@ if __name__ == "__main__":
     subid = {}
     for i in range(sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name = h.helicsSubscriptionGetTarget(subid[i])
+        sub_name = h.helicsInputGetTarget(subid[i])
         logger.debug(f"\tRegistered subscription---> {sub_name}")
 
     pubid = {}
@@ -125,7 +125,7 @@ if __name__ == "__main__":
     charging_voltage = calc_charging_voltage(EVlist)
     currentsoc = {}
 
-    hours = 24 * 1  # one day
+    hours = 24 * float(args.days)
     total_interval = int(60 * 60 * hours)
     update_interval = int(
         h.helicsFederateGetTimeProperty(fed, h.HELICS_PROPERTY_TIME_PERIOD)
@@ -169,7 +169,7 @@ if __name__ == "__main__":
             charging_current[j] = h.helicsInputGetDouble((subid[j]))
             logger.debug(
                 f"\tCharging current: {charging_current[j]:.2f} from"
-                f" input {h.helicsSubscriptionGetTarget(subid[j])}"
+                f" input {h.helicsInputGetTarget(subid[j])}"
             )
 
             # Publish updated charging voltage

@@ -79,7 +79,7 @@ def configure_federate():
 
 
 def filter_drop_delay(eq, drop_rate, delay_time):
-    if random.random() > 0.1:
+    if random.random() > drop_rate:
         logger.debug(f"\t\t\tMessage not randomly dropped")
         # Pulling incoming message from its parking spot at the end of eq
         msg_dict = eq[-1]
@@ -237,7 +237,7 @@ def run_cosim(fed, endid, end_name, args):
     h.helicsFederateEnterExecutingMode(fed)
     logger.info("Entered HELICS execution mode")
 
-    hours = 24 * 1  # one day
+    hours = 24 * float(args.days)
     total_interval = int(60 * 60 * hours)
 
     starttime = h.HELICS_TIME_MAXTIME
@@ -358,9 +358,10 @@ if __name__ == "__main__":
     auto_run_dir = os.path.join(script_path)
     parser.add_argument("-a", "--auto_run_dir", nargs="?", default=script_path)
     parser.add_argument("-r", "--random_seed", nargs="?", default=2609)
-    parser.add_argument("-d", "--drop_rate", nargs="?", default=0.1)
+    parser.add_argument("-D", "--drop_rate", nargs="?", default=0.1)
     parser.add_argument("-t", "--delay_time", nargs="?", default=1800)
     parser.add_argument("-k", "--hack_success_rate", nargs="?", default=0.02)
     parser.add_argument("-i", "--interference_threshold_time", nargs="?", default=200)
+    parser.add_argument("-d", "--days", nargs="?", default=1)
     args = parser.parse_args()
     _auto_run(args)

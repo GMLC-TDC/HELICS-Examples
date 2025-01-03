@@ -14,6 +14,7 @@ SOC modeled by the charger. Each battery ceases charging when its SOC reaches 10
 trevor.hardy@pnnl.gov
 """
 
+import argparse
 import matplotlib.pyplot as plt
 import helics as h
 import logging
@@ -25,15 +26,15 @@ logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.DEBUG)
 
 
-def get_new_battery(numBattery):
+def get_new_battery(num_battery):
     """
     Using hard-coded probabilities, a distribution of batteries of
     fixed battery sizes are generated. The number of batteries is a user
     provided parameter.
 
-    :param numBattery: Number of batteries to generate
+    :param num_battery: Number of batteries to generate
     :return
-        listOfBatts: List of generated batteries
+        list_of_batts: List of generated batteries
 
     """
 
@@ -45,15 +46,24 @@ def get_new_battery(numBattery):
 
     # Batteries have different sizes:
     # [25,62,100]
-    listOfBatts = np.random.choice([25, 62, 100], numBattery, p=[sm, med, lg]).tolist()
+    list_of_batts = np.random.choice(
+        [25, 62, 100], num_battery, p=[sm, med, lg]
+    ).tolist()
 
-    return listOfBatts
+    return list_of_batts
 
 
 if __name__ == "__main__":
-    np.random.seed(2622)
 
-    ##########  Registering  federate and configuring from JSON################
+    parser = argparse.ArgumentParser(description="Demo HELICS Federate")
+    parser.add_argument("-r", "--random_seed", nargs="?", default=628)
+    parser.add_argument("-d", "--days", nargs="?", default=1)
+    parser.add_argument("-p", "--show_plots", nargs="?", default=True)
+    args = parser.parse_args()
+
+    np.random.seed(args.random_seed)
+
+    ##########  Registering  federate and configuring from JSON ################
     fed = h.helicsCreateValueFederateFromConfig("BatteryConfig.json")
 
     logger.info(f"Created federate {fed.name}")
@@ -80,13 +90,11 @@ if __name__ == "__main__":
 
     subid = {}
     for i in range(fed.n_inputs):
-        subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name = h.helicsSubscriptionGetTarget(subid[i])
-
+        subid[i] = fed.get_subscription_by_index(i)
+    #
     pubid = {}
     for i in range(fed.n_publications):
-        pubid[i] = h.helicsFederateGetPublicationByIndex(fed, i)
-        pub_name = h.helicsPublicationGetName(pubid[i])
+        pubid[i] = fed.get_publication_by_index(i)
 
     batt_list = get_new_battery(fed.n_publications)
 
@@ -94,7 +102,7 @@ if __name__ == "__main__":
     for i in range(fed.n_publications):
         current_soc[i] = (np.random.randint(0, 60)) / 100
 
-    hours = 24 * 1  # one day
+    hours = 24 * float(args.days)
     total_interval = int(60 * 60 * hours)
     update_interval = int(fed.property["TIME_PERIOD"])
     grantedtime = 0
@@ -146,7 +154,7 @@ if __name__ == "__main__":
             # Publish out charging current
             pubid[j].publish(charging_current)
             logger.debug(
-                f"\tPublished {pub_name[j]} with value " f"{charging_current:.2f}"
+                f"\tPublished {pubid[j].name} with value " f"{charging_current:.2f}"
             )
 
             # Store SOC for later analysis/graphing
@@ -157,14 +165,15 @@ if __name__ == "__main__":
         # Data collection vectors
         time_sim.append(grantedtime)
 
+    # Cleaning up HELICS stuff once we've finished the co-simulation.
+    fed.disconnect()
     # Printing out final results graphs for comparison/diagnostic purposes.
     xaxis = np.array(time_sim) / 3600
     y = []
     for key in soc:
         y.append(np.array(soc[key]))
 
-    plt.figure()
-
+    axs: plt.Axes
     fig, axs = plt.subplots(5, sharex=True, sharey=True)
     fig.suptitle("SOC of each EV Battery")
 
@@ -189,8 +198,7 @@ if __name__ == "__main__":
     axs[4].set(ylabel="Batt5")
     axs[4].grid(True)
     plt.xlabel("time (hr)")
-    # for ax in axs():
-    #        ax.label_outer()
+    # Saving graph to file
     plt.savefig("fundamental_default_battery_SOCs.png", format="png")
-
-    plt.show()
+    if args.show_plots:
+        plt.show()
