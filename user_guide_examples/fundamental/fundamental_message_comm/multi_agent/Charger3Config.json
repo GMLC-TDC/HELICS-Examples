@@ -1,0 +1,32 @@
+{
+  "name": "Charger3",
+  "core_name": "charger3_core",
+  "log_level": "warning",
+  "core_type": "zmq",
+  "period": 60,
+  "uninterruptible": false,
+  "terminate_on_error": true,
+  "endpoints": [
+    {
+      "name": "Charger3/soc",
+      "destination": "Controller/ep",
+      "global": true
+    }
+  ],
+  "publications":[
+    {
+      "key":"Charger3/voltage",
+      "type":"double",
+      "unit":"V",
+      "global": true
+    }
+  ],
+  "subscriptions":[
+    {
+      "target":"Battery3/current",
+      "type":"double",
+      "unit":"A",
+      "global": true
+    }
+  ]
+}
