@@ -1,0 +1,12 @@
+{
+  "name": "advanced single core",
+  "broker": true,
+  "federates": [
+    {
+      "directory": ".",
+      "exec": "python -u battery_charger.py",
+      "host": "localhost",
+      "name": "battery_charger"
+    }
+  ]
+}
