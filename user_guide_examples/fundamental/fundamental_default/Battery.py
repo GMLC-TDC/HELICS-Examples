@@ -22,7 +22,7 @@ import numpy as np
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.WARNING)
 
 
 def destroy_federate(fed):
@@ -89,7 +89,7 @@ if __name__ == "__main__":
     subid = {}
     for i in range(0, sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name = h.helicsSubscriptionGetTarget(subid[i])
+        sub_name = h.helicsInputGetTarget(subid[i])
         logger.debug(f"\tRegistered subscription---> {sub_name}")
 
     pubid = {}
@@ -147,7 +147,7 @@ if __name__ == "__main__":
             # Get the applied charging voltage from the EV
             charging_voltage = h.helicsInputGetDouble((subid[j]))
             logger.debug(f"\tReceived voltage {charging_voltage:.2f}" 
-                        f" from input {h.helicsSubscriptionGetTarget(subid[j])}")
+                        f" from input {h.helicsInputGetTarget(subid[j])}")
 
             # Calculate charging current and update SOC
             R = np.interp(current_soc[j], socs, effective_R)
@@ -214,4 +214,4 @@ if __name__ == "__main__":
     #        ax.label_outer()
     plt.savefig("fundamental_default_battery_SOCs.png", format="png")
 
-    plt.show()
+    # plt.show()

@@ -101,7 +101,7 @@ if __name__ == "__main__":
     sub_name = {}
     for i in range(0, sub_count):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name[i] = h.helicsSubscriptionGetTarget(subid[i])
+        sub_name[i] = h.helicsInputGetTarget(subid[i])
         logger.debug(f'\tRegistered subscription---> {sub_name[i]}')
 
     pubid = {}
@@ -161,7 +161,7 @@ if __name__ == "__main__":
             # Get the applied charging voltage from the EV
             charging_voltage = h.helicsInputGetDouble((subid[0]))
             logger.debug(f'\tReceived voltage {charging_voltage:.2f} from input'
-                         f' {h.helicsSubscriptionGetTarget(subid[0])}')
+                         f' {h.helicsInputGetTarget(subid[0])}')
 
 
             # Calculate charging current and update SOC

@@ -51,7 +51,7 @@ class FedItr:
         for j in range(0, sub_count):
             x = h.helicsInputGetDouble((subid[j]))
             self.logger.debug(f"\t\t{nametyp} {j+1} received {proptyp} {x:.2f}" 
-                        f" from input {h.helicsSubscriptionGetTarget(subid[j])}")
+                        f" from input {h.helicsInputGetTarget(subid[j])}")
             if itr == 0:
                 valarray[j] = [valinit] * 2
             else:

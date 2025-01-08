@@ -101,7 +101,7 @@ if __name__ == "__main__":
     subid = {}
     for i in range(0, fed.n_inputs):
         subid[i] = h.helicsFederateGetInputByIndex(fed, i)
-        sub_name = h.helicsSubscriptionGetTarget(subid[i])
+        sub_name = h.helicsInputGetTarget(subid[i])
 
     pubid = {}
     for i in range(0, fed.n_publications):

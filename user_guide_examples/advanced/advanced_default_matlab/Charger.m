@@ -48,7 +48,7 @@ try
     subid = {};
     for i=1:sub_count
         subid{i} = helics.helicsFederateGetInputByIndex(fed, i-1);
-        sub_name = helics.helicsSubscriptionGetTarget(subid{i});
+        sub_name = helics.helicsInputGetTarget(subid{i});
         fprintf(fid,'\tRegistered subscription---> %s\n', sub_name);
     end
     pubid = {};
@@ -113,7 +113,7 @@ try
             %   every time step whether a message comes in or not and always
             %   uses the latest value provided by the battery model.
             charging_current(j) = helics.helicsInputGetDouble(subid{j});
-            fprintf(fid,'\tCharging current: %0.2f  from input %s\n', charging_current(j), helics.helicsSubscriptionGetTarget(subid{j}));
+            fprintf(fid,'\tCharging current: %0.2f  from input %s\n', charging_current(j), helics.helicsInputGetTarget(subid{j}));
 
             % New EV is in place after removing charge from old EV,
             % as indicated by the zero current draw.
