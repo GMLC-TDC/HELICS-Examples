@@ -1,0 +1,26 @@
+{
+  "name": "Battery1",
+  "core_name": "battery1_core",
+  "log_level": "warning",
+  "core_type": "zmq",
+  "period": 60,
+  "uninterruptible": false,
+  "terminate_on_error": true,
+  "wait_for_current_time_update": true,
+  "publications":[
+    {
+      "key":"Battery1/current",
+      "type":"double",
+      "unit":"A",
+      "global": true
+    }
+  ],
+  "subscriptions":[
+    {
+      "target":"Charger1/voltage",
+      "type":"double",
+      "unit":"V",
+      "global": true
+    }
+  ]
+}

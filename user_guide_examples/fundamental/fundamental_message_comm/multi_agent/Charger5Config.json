@@ -1,0 +1,32 @@
+{
+  "name": "Charger5",
+  "core_name": "charger5_core",
+  "log_level": "warning",
+  "core_type": "zmq",
+  "period": 60,
+  "uninterruptible": false,
+  "terminate_on_error": true,
+  "endpoints": [
+    {
+      "name": "Charger5/soc",
+      "destination": "Controller/ep",
+      "global": true
+    }
+  ],
+  "publications":[
+    {
+      "key":"Charger5/voltage",
+      "type":"double",
+      "unit":"V",
+      "global": true
+    }
+  ],
+  "subscriptions":[
+    {
+      "target":"Battery5/current",
+      "type":"double",
+      "unit":"A",
+      "global": true
+    }
+  ]
+}

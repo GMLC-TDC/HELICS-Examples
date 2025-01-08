@@ -1,0 +1,32 @@
+{
+  "name": "Charger4",
+  "core_name": "charger4_core",
+  "log_level": "warning",
+  "core_type": "zmq",
+  "period": 60,
+  "uninterruptible": false,
+  "terminate_on_error": true,
+  "endpoints": [
+    {
+      "name": "Charger4/soc",
+      "destination": "Controller/ep",
+      "global": true
+    }
+  ],
+  "publications":[
+    {
+      "key":"Charger4/voltage",
+      "type":"double",
+      "unit":"V",
+      "global": true
+    }
+  ],
+  "subscriptions":[
+    {
+      "target":"Battery4/current",
+      "type":"double",
+      "unit":"A",
+      "global": true
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+# HELICS User Guide Fundamental Topics - Multi-Agent Example
+
+This example disaggregates the Charger and Battery federates from Combination Federate example (where Battery and Charger model five batteries and chargers, respectively) to create unique federates per simulated entity. A full description of the Combination Federate example can be found in the [HELICS User Guide](https://docs.helics.org/en/latest/user-guide/examples/fundamental_examples/fundamental_combo.html) where this example is referenced.

@@ -1,0 +1,32 @@
+{
+  "name": "Charger2",
+  "core_name": "charger2_core",
+  "log_level": "warning",
+  "core_type": "zmq",
+  "period": 60,
+  "uninterruptible": false,
+  "terminate_on_error": true,
+  "endpoints": [
+    {
+      "name": "Charger2/soc",
+      "destination": "Controller/ep",
+      "global": true
+    }
+  ],
+  "publications":[
+    {
+      "key":"Charger2/voltage",
+      "type":"double",
+      "unit":"V",
+      "global": true
+    }
+  ],
+  "subscriptions":[
+    {
+      "target":"Battery2/current",
+      "type":"double",
+      "unit":"A",
+      "global": true
+    }
+  ]
+}
