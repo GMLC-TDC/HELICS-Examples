@@ -1,3 +1,6 @@
+# Disabling Azure pipelines until we can get them working correctly
+pr: none
+
 jobs:
 - job: Native
   strategy:
