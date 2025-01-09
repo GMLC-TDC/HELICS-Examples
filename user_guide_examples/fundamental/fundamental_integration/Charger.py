@@ -23,6 +23,7 @@ import logging
 import numpy as np
 import time
 import pprint
+import os
 
 # Setting up pretty printing, mostly for debugging.
 pp = pprint.PrettyPrinter(indent=4)
@@ -47,7 +48,7 @@ def destroy_federate(fed):
     '''
     # Adding extra time request to clear out any pending messages to avoid
     #   annoying errors in the broker log. Any message are tacitly disregarded.
-    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME -1)
     status = h.helicsFederateDisconnect(fed)
     h.helicsFederateDestroy(fed)
     logger.info('Federate finalized')

@@ -15,8 +15,7 @@ import matplotlib.pyplot as plt
 import helics as h
 import logging
 import numpy as np
-import sys
-import time
+import os
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
@@ -37,7 +36,7 @@ def destroy_federate(fed):
     '''
     # Adding extra time request to clear out any pending messages to avoid
     #   annoying errors in the broker log. Any message are tacitly disregarded.
-    # grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME -1)
     status = h.helicsFederateDisconnect(fed)
     h.helicsFederateDestroy(fed)
     logger.info('Federate finalized')
