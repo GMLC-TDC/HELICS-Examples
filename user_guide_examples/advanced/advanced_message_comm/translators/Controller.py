@@ -46,10 +46,7 @@ def destroy_federate(fed, max_time):
 	'''
 	# Adding extra time request to clear out any pending messages to avoid
 	#	annoying errors in the broker log. Any message are tacitly disregarded.
-	if max_time:
-		grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
-	else: 
-		granted_time = h.helicsFederateRequestTime(fed, 99999999)
+	grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME - 1)
 	status = h.helicsFederateDisconnect(fed)
 	h.helicsFederateFree(fed)
 	h.helicsCloseLibrary()
