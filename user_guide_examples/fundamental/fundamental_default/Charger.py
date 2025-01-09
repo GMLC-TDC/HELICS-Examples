@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 import helics as h
 import logging
 import numpy as np
+import os
 
 
 logger = logging.getLogger(__name__)
