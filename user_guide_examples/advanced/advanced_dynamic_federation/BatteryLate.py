@@ -42,7 +42,7 @@ def destroy_federate(fed):
     '''
     # Adding extra time request to clear out any pending messages to avoid
     #   annoying errors in the broker log. Any message are tacitly disregarded.
-    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME - 1)
     status = h.helicsFederateDisconnect(fed)
     h.helicsFederateFree(fed)
     h.helicsCloseLibrary()
@@ -214,7 +214,7 @@ if __name__ == "__main__":
     axs[0].grid(True)
 
     axs[1].plot(xaxis, y[1], color='tab:blue', linestyle='-')
-    axs[1].set(ylabel='Batt a\nport 2')
+    axs[1].set(ylabel='Batt at\nport 2')
     axs[1].grid(True)
 
     axs[2].plot(xaxis, y[2], color='tab:blue', linestyle='-')

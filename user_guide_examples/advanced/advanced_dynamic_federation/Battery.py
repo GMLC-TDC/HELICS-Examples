@@ -44,7 +44,7 @@ def destroy_federate(fed):
     # Adding extra time request to clear out any pending messages to avoid
     #   annoying errors in the broker log. Any message are tacitly disregarded.
     logger.debug(f'Hi2!')
-    h.helicsFederateRequestTimeAsync(fed, h.HELICS_TIME_MAXTIME)
+    h.helicsFederateRequestTimeAsync(fed, h.HELICS_TIME_MAXTIME - 1)
     logger.debug(f'Hi3!')
     time.sleep(20)
     logger.debug(f'Hi4!')
