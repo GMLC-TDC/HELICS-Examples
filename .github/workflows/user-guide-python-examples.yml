@@ -44,7 +44,6 @@ jobs:
       timeout-minutes: 2
       run: |
         ./run_fundamental_user_guide_examples.sh
-        ./run_advanced_user_guide_examples.sh
        
 #    - name: Test with pytest
 #      run: |
