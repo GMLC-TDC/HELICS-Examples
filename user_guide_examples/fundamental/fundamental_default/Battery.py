@@ -215,4 +215,4 @@ if __name__ == "__main__":
     #        ax.label_outer()
     plt.savefig("fundamental_default_battery_SOCs.png", format="png")
 
-    # plt.show()
+    plt.show()
