@@ -44,6 +44,8 @@ jobs:
     #   timeout-minutes: 2
     #   run: |
     #     ./run_fundamental_user_guide_examples.sh
+    - name: Print out system information
+      run: helics --version
     - name: Run advanced user guide examples
       timeout-minutes: 15
       run: |
