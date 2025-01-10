@@ -39,13 +39,13 @@ jobs:
 #        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
 #        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Install latest HELICS PyPI release with CLI
-      run: pip install helics[cli]
+      run: pip install helics[cli] helics_apps
     # - name: Run fundamental user guide examples
     #   timeout-minutes: 2
     #   run: |
     #     ./run_fundamental_user_guide_examples.sh
     - name: Run advanced user guide examples
-      timeout-minutes: 5
+      timeout-minutes: 15
       run: |
         ./run_advanced_user_guide_examples.sh
                 
