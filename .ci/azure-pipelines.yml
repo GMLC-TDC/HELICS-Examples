@@ -1,18 +1,19 @@
 # Disabling Azure pipelines until we can get them working correctly
 trigger: none
+pr: none
 
-jobs:
-- job: Native
-  strategy:
-    matrix:
-      Linux:
-        imageName: "ubuntu-22.04"
-      macOS:
-        imageName: "macos-13"
-      Windows:
-        imageName: "windows-2019"
-  pool:
-    vmImage: $(imageName)
+# jobs:
+# - job: Native
+#   strategy:
+#     matrix:
+#       Linux:
+#         imageName: "ubuntu-22.04"
+#       macOS:
+#         imageName: "macos-13"
+#       Windows:
+#         imageName: "windows-2019"
+#   pool:
+#     vmImage: $(imageName)
 
 #   steps:
 #   # -----------------------
