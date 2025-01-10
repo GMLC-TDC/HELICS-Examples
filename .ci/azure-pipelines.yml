@@ -1,5 +1,5 @@
 # Disabling Azure pipelines until we can get them working correctly
-pr: none
+trigger: none
 
 jobs:
 - job: Native
