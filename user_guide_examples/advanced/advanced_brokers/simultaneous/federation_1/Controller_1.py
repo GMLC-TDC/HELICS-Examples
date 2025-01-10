@@ -123,11 +123,6 @@ if __name__ == "__main__":
             if source not in time_sim:
                 time_sim[source] = []
             time_sim[source].append(float(grantedtime))
-            # if len(time_sim) > 0:
-            #     if time_sim[-1] != grantedtime:
-            #         time_sim.append(grantedtime)
-            # else:
-            #     time_sim.append(grantedtime)
 
         # Since we've dealt with all the messages that are queued, there's
         #   nothing else for the federate to do until/unless another

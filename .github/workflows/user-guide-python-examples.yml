@@ -44,7 +44,7 @@ jobs:
     #   timeout-minutes: 2
     #   run: |
     #     ./run_fundamental_user_guide_examples.sh
-    - name: Print out os information
+    - name: Print out OS information
       run: cat /etc/os-release
     - name: Print out HELICS installation information
       run: helics --version
