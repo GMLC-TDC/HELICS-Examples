@@ -14,32 +14,32 @@ fi
 
 #Advanced
 
-echo "\n###### Advanced broker hierarchies - SKIPPING   #####"
+echo "\n###### Advanced broker hierarchies  #####"
 cd ./advanced/advanced_brokers/hierarchies
-# helics run --path=./broker_hierarchy_runner_A.json &
-# helics run --path=./broker_hierarchy_runner_B.json &
-# helics run --path=./broker_hierarchy_runner_C.json
+helics run --path=./broker_hierarchy_runner_A.json &
+helics run --path=./broker_hierarchy_runner_B.json &
+helics run --path=./broker_hierarchy_runner_C.json
 
 # Fails due to broker port out of range
-echo "\n###### Advanced multi-broker - SKIPPING  ######"
+echo "\n###### Advanced multi-broker   ######"
 cd ../multi_broker
-# helics run --path=./multi_broker_runner.json
+helics run --path=./multi_broker_runner.json
 
 
-echo "\n###### Advanced simultaneous co-simulations - SKIPPING  ######"
+echo "\n###### Advanced simultaneous co-simulations ######"
 # Fails due to graphing index problems
 cd ../simultaneous/federation_1
-# helics run --path=./federation_1_runner.json &
-# cd ../federation_2
-# helics run --path=./federation_2_runner.json &
-# cd ../federation_3
-# helics run --path=./federation_3_runner.json
+helics run --path=./federation_1_runner.json &
+cd ../federation_2
+helics run --path=./federation_2_runner.json &
+cd ../federation_3
+helics run --path=./federation_3_runner.json
 
 # Example does not run due to filter bug
 # HELICS issue #2524
-# echo "\n##### Advanced input and output ######"
+echo "\n##### Advanced input and output ######"
 cd ../../../advanced_input_output
-# helics run --path=./fib_runner.json
+helics run --path=./fib_runner.json
 
 echo "\n###### Iteration ######"
 cd ../advanced_iteration
@@ -54,11 +54,12 @@ cd ../query
 helics run --path=./query_runner.json
 
 echo "\n##### Translators - SKIPPING   ######"
-# Doesn't run to completion
+# Hangs
 cd ../translators
 # helics run --path=./translator_runner.json
 
 echo "\n##### Advanced default ######"
+# Fails due to graph index problems
 cd ../../advanced_default
 helics run --path=./advanced_default_runner.json
 
@@ -70,7 +71,7 @@ echo "\n##### Connector interface creation ######"
 cd ../advanced_connector/interface_creation
 helics run --path=./connector_interface_creation_runner.json
 
-echo "\n##### Connector matchfile direct ######"
+echo "\n##### Connector matchfile ######"
 cd ../matchfile
 # Currently not working
 # HELICS Examples issue #101
@@ -82,7 +83,7 @@ cd ../../advanced_default_pythonic/
 helics run --path=./advanced_default_runner.json
 
 # Graphing needs to be looked at
-# echo "\n##### Dyanmic federation ######"
+echo "\n##### Dyanmic federation  - SKIPPING  ######"
 cd ../advanced_dynamic_federation/
 # helics run --path=./dynamic_federation_runner.json
 
