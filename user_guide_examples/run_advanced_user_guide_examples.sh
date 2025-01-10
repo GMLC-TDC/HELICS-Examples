@@ -21,10 +21,10 @@ helics run --path=./broker_hierarchy_runner_B.json &
  helics run --path=./broker_hierarchy_runner_C.json
 
 # Fails due to broker port out of range
-echo "\n###### Advanced multi-broker -    FAILS    ######"
-echo "HELICS Issue #2721"
+echo "\n###### Advanced multi-broker -    SKIPPING    ######"
+echo "\tHELICS Issue #2721"
 cd ../multi_broker
-helics run --path=./multi_broker_runner.json
+# helics run --path=./multi_broker_runner.json
 
 
 echo "\n###### Advanced simultaneous co-simulations ######"
@@ -36,7 +36,7 @@ cd ../federation_3
 helics run --path=./federation_3_runner.json
 
 echo "\n##### Advanced input and output - SKIPPING ######"
-echo "\t HELICS issue #2542"
+echo "\tHELICS issue #2542\n"
 cd ../../../advanced_input_output
 # helics run --path=./fib_runner.json
 
@@ -53,7 +53,7 @@ cd ../query
 helics run --path=./query_runner.json
 
 echo "\n##### Translators - SKIPPING ######"
-echo "\t HELICS issue 2562"
+echo "\tHELICS issue 2562\n"
 cd ../translators
 # helics run --path=./translator_runner.json
 
@@ -69,8 +69,8 @@ echo "\n##### Connector interface creation ######"
 cd ../advanced_connector/interface_creation
 helics run --path=./connector_interface_creation_runner.json
 
-echo "\n##### Connector matchfile -    FAILS    ######"
-echo "HELICS-Example issue # 101"
+echo "\n##### Connector matchfile - SKIPPING ######"
+echo "\tHELICS-Example issue #101\n"
 cd ../matchfile
 # helics run --path=./connector_matchfile_direct_runner.json
 helics run --path=./connector_matchfile_regex_runner.json
