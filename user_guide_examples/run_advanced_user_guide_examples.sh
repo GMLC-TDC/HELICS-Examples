@@ -23,6 +23,7 @@ helics run --path=./broker_hierarchy_runner_B.json &
 # Fails due to broker port out of range
 echo "\n###### Advanced multi-broker -    SKIPPING    ######"
 echo "\tHELICS Issue #2721"
+echo "\n"
 cd ../multi_broker
 # helics run --path=./multi_broker_runner.json
 
@@ -36,7 +37,8 @@ cd ../federation_3
 helics run --path=./federation_3_runner.json
 
 echo "\n##### Advanced input and output - SKIPPING ######"
-echo "\tHELICS issue #2542\n"
+echo "\tHELICS issue #2542"
+echo "\n"
 cd ../../../advanced_input_output
 # helics run --path=./fib_runner.json
 
@@ -53,7 +55,8 @@ cd ../query
 helics run --path=./query_runner.json
 
 echo "\n##### Translators - SKIPPING ######"
-echo "\tHELICS issue 2562\n"
+echo "\tHELICS issue #2562"
+echo "\n"
 cd ../translators
 # helics run --path=./translator_runner.json
 
@@ -69,10 +72,13 @@ echo "\n##### Connector interface creation ######"
 cd ../advanced_connector/interface_creation
 helics run --path=./connector_interface_creation_runner.json
 
-echo "\n##### Connector matchfile - SKIPPING ######"
-echo "\tHELICS-Example issue #101\n"
+echo "\n##### Connector matchfile direct - SKIPPING ######"
+echo "\tHELICS-Example issue #101"
+echo "\n"
 cd ../matchfile
 # helics run --path=./connector_matchfile_direct_runner.json
+
+echo "\n##### Connector matchfile regex ######"
 helics run --path=./connector_matchfile_regex_runner.json
 
 echo "\n##### Advanced default Pythonic ######"

@@ -137,8 +137,8 @@ if __name__ == "__main__":
 
 
     # Data collection lists
-    time_sim = []
-    current = []
+    time_sim = {}
+    current = {}
     soc = {}
 
     # As long as granted time is in the time range to be simulated...
@@ -189,17 +189,25 @@ if __name__ == "__main__":
             if subid[j] not in soc:
                 soc[subid[j]] = []
             soc[subid[j]].append(float(current_soc[j]))
+            if subid[j] not in time_sim:
+                time_sim[subid[j]] = []
+            time_sim[subid[j]].append(float(time_sim[j]))
+            if subid[j] not in current:
+                current[subid[j]] = []
+            current[subid[j]].append(float(current[j]))
 
         # Data collection vectors
-        time_sim.append(grantedtime)
-        current.append(charging_current)
+        # time_sim.append(grantedtime)
+        # current.append(charging_current)
 
 
 
     # Cleaning up HELICS stuff once we've finished the co-simulation.
     destroy_federate(fed)
     # Printing out final results graphs for comparison/diagnostic purposes.
-    xaxis = np.array(time_sim)/3600
+    x = []
+    for key in time_sim:
+        x.append(np.array(time_sim[key]))
     y = []
     for key in soc:
         y.append(np.array(soc[key]))
@@ -208,20 +216,20 @@ if __name__ == "__main__":
     fig, axs = plt.subplots(5, sharex=True, sharey=True)
     fig.suptitle('SOC of each EV Battery')
 
-    axs[0].plot(xaxis, y[0], color='tab:blue', linestyle='-')
+    axs[0].plot(x[0], y[0], color='tab:blue', linestyle='-')
     axs[0].set_yticks(np.arange(0,1.25,0.5))
     axs[0].set(ylabel='Batt at\nport 1')
     axs[0].grid(True)
 
-    axs[1].plot(xaxis, y[1], color='tab:blue', linestyle='-')
+    axs[1].plot(x[1], y[1], color='tab:blue', linestyle='-')
     axs[1].set(ylabel='Batt at\nport 2')
     axs[1].grid(True)
 
-    axs[2].plot(xaxis, y[2], color='tab:blue', linestyle='-')
+    axs[2].plot(x[2], y[2], color='tab:blue', linestyle='-')
     axs[2].set(ylabel='Batt at\nport 3')
     axs[2].grid(True)
 
-    axs[3].plot(xaxis, y[3], color='tab:blue', linestyle='-')
+    axs[3].plot(x[3], y[3], color='tab:blue', linestyle='-')
     axs[3].set(ylabel='Batt at\nport 4')
     axs[3].grid(True)
 
