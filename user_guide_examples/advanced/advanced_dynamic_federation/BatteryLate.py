@@ -19,6 +19,7 @@ import helics as h
 import logging
 import numpy as np
 import time
+import argparse
 
 
 logger = logging.getLogger(__name__)
@@ -74,12 +75,17 @@ def get_new_battery(numBattery):
 
 
 if __name__ == "__main__":
-    late_flag = True
     np.random.seed(2608)
 
+    parser = argparse.ArgumentParser(description='Batery federates')
+    parser.add_argument('-l', '--late', 
+                        action=argparse.BooleanOptionalAction,
+                        help='Set to join late')
+    args = parser.parse_args()
+
     ##########  Registering  federate and configuring from JSON################
-    if late_flag: 
-        time.sleep(20.0)
+    if args.late: 
+        time.sleep(10.0)
         fed = h.helicsCreateValueFederateFromConfig("BatteryLateConfig.json")
     else:
         fed = h.helicsCreateValueFederateFromConfig("BatteryConfig.json")
@@ -150,7 +156,7 @@ if __name__ == "__main__":
         grantedtime = h.helicsFederateRequestTime (fed, requested_time)
         logger.debug(f'Granted time {grantedtime}')
 
-        for j in range(0,sub_count):
+        for j in range(0, sub_count):
             logger.debug(f'Battery {j+1} time {grantedtime}')
 
             # Get the applied charging voltage from the EV
@@ -189,12 +195,14 @@ if __name__ == "__main__":
             if subid[j] not in soc:
                 soc[subid[j]] = []
             soc[subid[j]].append(float(current_soc[j]))
+            
             if subid[j] not in time_sim:
                 time_sim[subid[j]] = []
-            time_sim[subid[j]].append(float(time_sim[j]))
-            if subid[j] not in current:
-                current[subid[j]] = []
-            current[subid[j]].append(float(current[j]))
+            time_sim[subid[j]].append(float(grantedtime))
+            
+            # if subid[j] not in current:
+            #     current[subid[j]] = []
+            # current[subid[j]].append(float(charging_current))
 
         # Data collection vectors
         # time_sim.append(grantedtime)
@@ -214,32 +222,44 @@ if __name__ == "__main__":
 
 
     fig, axs = plt.subplots(5, sharex=True, sharey=True)
-    fig.suptitle('SOC of each EV Battery')
 
-    axs[0].plot(x[0], y[0], color='tab:blue', linestyle='-')
-    axs[0].set_yticks(np.arange(0,1.25,0.5))
-    axs[0].set(ylabel='Batt at\nport 1')
-    axs[0].grid(True)
+    if args.late:
+        fig.suptitle('SOC of EV Battery 5')
+    else: 
+        fig.suptitle('SOC of EV Batteries 1-4')
 
-    axs[1].plot(x[1], y[1], color='tab:blue', linestyle='-')
-    axs[1].set(ylabel='Batt at\nport 2')
-    axs[1].grid(True)
+    if not args.late:
+        axs[0].plot(x[0], y[0], color='tab:blue', linestyle='-')
+        axs[0].set_yticks(np.arange(0,1.25,0.5))
+        axs[0].set(ylabel='Batt at\nport 1')
+        axs[0].grid(True)
 
-    axs[2].plot(x[2], y[2], color='tab:blue', linestyle='-')
-    axs[2].set(ylabel='Batt at\nport 3')
-    axs[2].grid(True)
+        axs[1].plot(x[1], y[1], color='tab:blue', linestyle='-')
+        axs[1].set_yticks(np.arange(0,1.25,0.5))
+        axs[1].set(ylabel='Batt at\nport 1')
+        axs[1].grid(True)
 
-    axs[3].plot(x[3], y[3], color='tab:blue', linestyle='-')
-    axs[3].set(ylabel='Batt at\nport 4')
-    axs[3].grid(True)
+        axs[2].plot(x[2], y[2], color='tab:blue', linestyle='-')
+        axs[2].set_yticks(np.arange(0,1.25,0.5))
+        axs[2].set(ylabel='Batt at\nport 1')
+        axs[2].grid(True)
 
-    #axs[4].plot(xaxis, y[4], color='tab:blue', linestyle='-')
-    #axs[4].set(ylabel='Batt at\nport 5')
-    #axs[4].grid(True)
+        axs[3].plot(x[3], y[3], color='tab:blue', linestyle='-')
+        axs[3].set_yticks(np.arange(0,1.25,0.5))
+        axs[3].set(ylabel='Batt at\nport 1')
+        axs[3].grid(True)
+    else:
+        axs[4].plot(x[0], y[0], color='tab:blue', linestyle='-')
+        axs[4].set_yticks(np.arange(0,1.25,0.5))
+        axs[4].set(ylabel='Batt at\nport 1')
+        axs[4].grid(True)
+
     plt.xlabel('time (hr)')
     #for ax in axs():
 #        ax.label_outer()
     # Saving graph to file
-    plt.savefig('advanced_default_battery_SOCs.png', format='png')
-
+    if args.late:
+        plt.savefig('advanced_default_battery_5_SOC.png', format='png')
+    else: 
+        plt.savefig('advanced_default_battery_1-4_SOC.png', format='png')
     plt.show()
