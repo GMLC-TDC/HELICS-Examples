@@ -29,12 +29,12 @@ cd ../multi_broker
 
 
 echo "\n###### Advanced simultaneous co-simulations ######"
-# cd ../simultaneous/federation_1
-helics run --path=./federation_1_runner.json &
-# cd ../federation_2
-helics run --path=./federation_2_runner.json &
-# cd ../federation_3
-helics run --path=./federation_3_runner.json
+cd ../simultaneous/federation_1
+# helics run --path=./federation_1_runner.json &
+cd ../federation_2
+# helics run --path=./federation_2_runner.json &
+cd ../federation_3
+# helics run --path=./federation_3_runner.json
 
 echo "\n##### Advanced input and output     SKIPPING      ######"
 echo "\tHELICS issue #2542"
