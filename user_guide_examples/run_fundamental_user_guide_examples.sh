@@ -40,12 +40,12 @@ cd ../endpoints
 helics run --path=./fundamental_endpoints_runner.json
 
 echo "\n###### Fundamental native filters - SKIPPING ######"
-echo "\tHELICS issue #2524\n"
+echo "\tHELICS-Examples issue #122\n"
 cd ../filter_native
 # helics run --path=./fundamental_filter_native_runner.json
 
 echo "\n##### Fundamental filter federate - SKIPPING #####"
-echo "\tHELICS issue #1995"
+echo "\tHELICS-Examples issue #123"
 cd ../filter_federate
 # helics run --path=./fundamental_filter_runner.json
 

@@ -22,7 +22,7 @@ helics run --path=./broker_hierarchy_runner_C.json
 
 # Fails due to broker port out of range
 echo "\n###### Advanced multi-broker     SKIPPING    ######"
-echo "\tHELICS Issue #2721"
+echo "\tHELICS-Examples Issue #125"
 echo "\n"
 cd ../multi_broker
 # helics run --path=./multi_broker_runner.json
@@ -71,7 +71,7 @@ cd ../advanced_connector/interface_creation
 helics run --path=./connector_interface_creation_runner.json
 
 echo "\n##### Connector matchfile direct    SKIPPING     ######"
-echo "\tHELICS issue #2722"
+echo "\tHELICS-Examples issue #124"
 cd ../matchfile
 # helics run --path=./connector_matchfile_direct_runner.json
 
