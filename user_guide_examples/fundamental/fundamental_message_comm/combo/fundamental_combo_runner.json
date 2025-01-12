@@ -19,12 +19,6 @@
       "exec": "python -u Battery.py",
       "host": "localhost",
       "name": "Battery"
-    },
-    {
-      "directory": ".",
-      "exec": "helics_recorder -o recorder_output.txt --config-file recorder_config.txt ",
-      "host": "localhost",
-      "name": "recorder"
     }
   ]
 }

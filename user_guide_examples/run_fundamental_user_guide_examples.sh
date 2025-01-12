@@ -39,17 +39,19 @@ echo "\n##### Fundamental endpoints ######"
 cd ../endpoints
 helics run --path=./fundamental_endpoints_runner.json
 
-# Disabling test until bug is fixed
-# HELICS issue 2524
-# echo "\n###### Fundamental native filters ######"
-# cd ../filter_native
+echo "\n###### Fundamental native filters - SKIPPING ######"
+echo "\tHELICS issue #2542\n"
+cd ../filter_native
 # helics run --path=./fundamental_filter_native_runner.json
 
-# Disabling test until bug is fixed
-# HELICS issue 1995
-# echo "\n##### Fundamental filter federate #####"
-# cd ../filter_federate
+echo "\n##### Fundamental filter federate - SKIPPING #####"
+echo "\tHELICS issue #1995"
+cd ../filter_federate
 # helics run --path=./fundamental_filter_runner.json
+
+echo "\n##### Fundamental multi-agent ######"
+cd ../multi_agent
+helics run --path=./fundamental_multi_agent_runner.json
 
 if [ "$HELICS_EXAMPLES_AUTO_TESTING_UNDEFINED" = true ]; then
   # If it was originally undefined, unset it
