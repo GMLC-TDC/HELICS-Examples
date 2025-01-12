@@ -48,10 +48,10 @@ jobs:
       run: cat /etc/os-release
     - name: Print out HELICS installation information
       run: helics --version
-    # - name: Run fundamental User Guide examples
-    #   timeout-minutes: 5
-    #   run: |
-    #     ./run_fundamental_user_guide_examples.sh
+    - name: Run fundamental User Guide examples
+      timeout-minutes: 5
+      run: |
+        ./run_fundamental_user_guide_examples.sh
     - name: Run advanced User Guide examples
       timeout-minutes: 10
       run: |
