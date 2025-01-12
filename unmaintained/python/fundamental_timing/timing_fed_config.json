@@ -1,0 +1,63 @@
+{
+    "1":{
+        "subs": ["fed5pub", "fed6pub"],
+        "execution time":{
+            "0": 110,
+            "10": 260,
+            "20": 90
+        },
+        "max time request": false,
+        "period": 10 
+    },
+    "2":{
+        "subs": ["fed1pub", "fed3pub"],
+        "execution time":{
+            "0": 80,
+            "10": 100,
+            "20": 70
+        },
+        "max time request": true,
+        "period": 10 
+        
+    },
+    "3":{
+        "subs": ["fed1pub"],
+        "execution time":{
+            "0": 140,
+            "10": 150,
+            "20": 200
+        },
+        "max time request": false,
+        "period": 10 
+    },
+    "4":{
+        "subs": [],
+        "execution time":{
+            "0": 80,
+            "10": 80,
+            "20": 80
+        },
+        "max time request": false,
+        "period": 10 
+    },
+    "5":{
+        "subs": [],
+        "execution time":{
+            "0": 80,
+            "10": 330,
+            "20": 120
+        },
+        "max time request": false,
+        "period": 10 
+    },
+    "6":{
+        "subs": ["fed1pub", "fed3pub", "fed5pub"],
+        "execution time":{
+            "0": 60,
+            "10": 170,
+            "20": 60
+        },
+        "max time request": false,
+        "period": 10 
+    }
+}
