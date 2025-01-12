@@ -4,31 +4,31 @@
   "federates": [
     {
       "directory": ".",
-      "exec": "python -u Charger.py --config=Charger1Config.json -r 11",
+      "exec": "python -u Charger.py --config=Charger1Config.json --days=0.5",
       "host": "localhost",
       "name": "Charger1"
     },
     {
       "directory": ".",
-      "exec": "python -u Charger.py --config=Charger2Config.json -r 12",
+      "exec": "python -u Charger.py --config=Charger2Config.json --days=0.5",
       "host": "localhost",
       "name": "Charger2"
     },
     {
       "directory": ".",
-      "exec": "python -u Charger.py --config=Charger3Config.json -r 13",
+      "exec": "python -u Charger.py --config=Charger3Config.json --days=0.5",
       "host": "localhost",
       "name": "Charger3"
     },
     {
       "directory": ".",
-      "exec": "python -u Charger.py --config=Charger4Config.json -r 14",
+      "exec": "python -u Charger.py --config=Charger4Config.json --days=0.5",
       "host": "localhost",
       "name": "Charger4"
     },
     {
       "directory": ".",
-      "exec": "python -u Charger.py --config=Charger5Config.json -r 15",
+      "exec": "python -u Charger.py --config=Charger5Config.json --days=0.5",
       "host": "localhost",
       "name": "Charger5"
     },
@@ -40,31 +40,31 @@
     },
     {
       "directory": ".",
-      "exec": "python -u Battery.py --config=Battery1Config.json -r 1",
+      "exec": "python -u Battery.py --config=Battery1Config.json --days=0.5",
       "host": "localhost",
       "name": "Battery1"
     },
     {
       "directory": ".",
-      "exec": "python -u Battery.py --config=Battery2Config.json -r 2",
+      "exec": "python -u Battery.py --config=Battery2Config.json --days=0.5",
       "host": "localhost",
       "name": "Battery2"
     },
     {
       "directory": ".",
-      "exec": "python -u Battery.py --config=Battery3Config.json -r 3",
+      "exec": "python -u Battery.py --config=Battery3Config.json --days=0.5",
       "host": "localhost",
       "name": "Battery3"
     },
     {
       "directory": ".",
-      "exec": "python -u Battery.py --config=Battery4Config.json -r 4",
+      "exec": "python -u Battery.py --config=Battery4Config.json --days=0.5",
       "host": "localhost",
       "name": "Battery4"
     },
     {
       "directory": ".",
-      "exec": "python -u Battery.py --config=Battery5Config.json -r 5",
+      "exec": "python -u Battery.py --config=Battery5Config.json --days=0.5",
       "host": "localhost",
       "name": "Battery5"
     }
