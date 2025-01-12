@@ -41,7 +41,7 @@ def destroy_federate(fed):
     '''
     # Adding extra time request to clear out any pending messages to avoid
     #   annoying errors in the broker log. Any message are tacitly disregarded.
-    grantedtime = fed.request_time(h.helics_time_maxtime)
+    grantedtime = fed.request_time(h.helics_time_maxtime - 1)
     fed.disconnect()
     h.helicsFederateDestroy(fed)
     logger.info('Federate finalized')

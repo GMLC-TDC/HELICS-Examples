@@ -20,7 +20,8 @@
       "key":"Charger/EV5_voltage",
       "type":"double",
       "unit":"V",
-      "global": true
+      "global": true,
+      "default": 240
     }
   ]
 }

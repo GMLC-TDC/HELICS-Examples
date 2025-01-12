@@ -38,7 +38,7 @@ def destroy_federate(fed):
     '''
     # Adding extra time request to clear out any pending messages to avoid
     #   annoying errors in the broker log. Any message are tacitly disregarded.
-    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME)
+    grantedtime = h.helicsFederateRequestTime(fed, h.HELICS_TIME_MAXTIME - 1)
     status = h.helicsFederateDisconnect(fed)
     h.helicsFederateDestroy(fed)
     logger.info('Federate finalized')
@@ -81,7 +81,7 @@ if __name__ == "__main__":
     logger.debug(f'Granted time {grantedtime}')
 
 
-    time_sim = []
+    time_sim = {}
     soc = {}
 
     while grantedtime < total_interval:
@@ -120,7 +120,9 @@ if __name__ == "__main__":
                 soc[source] = []
             soc[source].append(float(currentsoc))
 
-        time_sim.append(grantedtime)
+            if source not in time_sim:
+                time_sim[source] = []
+            time_sim[source].append(float(grantedtime))
 
         # Since we've dealt with all the messages that are queued, there's
         #   nothing else for the federate to do until/unless another
@@ -134,33 +136,34 @@ if __name__ == "__main__":
     destroy_federate(fed)
 
     # Printing out final results graphs for comparison/diagnostic purposes.
-    xaxis = np.array(time_sim)/3600
+    x = []
+    for key in time_sim:
+        x.append(np.array(time_sim[key]))
     y = []
     for key in soc:
         y.append(np.array(soc[key]))
-
+    
 
     fig, axs = plt.subplots(5, sharex=True, sharey=True)
     fig.suptitle('SOC at each charging port')
-
-    axs[0].plot(xaxis, y[0], color='tab:blue', linestyle='-')
+    axs[0].plot(x[0], y[0], color='tab:blue', linestyle='-')
     axs[0].set_yticks(np.arange(0,1.25,0.5))
     axs[0].set(ylabel='Port 1')
     axs[0].grid(True)
 
-    axs[1].plot(xaxis, y[1], color='tab:blue', linestyle='-')
+    axs[1].plot(x[1], y[1], color='tab:blue', linestyle='-')
     axs[1].set(ylabel='Port 2')
     axs[1].grid(True)
 
-    axs[2].plot(xaxis, y[2], color='tab:blue', linestyle='-')
+    axs[2].plot(x[2], y[2], color='tab:blue', linestyle='-')
     axs[2].set(ylabel='Port 3')
     axs[2].grid(True)
 
-    axs[3].plot(xaxis, y[3], color='tab:blue', linestyle='-')
+    axs[3].plot(x[3], y[3], color='tab:blue', linestyle='-')
     axs[3].set(ylabel='Port 4')
     axs[3].grid(True)
 
-    axs[4].plot(xaxis, y[4], color='tab:blue', linestyle='-')
+    axs[4].plot(x[4], y[4], color='tab:blue', linestyle='-')
     axs[4].set(ylabel='Port 5')
     axs[4].grid(True)
     plt.xlabel('time (hr)')

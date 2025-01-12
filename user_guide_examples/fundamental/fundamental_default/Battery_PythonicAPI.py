@@ -18,6 +18,7 @@ import matplotlib.pyplot as plt
 import helics as h
 import logging
 import numpy as np
+import os
 
 
 logger = logging.getLogger(__name__)
@@ -72,6 +73,10 @@ def get_new_battery(numBattery):
 
 if __name__ == "__main__":
     np.random.seed(2622)
+
+    # Fancy way of getting the environment variable, assigning it a default
+    # value if not set (False), test to see if it is equal to 
+    auto_testing = os.getenv("HELICS_EXAMPLES_AUTO_TESTING", False) == "TRUE"
 
     ##########  Registering  federate and configuring from JSON################
     fed = h.helicsCreateValueFederateFromConfig("BatteryConfig.json")
@@ -171,40 +176,41 @@ if __name__ == "__main__":
         # Data collection vectors
         time_sim.append(grantedtime)
 
-    # Printing out final results graphs for comparison/diagnostic purposes.
-    xaxis = np.array(time_sim) / 3600
-    y = []
-    for key in soc:
-        y.append(np.array(soc[key]))
+    if not auto_testing:
+        # Printing out final results graphs for comparison/diagnostic purposes.
+        xaxis = np.array(time_sim) / 3600
+        y = []
+        for key in soc:
+            y.append(np.array(soc[key]))
 
-    plt.figure()
+        plt.figure()
 
-    fig, axs = plt.subplots(5, sharex=True, sharey=True)
-    fig.suptitle("SOC of each EV Battery")
+        fig, axs = plt.subplots(5, sharex=True, sharey=True)
+        fig.suptitle("SOC of each EV Battery")
 
-    axs[0].plot(xaxis, y[0], color="tab:blue", linestyle="-")
-    axs[0].set_yticks(np.arange(0, 1.25, 0.5))
-    axs[0].set(ylabel="Batt1")
-    axs[0].grid(True)
+        axs[0].plot(xaxis, y[0], color="tab:blue", linestyle="-")
+        axs[0].set_yticks(np.arange(0, 1.25, 0.5))
+        axs[0].set(ylabel="Batt1")
+        axs[0].grid(True)
 
-    axs[1].plot(xaxis, y[1], color="tab:blue", linestyle="-")
-    axs[1].set(ylabel="Batt2")
-    axs[1].grid(True)
+        axs[1].plot(xaxis, y[1], color="tab:blue", linestyle="-")
+        axs[1].set(ylabel="Batt2")
+        axs[1].grid(True)
 
-    axs[2].plot(xaxis, y[2], color="tab:blue", linestyle="-")
-    axs[2].set(ylabel="Batt3")
-    axs[2].grid(True)
+        axs[2].plot(xaxis, y[2], color="tab:blue", linestyle="-")
+        axs[2].set(ylabel="Batt3")
+        axs[2].grid(True)
 
-    axs[3].plot(xaxis, y[3], color="tab:blue", linestyle="-")
-    axs[3].set(ylabel="Batt4")
-    axs[3].grid(True)
+        axs[3].plot(xaxis, y[3], color="tab:blue", linestyle="-")
+        axs[3].set(ylabel="Batt4")
+        axs[3].grid(True)
 
-    axs[4].plot(xaxis, y[4], color="tab:blue", linestyle="-")
-    axs[4].set(ylabel="Batt5")
-    axs[4].grid(True)
-    plt.xlabel("time (hr)")
-    # for ax in axs():
-    #        ax.label_outer()
-    plt.savefig("fundamental_default_battery_SOCs.png", format="png")
+        axs[4].plot(xaxis, y[4], color="tab:blue", linestyle="-")
+        axs[4].set(ylabel="Batt5")
+        axs[4].grid(True)
+        plt.xlabel("time (hr)")
+        # for ax in axs():
+        #        ax.label_outer()
+        plt.savefig("fundamental_default_battery_SOCs.png", format="png")
 
-    plt.show()
+        plt.show()
