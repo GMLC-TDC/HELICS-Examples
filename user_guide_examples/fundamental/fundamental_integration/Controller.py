@@ -184,7 +184,7 @@ if __name__ == "__main__":
     axs[1].set(ylabel='Port 2')
     axs[1].grid(True)
 
-    axs[2].plot(x[2], xaxis, y[2], color='tab:blue', linestyle='-')
+    axs[2].plot(x[2], y[2], color='tab:blue', linestyle='-')
     axs[2].set(ylabel='Port 3')
     axs[2].grid(True)
 
