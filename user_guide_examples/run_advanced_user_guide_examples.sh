@@ -37,7 +37,7 @@ cd ../federation_3
 helics run --path=./federation_3_runner.json
 
 echo "\n##### Advanced input and output     SKIPPING      ######"
-echo "\tHELICS issue #2542"
+echo "\tHELICS issue #2524"
 cd ../../../advanced_input_output
 # helics run --path=./fib_runner.json
 
@@ -71,7 +71,7 @@ cd ../advanced_connector/interface_creation
 helics run --path=./connector_interface_creation_runner.json
 
 echo "\n##### Connector matchfile direct    SKIPPING     ######"
-echo "\tHELICS-Example issue #101"
+echo "\tHELICS issue #2722"
 cd ../matchfile
 # helics run --path=./connector_matchfile_direct_runner.json
 
