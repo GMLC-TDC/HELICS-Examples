@@ -1,0 +1,24 @@
+{
+  "name": "advanced_default",
+  "broker": true,
+  "federates": [    
+    {
+      "directory": ".",
+      "exec": "julia --project=HELICS Charger.jl",
+      "host": "localhost",
+      "name": "Charger"
+    },
+    {
+      "directory": ".",
+      "exec": "julia --project=HELICS Controller.jl",
+      "host": "localhost",
+      "name": "Controller"
+    },
+    {
+      "directory": ".",
+      "exec": "julia --project=HELICS Battery.jl",
+      "host": "localhost",
+      "name": "Battery"
+    }
+  ]
+}
