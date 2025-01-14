@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 import helics as h
 import logging
 import numpy as np
+import os
 
 
 logger = logging.getLogger(__name__)
@@ -212,4 +213,4 @@ if __name__ == "__main__":
     plt.title("Instantaneous Power Draw from 5 EVs")
     plt.savefig("fundamental_default_charger_power.png", format="png")
 
-    # plt.show()
+    plt.show()

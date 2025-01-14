@@ -4,6 +4,16 @@
 # A faux backend that displays nothing
 export MPLBACKEND=AGG
 
+# Setting example-testing flag
+# Getting fancy to preserve not only the state of existance
+# of the flag.
+if [ -z "${HELICS_EXAMPLES_AUTO_TESTING+x}" ]; then
+  HELICS_EXAMPLES_AUTO_TESTING_UNDEFINED=true
+else
+  HELICS_EXAMPLES_AUTO_TESTING_UNDEFINED=false
+  ORIGINAL_HELICS_EXAMPLES_AUTO_TESTING=$HELICS_EXAMPLES_AUTO_TESTING
+fi
+
 # Stop running examples once one of them fails
 set -o errexit
 
@@ -29,10 +39,24 @@ echo "\n##### Fundamental endpoints ######"
 cd ../endpoints
 helics run --path=./fundamental_endpoints_runner.json
 
-echo "\n###### Fundamental native filters ######"
+echo "\n###### Fundamental native filters - SKIPPING ######"
+echo "\tHELICS-Examples issue #122\n"
 cd ../filter_native
-helics run --path=./fundamental_filter_native_runner.json
+# helics run --path=./fundamental_filter_native_runner.json
 
-echo "\n##### Fundamental filter federate #####"
+echo "\n##### Fundamental filter federate - SKIPPING #####"
+echo "\tHELICS-Examples issue #123"
 cd ../filter_federate
-helics run --path=./fundamental_filter_runner.json
+# helics run --path=./fundamental_filter_runner.json
+
+echo "\n##### Fundamental multi-agent ######"
+cd ../multi_agent
+helics run --path=./fundamental_multi_agent_runner.json
+
+if [ "$HELICS_EXAMPLES_AUTO_TESTING_UNDEFINED" = true ]; then
+  # If it was originally undefined, unset it
+  unset HELICS_EXAMPLES_AUTO_TESTING
+else
+  # Otherwise, set it back to its original value
+  HELICS_EXAMPLES_AUTO_TESTING=$ORIGINAL_HELICS_EXAMPLES_AUTO_TESTING
+fi

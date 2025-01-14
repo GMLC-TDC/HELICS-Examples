@@ -4,7 +4,7 @@
   "federates": [    
     {
       "directory": ".",
-      "exec": "helics_broker -f3 --log_level=trace",
+      "exec": "helics_broker -f3 --dynamic",
       "host": "localhost",
       "name": "broker"
     },
@@ -22,9 +22,15 @@
     },
     {
       "directory": ".",
-      "exec": "python -u Battery.py",
+      "exec": "python -u BatteryLate.py",
       "host": "localhost",
       "name": "Battery"
+    },
+    {
+      "directory": ".",
+      "exec": "python -u BatteryLate.py --late",
+      "host": "localhost",
+      "name": "BatteryLate"
     }
   ]
 }
