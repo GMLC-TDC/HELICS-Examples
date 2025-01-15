@@ -247,6 +247,16 @@ if __name__ == "__main__":
                 logger.debug(f'\t New EV, SOC estimate: {currentsoc[j]:.4f}')
                 logger.debug(f'\t New EV, charging voltage:'
                              f' {charging_voltage[j]}')
+            elif charging_current[j] == 0.001:
+                # No car is initally connected and HELICS is providing the default
+                # value.
+                # This is kind of hacky and if we were trying to do a better
+                # job modeling this we would likely figure out some way of
+                # indicating and tracking the presence of a car. This would
+                # likely take the form of a separate signal. For demonstration
+                # and simplicity purposes for now, though, this is good 
+                # enough.
+                currentsoc[j] = 0.001 # Initial SOC estimate
             else:
                 # SOC estimation
                 currentsoc[j] = estimate_SOC(charging_voltage[j], charging_current[j])
@@ -275,6 +285,13 @@ if __name__ == "__main__":
                     # Stop charing this EV
                     charging_voltage[j] = 0
                     logger.info(f'\tEV full; removing charging voltage')
+                else:
+                    # Using 0.001 as a signaling value. This is a hack but
+                    # is good enough for this example. To model this better
+                    # we would need some kind of separate signal to indicate 
+                    # when a car was connected or not.
+                    if currentsoc[j] == 0.001:
+                        charging_voltage[j] = 0.001
             else:
                 logger.debug(f'\tNo messages at endpoint {endpoint_name} '
                              f'recieved at '
