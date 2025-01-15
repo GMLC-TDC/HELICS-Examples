@@ -94,7 +94,7 @@
       "key":"BatteryLate/EV5_current",
       "type":"double",
       "unit":"A",
-      "default": 50,
+      "default": 0.0001,
       "global": true
     }
   ]

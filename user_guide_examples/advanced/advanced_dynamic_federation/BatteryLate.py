@@ -172,6 +172,8 @@ if __name__ == "__main__":
                 batt_list[j] = new_batt[0]
                 current_soc[j] = (np.random.randint(0,80))/100
                 charging_current = 0
+            elif charging_voltage == 0.001:
+                current_soc[j] = 0.001
 
             # Calculate charging current and update SOC
             R =  np.interp(current_soc[j], socs, effective_R)
@@ -200,13 +202,6 @@ if __name__ == "__main__":
                 time_sim[subid[j]] = []
             time_sim[subid[j]].append(float(grantedtime))
             
-            # if subid[j] not in current:
-            #     current[subid[j]] = []
-            # current[subid[j]].append(float(charging_current))
-
-        # Data collection vectors
-        # time_sim.append(grantedtime)
-        # current.append(charging_current)
 
 
 
@@ -229,29 +224,35 @@ if __name__ == "__main__":
         fig.suptitle('SOC of EV Batteries 1-4')
 
     if not args.late:
-        axs[0].plot(x[0], y[0], color='tab:blue', linestyle='-')
+        axs[0].plot(x[0]/3600, y[0], color='tab:blue', linestyle='-')
+        axs[4].set_xticks(np.arange(0,175,25))
         axs[0].set_yticks(np.arange(0,1.25,0.5))
         axs[0].set(ylabel='Batt at\nport 1')
         axs[0].grid(True)
 
-        axs[1].plot(x[1], y[1], color='tab:blue', linestyle='-')
+        axs[1].plot(x[1]/3600, y[1], color='tab:blue', linestyle='-')
+        axs[4].set_xticks(np.arange(0,175,25))
         axs[1].set_yticks(np.arange(0,1.25,0.5))
-        axs[1].set(ylabel='Batt at\nport 1')
+        axs[1].set(ylabel='Batt at\nport 2')
         axs[1].grid(True)
 
-        axs[2].plot(x[2], y[2], color='tab:blue', linestyle='-')
+        axs[2].plot(x[2]/3600, y[2], color='tab:blue', linestyle='-')
+        axs[4].set_xticks(np.arange(0,175,25))
         axs[2].set_yticks(np.arange(0,1.25,0.5))
-        axs[2].set(ylabel='Batt at\nport 1')
+        axs[2].set(ylabel='Batt at\nport 3')
         axs[2].grid(True)
 
-        axs[3].plot(x[3], y[3], color='tab:blue', linestyle='-')
+        axs[3].plot(x[3]/3600, y[3], color='tab:blue', linestyle='-')
+        axs[4].set_xticks(np.arange(0,175,25))
         axs[3].set_yticks(np.arange(0,1.25,0.5))
-        axs[3].set(ylabel='Batt at\nport 1')
+        axs[3].set(ylabel='Batt at\nport 4')
         axs[3].grid(True)
     else:
-        axs[4].plot(x[0], y[0], color='tab:blue', linestyle='-')
+        print(f"x-axis vector first time: {x[0][0]/3600}")
+        axs[4].plot(x[0]/3600, y[0], color='tab:blue', linestyle='-')
+        axs[4].set_xticks(np.arange(0,175,25))
         axs[4].set_yticks(np.arange(0,1.25,0.5))
-        axs[4].set(ylabel='Batt at\nport 1')
+        axs[4].set(ylabel='Batt at\nport 5')
         axs[4].grid(True)
 
     plt.xlabel('time (hr)')

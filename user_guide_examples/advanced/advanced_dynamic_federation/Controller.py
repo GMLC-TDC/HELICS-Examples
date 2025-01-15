@@ -148,24 +148,24 @@ if __name__ == "__main__":
     fig, axs = plt.subplots(5, sharex=True, sharey=True)
     fig.suptitle('SOC at each charging port')
 
-    axs[0].plot(x[0], y[0], color='tab:blue', linestyle='-')
+    axs[0].plot(x[0]/3600, y[0], color='tab:blue', linestyle='-')
     axs[0].set_yticks(np.arange(0,1.25,0.5))
     axs[0].set(ylabel='Port 1')
     axs[0].grid(True)
 
-    axs[1].plot(x[1], y[1], color='tab:blue', linestyle='-')
+    axs[1].plot(x[1]/3600, y[1], color='tab:blue', linestyle='-')
     axs[1].set(ylabel='Port 2')
     axs[1].grid(True)
 
-    axs[2].plot(x[2], y[2], color='tab:blue', linestyle='-')
+    axs[2].plot(x[2]/3600, y[2], color='tab:blue', linestyle='-')
     axs[2].set(ylabel='Port 3')
     axs[2].grid(True)
 
-    axs[3].plot(x[3], y[3], color='tab:blue', linestyle='-')
+    axs[3].plot(x[3]/3600, y[3], color='tab:blue', linestyle='-')
     axs[3].set(ylabel='Port 4')
     axs[3].grid(True)
 
-    axs[4].plot(x[4], y[4], color='tab:blue', linestyle='-')
+    axs[4].plot(x[4]/3600, y[4], color='tab:blue', linestyle='-')
     axs[4].set(ylabel='Port 5')
     axs[4].grid(True)
     plt.xlabel('time (hr)')
