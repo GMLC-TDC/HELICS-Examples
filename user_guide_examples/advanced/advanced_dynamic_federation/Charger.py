@@ -180,7 +180,7 @@ if __name__ == "__main__":
     # Definition of charging power level (in kW) for level 1, 2, 3 chargers
     charge_rate = [1.8,7.2,50]
 
-
+    not_charging_value = 0.00001
 
     hours = 24*7 # one week
     total_interval = int(60 * 60 * hours)
@@ -256,7 +256,7 @@ if __name__ == "__main__":
                 # likely take the form of a separate signal. For demonstration
                 # and simplicity purposes for now, though, this is good 
                 # enough.
-                currentsoc[j] = 0.001 # Initial SOC estimate
+                currentsoc[j] = not_charging_value # Initial SOC estimate
             else:
                 # SOC estimation
                 currentsoc[j] = estimate_SOC(charging_voltage[j], charging_current[j])
@@ -290,8 +290,8 @@ if __name__ == "__main__":
                     # is good enough for this example. To model this better
                     # we would need some kind of separate signal to indicate 
                     # when a car was connected or not.
-                    if currentsoc[j] == 0.001:
-                        charging_voltage[j] = 0.001
+                    if currentsoc[j] == not_charging_value:
+                        charging_voltage[j] = not_charging_value
             else:
                 logger.debug(f'\tNo messages at endpoint {endpoint_name} '
                              f'recieved at '

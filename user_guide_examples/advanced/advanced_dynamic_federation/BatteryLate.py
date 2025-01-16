@@ -85,7 +85,7 @@ if __name__ == "__main__":
 
     ##########  Registering  federate and configuring from JSON################
     if args.late: 
-        time.sleep(10.0)
+        time.sleep(5.0)
         fed = h.helicsCreateValueFederateFromConfig("BatteryLateConfig.json")
     else:
         fed = h.helicsCreateValueFederateFromConfig("BatteryConfig.json")
@@ -123,7 +123,12 @@ if __name__ == "__main__":
     h.helicsFederateEnterExecutingMode(fed)
     logger.info('Entered HELICS execution mode')
 
-    hours = 24*7 # one week
+    not_charging_value = 0.00001
+
+    if args.late:
+        hours = 24*6 # one week less a day
+    else:
+        hours = 24*7 # one week
     total_interval = int(60 * 60 * hours)
     update_interval = int(h.helicsFederateGetTimeProperty(
                                 fed,
@@ -172,8 +177,8 @@ if __name__ == "__main__":
                 batt_list[j] = new_batt[0]
                 current_soc[j] = (np.random.randint(0,80))/100
                 charging_current = 0
-            elif charging_voltage == 0.001:
-                current_soc[j] = 0.001
+            elif charging_voltage == not_charging_value:
+                current_soc[j] = not_charging_value
 
             # Calculate charging current and update SOC
             R =  np.interp(current_soc[j], socs, effective_R)
@@ -202,8 +207,10 @@ if __name__ == "__main__":
                 time_sim[subid[j]] = []
             time_sim[subid[j]].append(float(grantedtime))
             
-
-
+    # Turning off charging current to indicate the vehicle has
+    # left and is no longer connected.
+    charging_current = not_charging_value
+    h.helicsPublicationPublishDouble(pubid[j], charging_current)
 
     # Cleaning up HELICS stuff once we've finished the co-simulation.
     destroy_federate(fed)
