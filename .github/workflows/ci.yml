@@ -1,0 +1,55 @@
+name: Check Examples
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+concurrency:
+    group: build-examples-${{ github.head_ref || github.ref_name }} 
+    cancel-in-progress: false
+
+jobs:
+  build-examples:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      max-parallel: 3
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - name: Install HELICS from source (needed for C++ shared lib)
+        uses: gmlc-tdc/helics-action/install@main
+        with:
+          build_from_source: "true"
+
+      - uses: actions/checkout@v4
+
+      - name: Install Ninja
+        run: pipx install ninja
+
+      - name: Configure (Linux/macOS)
+        if: matrix.os != 'windows-latest'
+        run: cmake -GNinja -DCMAKE_BUILD_TYPE=Release -Bbuild
+
+      - name: Configure (Windows)
+        if: matrix.os == 'windows-latest'
+        run: cmake -Ax64 -DCMAKE_BUILD_TYPE=Release -Bbuild
+
+      - name: Build Examples
+        run: cmake --build build
+
+# After building, if the job was triggered by a PR in another repository
+# the results could be reported back to it as a comment
+#   report-results:
+#     name: Report Results
+#     needs: build-examples
+#     runs-on: ubuntu-latest
+#     if: always()
+#     steps:
+#       - uses: actions/checkout@v3
+#       - name: Run report script
+#         run: .ci/report-results.sh
+#         env:
+#           HELICSBOT_GH_TOKEN: ${{ secrets.HELICSBOT_GH_TOKEN }}
