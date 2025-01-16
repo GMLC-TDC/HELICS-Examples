@@ -138,7 +138,7 @@ if __name__ == "__main__":
     # Printing out final results graphs for comparison/diagnostic purposes.
     x = []
     for key in time_sim:
-        x.append(np.array(time_sim[key]))
+        x.append(np.array(time_sim[key])/3600)
     y = []
     for key in soc:
         y.append(np.array(soc[key]))
