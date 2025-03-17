@@ -1,0 +1,23 @@
+{
+  "core_type": "zmq",
+  "log_level": "warning",
+  "name": "Federate1",
+  "period": 1,
+  "offset": 0.1,
+  "terminate_on_error": true,
+  "uninterruptible": false,
+  "publications": [
+    {
+      "global": true,
+      "key": "Federate1_Value",
+      "type": "double"
+    }
+  ],
+  "subscriptions": [
+    {
+      "global": true,
+      "key": "Federate3_Value",
+      "type": "double"
+    }
+  ]
+}

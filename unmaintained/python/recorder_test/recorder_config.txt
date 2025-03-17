@@ -1,0 +1,4 @@
+sub Federate1_Value
+sub Federate3_Value
+clone Federate2_Endpoint
+clone Federate3_Endpoint

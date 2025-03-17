@@ -1,0 +1,31 @@
+{
+    "name": "recorder test",
+    "broker": true,
+    "federates": [    
+      {
+        "directory": ".",
+        "exec": "python -u fed1.py",
+        "host": "localhost",
+        "name": "Federate1"
+      },
+      {
+        "directory": ".",
+        "exec": "python -u fed2.py",
+        "host": "localhost",
+        "name": "Federate2"
+      },
+      {
+        "directory": ".",
+        "exec": "python -u fed3.py",
+        "host": "localhost",
+        "name": "Federate3"
+      },
+      {
+        "directory": ".",
+        "exec": "helics_recorder recorder_config.txt --output=recorder_output.txt",
+        "host": "localhost",
+        "name": "Recorder"
+      }
+    ]
+  }
+  
