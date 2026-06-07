@@ -48,25 +48,30 @@ class Battery:
 def ensure_valid(value:float, current_consumption:float, battery:Battery)-> float:
     """ Ensure the value is within the valid range based on current demand and battery state.
     """
-    if value >= current_consumption + (BATTERY_CAPCITY-battery.current_charge()):
-        return current_consumption + (BATTERY_CAPCITY-battery.current_charge())
-    if value >= current_consumption + BATTERY_MAX_CHARGE:
-        return current_consumption + BATTERY_MAX_CHARGE
-    if value <= current_consumption -battery.current_charge():
-        return current_consumption - battery.current_charge()
-    if value <= current_consumption -BATTERY_MAX_DISCHARGE:
-        return current_consumption - BATTERY_MAX_DISCHARGE
-    return value
+    upper_bound = current_consumption + min(
+        BATTERY_MAX_CHARGE,
+        BATTERY_CAPCITY - battery.current_charge(),
+    )
+    lower_bound = current_consumption - min(
+        BATTERY_MAX_DISCHARGE,
+        battery.current_charge(),
+    )
+    return min(max(value, lower_bound), upper_bound)
 
 def check_valid(value:float, current_consumption:float, battery:Battery)-> str:
     """ check if the value of consumption is within the valid range based on current consumption and battery state.
     """
-    if value >= current_consumption + (BATTERY_CAPCITY-battery.current_charge()):
-        return "listed battery charge rate exceeds available battery storage capacity"
-    if value >= current_consumption + BATTERY_MAX_CHARGE:
+    remaining_capacity = BATTERY_CAPCITY - battery.current_charge()
+    max_charge = min(BATTERY_MAX_CHARGE, remaining_capacity)
+    max_discharge = min(BATTERY_MAX_DISCHARGE, battery.current_charge())
+    upper_bound = current_consumption + max_charge
+    lower_bound = current_consumption - max_discharge
+    if value > upper_bound:
+        if remaining_capacity < BATTERY_MAX_CHARGE:
+            return "listed battery charge rate exceeds available battery storage capacity"
         return "listed battery charge rate exceeds maximum charge rate"
-    if value <= current_consumption -battery.current_charge():
-        return "listed consumption exceeds available battery energy"
-    if value <= current_consumption -BATTERY_MAX_DISCHARGE:
+    if value < lower_bound:
+        if battery.current_charge() < BATTERY_MAX_DISCHARGE:
+            return "listed consumption exceeds available battery energy"
         return "listed consumption exceeds max battery discharge rate"
     return ""

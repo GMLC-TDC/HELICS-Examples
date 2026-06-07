@@ -154,14 +154,14 @@ while current_time<24:
         warning=check_valid(load,fed.demand[hour], fed.battery)
         if warning:
             valid_load=ensure_valid(load,fed.demand[hour], fed.battery)
-            print(f"invalid demand received for fed {fed.name}={load} vs {valid_load} warning={warning}, recalculating with new value and assessing penalty")
             penaltyCost=20*abs(load-valid_load)
+            print(f"invalid demand received for fed {fed.name}={load} vs {valid_load} warning={warning}, recalculating with new value and assessing penalty={penaltyCost}")
             load=valid_load
        
         fed.battery.change(load-fed.demand[hour])
         fed.consume.append(load)
-        fed.hourCost.append(load*current_price)
-        print(f"hr {hour}: federate {fed.name} using {load} scheduled {fed.demand[hour]} battery at {fed.battery.energy} cost={load*current_price}")
+        fed.hourCost.append(load*current_price+penaltyCost)
+        print(f"hr {hour}: federate {fed.name} using {load} scheduled {fed.demand[hour]} battery at {fed.battery.energy} cost={load*current_price+penaltyCost}")
         total_load+=load
     loads.append(total_load)
     print(f"hr {hour}: total load {total_load} new  price = {current_price} ")
