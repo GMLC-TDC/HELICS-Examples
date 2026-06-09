@@ -184,6 +184,22 @@ For a strategy-focused walkthrough of what those example houses actually do in a
 run, including hourly loads and costs, see
 [house_strategy_tutorial.md](/c:/CodeProjects/HELICS-Examples/python/market_game/house_strategy_tutorial.md).
 
+## Running The Pure-Python Checks
+
+The `simulation/` package mirrors the market-game rules without starting HELICS
+federates. It is useful for quick checks of pricing, battery validation, and
+strategy behavior. More details are in
+[docs/simulation.md](/c:/CodeProjects/HELICS-Examples/python/market_game/docs/simulation.md).
+
+From the repository root:
+
+```powershell
+python python/market_game/tests/check_simulation.py
+```
+
+The parity check verifies the expected 24-hour results for the stock example
+houses under the same `compute_demand(...)` interface used by the HELICS run.
+
 ## Files In This Example
 
 - [house_template.py](/c:/CodeProjects/HELICS-Examples/python/market_game/house_template.py):
@@ -202,3 +218,7 @@ run, including hourly loads and costs, see
   battery limits and validation helpers
 - [run_neighborhood.py](/c:/CodeProjects/HELICS-Examples/python/market_game/run_neighborhood.py):
   helper that builds `houses.json` for `helics run`
+- [docs/simulation.md](/c:/CodeProjects/HELICS-Examples/python/market_game/docs/simulation.md):
+  simulator behavior and parity-check details
+- [simulation/](/c:/CodeProjects/HELICS-Examples/python/market_game/simulation):
+  dependency-free rules and simulator for quick local checks
