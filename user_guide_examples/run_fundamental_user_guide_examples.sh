@@ -13,6 +13,7 @@ else
   HELICS_EXAMPLES_AUTO_TESTING_UNDEFINED=false
   ORIGINAL_HELICS_EXAMPLES_AUTO_TESTING=$HELICS_EXAMPLES_AUTO_TESTING
 fi
+export HELICS_EXAMPLES_AUTO_TESTING=TRUE
 
 # Stop running examples once one of them fails
 set -o errexit
@@ -25,7 +26,8 @@ fi
 # Fundamental
 echo "\n###### Fundamental default #####"
 cd ./fundamental/fundamental_default
-helics run --path=./fundamental_default_runner.json 
+helics run --path=./fundamental_default_runner_autotest.json
+python -m pytest -q ./test_fundamental_default_results.py
 
 echo "\n###### Fundamental integration ######"
 cd ../fundamental_integration

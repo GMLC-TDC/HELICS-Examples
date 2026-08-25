@@ -13,6 +13,7 @@ docs/xml
 docs/latex
 
 *.png
+user_guide_examples/fundamental/fundamental_default/fundamental_default_results.json
 
 #=============================================================================
 # Generic ignores
