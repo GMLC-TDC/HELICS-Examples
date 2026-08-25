@@ -1,0 +1,11 @@
+# Record the value exchanges used by the fundamental default example.
+sub Charger/EV1_voltage
+sub Charger/EV2_voltage
+sub Charger/EV3_voltage
+sub Charger/EV4_voltage
+sub Charger/EV5_voltage
+sub Battery/EV1_current
+sub Battery/EV2_current
+sub Battery/EV3_current
+sub Battery/EV4_current
+sub Battery/EV5_current
